@@ -1,8 +1,9 @@
+
 #' @title  Preparing a data set for further data processing or price index calculations
 #'
 #' @description This function returns a prepared data frame based on the user's data set. The resulting data frame is ready for further data processing (such as data selecting, matching or filtering) and it is also ready for price index calculations (if only it contains required columns).
 #'
-#' @param data The user's data frame to be prepared. The user must indicate columns: \code{time} (as Date or character type, allowed formats are, eg.: `2020-03` or `2020-12-28`), \code{prices} and \code{quantities} (as numeric). Optionally, the user may also indicate columns: \code{prodID}, \code{codeIN}, \code{codeOUT}, \code{retID} (as numeric, factor or character), \code{description} (as character) and other columns specified by the \code{additional} parameter.
+#' @param data The user's data frame to be prepared. The user must indicate columns: \code{time} (as Date or character type, allowed formats are, eg.: `2020-03` or `2020-12-28`), \code{prices} and \code{quantities} (as numeric). Optionally, the user may also indicate columns: \code{prodID}, \code{codeIN}, \code{codeOUT}, \code{retID} (as numeric, factor or character), \code{description},  \code{grammage} (as numeric or character), \code{unit} (as character) and other columns specified by the \code{additional} parameter.
 #' @param time A character name of the column which provides transaction dates.
 #' @param prices A character name of the column which provides product prices. 
 #' @param quantities A character name of the column which provides product quantities.
@@ -11,6 +12,8 @@
 #' @param description A character name of the column which provides product descriptions. It is not obligatory to consider this column while data preparing but it is required while product selecting (please see the \code{\link{data_selecting}} function).
 #' @param codeIN A character name of the column which provides internal product codes (from the retailer). It is not obligatory to consider this column while data preparing but it may be required while product matching (please see the \code{\link{data_matching}} function).
 #' @param codeOUT A character name of the column which provides external product codes (e.g. GTIN or SKU). It is not obligatory to consider this column while data preparing but it may be required while product matching (please see the \code{\link{data_matching}} function).
+#' @param grammage A character name of the numeric column which provides the grammage of products
+#' @param unit A character name of the column which provides the unit of the grammage of products
 #' @param additional A character vector of names of additional columns to be considered while data preparing (records with missing values are deleted).
 #' @rdname data_preparing
 #' @return The resulting data frame is free from missing values, zero or negative prices and quantities. As a result, column \code{time} is set to be Date type (in format: `Year-Month-01`), columns \code{prices} and \code{quantities} are set to be numeric. If the column \code{description} is selected, then it is set to be character type. If columns: \code{prodID}, \code{retID}, \code{codeIN} or  \code{codeOUT} are selected, then they are set to be factor type.
@@ -31,13 +34,14 @@ data_preparing <-
   description = NULL,
   codeIN = NULL,
   codeOUT = NULL,
+  grammage = NULL,
+  unit = NULL,
   additional = c())
   {
   if (nrow(data) == 0)
   stop("A data frame is empty")
   variables <- c()
   cn <- colnames(data)
-  
   #checking obligatory columns
   if ((length(time) == 0) |
   (length(prices) == 0) |
@@ -109,9 +113,24 @@ data_preparing <-
   data$codeOUT <- as.factor(data$codeOUT)
   variables <- c(variables, "codeOUT")
   }
+  if (length(grammage) > 0) {
+  if (!(grammage %in% cn))
+  stop ("Bad specification of the 'grammage' column!")
+  colnames(data)[which(names(data) == grammage)] <- "grammage"
+  if (!(is.character(data$grammage)))
+  data$grammage <- as.character(data$grammage)
+  variables <- c(variables, "grammage")
+  }
+  if (length(unit) > 0) {
+  if (!(unit %in% cn))
+  stop ("Bad specification of the 'unit' column!")
+  colnames(data)[which(names(data) == unit)] <- "unit"
+  if (!(is.character(data$unit)))
+  data$unit <- as.character(data$unit)
+  variables <- c(variables, "unit")
+  }
   variables <- c(variables, additional)
   data <- dplyr::select(data, variables)
-  
   #filtering
   data <- stats::na.omit(data)
   data <- dplyr::filter(data, data$prices > 0 & data$quantities > 0)
@@ -159,7 +178,7 @@ data_matching <-
   (precision > 1))
   stop("parametr 'precision' must belong to [0,1]")
   
-  
+  prodID<-NULL
   #preparing data set
   columns <- c()
   start <- paste(start, "-01", sep = "")
@@ -204,7 +223,7 @@ data_matching <-
   
   data <- dplyr::select(data, columns)
   data <- dplyr::distinct(data)
-  
+
   #main body
   if (codeIN == TRUE & codeOUT == TRUE & description == TRUE)
   {
@@ -310,22 +329,23 @@ data_matching <-
   codeOUT == FALSE &
   description == FALSE)
   stop("at least one of parameters: codeIN, codeOUT or description must be TRUE")
-  
+
   #pairs - new dataframe with reduced dataframe with matched products (additional column:   prodID)
   #now, let us back to the oryginal dataset, i.e. 'data_oryginal'
-  
   #names of columns which are considered in matching process
   columns <- colnames(dplyr::select(pairs,-prodID))
   
-  match <- function (i) {
-  df <- data_oryginal[i, ]
-  df2 <- pairs
-  for (k in 1:length(columns))
-  df2 <- dplyr::filter(df2, df2[, columns[k]] == df[, columns[k]])
-  return (df2$prodID)
-  }
-  prodID <- sapply(seq(1, nrow(data_oryginal)), match)
-  data_oryginal$prodID <- prodID
+  #setting a pattern
+  value_pattern<-pairs[,"prodID"]
+  vector_pattern<-as.character(pairs[,columns[1]])
+  if (length(columns)>1) for (i in 1:length(columns)) vector_pattern<-paste(vector_pattern,  as.character(pairs[,columns[i]]),sep="")
+  
+  #matching
+  vector_test<-as.character(data_oryginal[,columns[1]])
+  if (length(columns)>1) for (i in 1:length(columns)) vector_test<-paste(vector_test,as.character(data_oryginal[,columns[i]]),sep="")
+  f<-function (word) value_pattern[which(vector_pattern==word)]
+  data_oryginal$prodID<-sapply(vector_test,f)
+  
   return (data_oryginal)
   }
 
@@ -469,18 +489,18 @@ data_matching <-
     include = c(),
     must = c(),
     exclude = c(),
-    sensitivity = TRUE,
+    sensitivity = FALSE,
     coicop = NULL)
     {
     if (nrow(data) == 0)
     stop("A data frame is empty")
-    if (sensitivity == TRUE)
+    if (sensitivity == FALSE)
     data$description <- tolower(data$description)
     if (length(must) == 0)
     set3 <- data
     else
     {
-    if (sensitivity == TRUE)
+    if (sensitivity == FALSE)
     must <- tolower(must)
     set3 <-
     dplyr::filter(data, stringr::str_detect(data$description, must[1]))
@@ -493,7 +513,7 @@ data_matching <-
     set1 <- data
     else
     {
-    if (sensitivity == TRUE)
+    if (sensitivity == FALSE)
     include <- tolower(include)
     set1 <-
     dplyr::filter(data, stringr::str_detect(data$description, include[1]))
@@ -506,7 +526,7 @@ data_matching <-
     set <- set1
     else
     {
-    if (sensitivity == TRUE)
+    if (sensitivity == FALSE)
     exclude <- tolower(exclude)
     set2 <-
     dplyr::filter(data, stringr::str_detect(data$description, exclude[1]))
@@ -1315,7 +1335,7 @@ data_matching <-
   vec <- numeric(length(set))
   for (i in 1:length(set)) {
   d <- dplyr::filter(data, data$prodID == set[i])
-  if (nrow(data) == 0)
+  if (nrow(d) == 0)
   vec[i] <- 0
   #returning the unit value
   else
@@ -1357,7 +1377,7 @@ quantities <- function(data, period, set = c())
   vec <- numeric(length(set))
   for (i in 1:length(set)) {
   d <- dplyr::filter(data, data$prodID == set[i])
-  if (nrow(data) == 0)
+  if (nrow(d) == 0)
   vec[i] <- 0
   else
   vec[i] <- sum(d$quantities)
@@ -1494,7 +1514,7 @@ sales <- function(data,
                   vec <- numeric(length(set))
                   for (i in 1:length(set)) {
                   d <- dplyr::filter(data, data$prodID == set[i])
-                  if (nrow(data) == 0)
+                  if (nrow(d) == 0)
                   vec[i] <- 0
                   
                   else
@@ -4643,7 +4663,7 @@ lehr <-
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chjevons(sugar, start="2018-12", end="2020-01")
+#' chjevons(sugar, start="2018-12", end="2019-04")
 #' \donttest{chjevons(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -4695,7 +4715,7 @@ lehr <-
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chcarli(sugar, start="2018-12", end="2020-01")
+#' chcarli(sugar, start="2018-12", end="2019-04")
 #' \donttest{chcarli(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -4746,7 +4766,7 @@ chcarli <-
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chdutot(sugar, start="2018-12", end="2020-01")
+#' chdutot(sugar, start="2018-12", end="2019-04")
 #' \donttest{chdutot(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -4799,7 +4819,7 @@ chdutot <-
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chcswd(sugar, start="2018-12", end="2020-01")
+#' chcswd(sugar, start="2018-12", end="2019-04")
 #' \donttest{chcswd(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -4850,7 +4870,7 @@ chcswd <-
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chharmonic(sugar, start="2018-12", end="2020-01")
+#' chharmonic(sugar, start="2018-12", end="2019-04")
 #' \donttest{chharmonic(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -4901,7 +4921,7 @@ chharmonic <-
 #'
 #' {(2018). \emph{Harmonised Index of Consumer Prices (HICP). Methodological Manual}. Publication Office of the European union, Luxembourg.}
 #' @examples 
-#' chbmw(sugar, start="2018-12", end="2020-01")
+#' chbmw(sugar, start="2018-12", end="2019-04")
 #' \donttest{chbmw(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -4952,7 +4972,7 @@ chbmw <-
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chlaspeyres(sugar, start="2018-12", end="2020-01")
+#' chlaspeyres(sugar, start="2018-12", end="2019-04")
 #' \donttest{chlaspeyres(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5003,7 +5023,7 @@ chlaspeyres <-
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chpaasche(sugar, start="2018-12", end="2020-01")
+#' chpaasche(sugar, start="2018-12", end="2019-04")
 #' \donttest{chpaasche(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5054,7 +5074,7 @@ chpaasche <-
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chfisher(sugar, start="2018-12", end="2020-01")
+#' chfisher(sugar, start="2018-12", end="2019-04")
 #' \donttest{chfisher(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5105,7 +5125,7 @@ chfisher <-
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chtornqvist(sugar, start="2018-12", end="2020-01")
+#' chtornqvist(sugar, start="2018-12", end="2019-04")
 #' \donttest{chtornqvist(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5156,7 +5176,7 @@ chtornqvist <-
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chgeolaspeyres(sugar, start="2018-12", end="2020-01")
+#' chgeolaspeyres(sugar, start="2018-12", end="2019-04")
 #' \donttest{chgeolaspeyres(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5207,7 +5227,7 @@ chgeolaspeyres <-
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chgeopaasche(sugar, start="2018-12", end="2020-01")
+#' chgeopaasche(sugar, start="2018-12", end="2019-04")
 #' \donttest{chgeopaasche(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5260,7 +5280,7 @@ chgeopaasche <-
 #'
 #' {Von der Lippe, P. (2007). \emph{Index Theory and Price Statistics}. Peter Lang: Berlin, Germany.}
 #' @examples 
-#' chdrobisch(sugar, start="2018-12", end="2020-01")
+#' chdrobisch(sugar, start="2018-12", end="2019-04")
 #' \donttest{chdrobisch(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5315,7 +5335,7 @@ chdrobisch <-
 #'
 #' {Von der Lippe, P. (2007). \emph{Index Theory and Price Statistics}. Peter Lang: Berlin, Germany.}
 #' @examples 
-#' chmarshall_edgeworth(sugar, start="2018-12", end="2020-01")
+#' chmarshall_edgeworth(sugar, start="2018-12", end="2019-04")
 #' \donttest{chmarshall_edgeworth(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export 
 
@@ -5368,7 +5388,7 @@ chmarshall_edgeworth <-
 #'
 #' {Von der Lippe, P. (2007). \emph{Index Theory and Price Statistics}. Peter Lang: Berlin, Germany.}
 #' @examples 
-#' chwalsh(sugar, start="2018-12", end="2020-01")
+#' chwalsh(sugar, start="2018-12", end="2019-04")
 #' \donttest{chwalsh(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5421,7 +5441,7 @@ chwalsh <-
 #'
 #' {Bialek, J. (2014). \emph{Simulation Study of an Original Price Index Formula}. Communications in Statistics - Simulation and Computation, 43(2), 285-297}
 #' @examples 
-#' chbialek(sugar, start="2018-12", end="2020-01")
+#' chbialek(sugar, start="2018-12", end="2019-04")
 #' \donttest{chbialek(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5474,7 +5494,7 @@ chbialek <-
 #'
 #' {Von der Lippe, P. (2007). \emph{Index Theory and Price Statistics}. Peter Lang: Berlin, Germany.}
 #' @examples 
-#' chbanajree(sugar, start="2018-12", end="2020-01")
+#' chbanajree(sugar, start="2018-12", end="2019-04")
 #' \donttest{chbanajree(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5527,7 +5547,7 @@ chbanajree <-
 #'
 #' {Von der Lippe, P. (2007). \emph{Index Theory and Price Statistics}. Peter Lang: Berlin, Germany.}
 #' @examples 
-#' chdavies(sugar, start="2018-12", end="2020-01")
+#' chdavies(sugar, start="2018-12", end="2019-04")
 #' \donttest{chdavies(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5580,7 +5600,7 @@ chdavies <-
 #'
 #' {Von der Lippe, P. (2007). \emph{Index Theory and Price Statistics}. Peter Lang: Berlin, Germany.}
 #' @examples 
-#' chstuvel(sugar, start="2018-12", end="2020-01")
+#' chstuvel(sugar, start="2018-12", end="2019-04")
 #' \donttest{chstuvel(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5633,7 +5653,7 @@ chstuvel <-
 #'
 #' {Von der Lippe, P. (2007). \emph{Index Theory and Price Statistics}. Peter Lang: Berlin, Germany.}
 #' @examples 
-#' chpalgrave(sugar, start="2018-12", end="2020-01")
+#' chpalgrave(sugar, start="2018-12", end="2019-04")
 #' \donttest{chpalgrave(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5688,7 +5708,7 @@ chpalgrave <-
 #'
 #' {Von der Lippe, P. (2007). \emph{Index Theory and Price Statistics}. Peter Lang: Berlin, Germany.}
 #' @examples 
-#' chgeary_khamis(sugar, start="2018-12", end="2020-01")
+#' chgeary_khamis(sugar, start="2018-12", end="2019-04")
 #' \donttest{chgeary_khamis(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5739,7 +5759,7 @@ chgeary_khamis <-
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chlehr(sugar, start="2018-12", end="2020-01")
+#' chlehr(sugar, start="2018-12", end="2019-04")
 #' \donttest{chlehr(milk, start="2018-12", end="2020-01", TRUE)}
 #' @export
 
@@ -5793,7 +5813,7 @@ chlehr <-
 #'
 #' {Von der Lippe, P. (2007). \emph{Index Theory and Price Statistics}. Peter Lang: Berlin, Germany.}
 #' @examples 
-#' chvartia(sugar, start="2018-12", end="2020-01")
+#' chvartia(sugar, start="2018-12", end="2019-04")
 #' \donttest{chvartia(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5848,7 +5868,7 @@ chvartia <-
 #'
 #' {Von der Lippe, P. (2007). \emph{Index Theory and Price Statistics}. Peter Lang: Berlin, Germany.}
 #' @examples 
-#' chsato_vartia(sugar, start="2018-12", end="2020-01")
+#' chsato_vartia(sugar, start="2018-12", end="2019-04")
 #' \donttest{chsato_vartia(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5904,7 +5924,7 @@ chsato_vartia <-
 #'
 #' {Von der Lippe, P. (2007). \emph{Index Theory and Price Statistics}. Peter Lang: Berlin, Germany.}
 #' @examples 
-#' chlloyd_moulton(sugar, start="2018-12", end="2020-01",sigma=0.9)
+#' chlloyd_moulton(sugar, start="2018-12", end="2019-04",sigma=0.9)
 #' \donttest{chlloyd_moulton(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -5960,7 +5980,7 @@ chlloyd_moulton <-
 #' @references
 #' {Lent J., & Dorfman,A. H. (2009). \emph{Using a Weighted Average of Base Period Price Indexes to Approximate a Superlative Index.} Journal of Official Statistics, 25(1), 139-149.}
 #' @examples 
-#' chagmean(sugar, start="2019-01", end="2020-01",sigma=0.5)
+#' chagmean(sugar, start="2019-01", end="2019-04",sigma=0.5)
 #' \donttest{chagmean(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -6018,7 +6038,7 @@ chagmean <-
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chyoung(sugar, start="2019-01", end="2020-01",base="2018-12")
+#' chyoung(sugar, start="2019-01", end="2019-04",base="2018-12")
 #' \donttest{chyoung(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -6075,7 +6095,7 @@ chyoung <-
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chgeoyoung(sugar, start="2019-01", end="2020-01",base="2018-12")
+#' chgeoyoung(sugar, start="2019-01", end="2019-04",base="2018-12")
 #' \donttest{chgeoyoung(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -6129,7 +6149,7 @@ chgeoyoung <-
 #' @references
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chlowe(sugar, start="2019-01", end="2020-01",base="2018-12")
+#' chlowe(sugar, start="2019-01", end="2019-04",base="2018-12")
 #' \donttest{chlowe(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -6183,7 +6203,7 @@ chlowe <-
 #' @references
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' chgeolowe(sugar, start="2019-01", end="2020-01",base="2018-12")
+#' chgeolowe(sugar, start="2019-01", end="2019-04",base="2018-12")
 #' \donttest{chgeolowe(milk, start="2018-12", end="2020-01", interval=TRUE)}
 #' @export
 
@@ -8364,7 +8384,7 @@ price_index <-
   interval = FALSE)
   {
   asplice <-
-  c("movement", "window", "half", "mean") #allowed values for 'splice' parameter
+  c("movement", "window", "half", "mean","window_published", "half_published","mean_published") #allowed values for 'splice' parameter
   if (!(splice %in% asplice))
   stop ("The 'splice' parameter has a wrong value")
   aformula <-

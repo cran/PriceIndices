@@ -29,6 +29,15 @@ knitr::opts_chunk$set(
 #  head(data_preparing(milk, time="time",prices="prices",quantities="quantities"))
 
 ## -----------------------------------------------------------------------------
+#  data_unit(dataU,units=c("g","ml","kg","l"),multiplication="x")
+
+## -----------------------------------------------------------------------------
+#  # Preparing a data set
+#  data<-data_unit(dataU,units=c("g","ml","kg","l"),multiplication="x")
+#  # Normalization of grammage units
+#  data_norm(data, rules=list(c("ml","l",1000),c("g","kg",1000)))
+
+## -----------------------------------------------------------------------------
 #  subgroup1<-data_selecting(milk, include=c("milk"), must=c("UHT"))
 #  head(subgroup1)
 
