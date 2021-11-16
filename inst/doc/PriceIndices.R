@@ -205,8 +205,9 @@ knitr::opts_chunk$set(
 
 ## -----------------------------------------------------------------------------
 #  ccdi_fbmw(milk, start="2018-12", end="2020-03")
-#      ccdi_fbmw(milk, start="2018-12", end="2019-12")*
-#      ccdi_fbmw(milk, start="2019-12", end="2020-03")
+#  
+#  ccdi_fbmw(milk, start="2018-12", end="2019-12")*
+#  ccdi_fbmw(milk, start="2019-12", end="2020-03")
 
 ## -----------------------------------------------------------------------------
 #  price_index(milk, start="2019-05", end="2019-06", formula="fisher")
@@ -270,4 +271,10 @@ knitr::opts_chunk$set(
 
 ## -----------------------------------------------------------------------------
 #  compare_final_indices(finalindices=list(case1, case2),names=c("TPD without aggregation","TPD with aggregation"))
+
+## -----------------------------------------------------------------------------
+#  #Creating a data frame with unweighted bilateral index values
+#  df<-price_indices(milk, bilateral=c("jevons","dutot","carli"), start="2018-12",end="2019-12",interval=TRUE)
+#  #Calculating average distances between indices (in p.p)
+#  compare_distances(df)
 

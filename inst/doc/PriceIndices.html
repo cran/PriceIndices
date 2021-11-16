@@ -138,7 +138,7 @@ remotes<span class="op">::</span><span class="kw">install_github</span>(<span cl
 <li><a href="#ad9">Functions for extending multilateral price indices by using the FBEW method</a></li>
 <li><a href="#ad10">Functions for extending multilateral price indices by using the FBMW method</a></li>
 <li><a href="#ad11">General functions for price index calculations</a></li>
-<li><a href="#ad12">Functions for graphical comparison of price indices</a></li>
+<li><a href="#ad12">Functions for comparisons of price indices</a></li>
 </ol>
 <p><a id="ad1"> </a></p>
 <div id="data-sets-included-in-the-package-and-generating-artificial-scanner-data-sets" class="section level3">
@@ -151,7 +151,7 @@ remotes<span class="op">::</span><span class="kw">install_github</span>(<span cl
 <p><strong><em>3) dataCOICOP</em></strong></p>
 <p>The third one, <strong>dataCOICOP</strong>, is a collection of artificial scanner data on the sale of tomatoes, fruit juices, low fat milk, full fat milk, sugar, chocolate, yoghurt, coffee, eggs and salt in the period from December 2018 to October 2020. It is a data frame with 8 columns and 96600 rows. The used variables are as follows: <strong>time</strong> - dates of transactions (Year-Month-Day); <strong>prices</strong> - prices of sold products (PLN); <strong>quantities</strong> - quantities of sold products (liters); <strong>prodID</strong> - unique product codes obtained after product matching (data set contains 331 different prodIDs); <strong>retID</strong> - unique codes identifying outlets/retailer sale points (data set contains 10 different retIDs); <strong>description</strong> - descriptions of sold products (data set contains 12 different product descriptions), <strong>unit</strong> - sales units, e.g. 'kg', 'ml', etc.; <strong>coicop</strong> - identifiers of COICOP groups (10 groups). Please note that this data set can serve as a training or testing set in product classification using machine learning methods (see the functions: <strong>model_classification</strong> and <strong>data_classifying</strong>).</p>
 <p><strong><em>4) milk</em></strong></p>
-<p>This data set, <strong>milk</strong>, is a collection of scaner data on the sale of milk in one of Polish supermarkets in the period from December 2018 to August 2020. It is a data frame with 6 columns and 4281 rows. The used variables are as follows: <strong>time</strong> - dates of transactions (Year-Month-Day); <strong>prices</strong> - prices of sold products (PLN); <strong>quantities</strong> - quantities of sold products (liters); <strong>prodID</strong> - unique product codes obtained after product matching (data set contains 67 different prodIDs); <strong>retID</strong> - unique codes identifying outlets/retailer sale points (data set contains 5 different retIDs); <strong>description</strong> - descriptions of sold milk products (data set contains 6 different product descriptions corresponding to <em>subgroups</em> of the milk group).</p>
+<p>This data set, <strong>milk</strong>, is a collection of scaner data on the sale of milk in one of Polish supermarkets in the period from December 2018 to August 2020. It is a data frame with 6 columns and 4386 rows. The used variables are as follows: <strong>time</strong> - dates of transactions (Year-Month-Day); <strong>prices</strong> - prices of sold products (PLN); <strong>quantities</strong> - quantities of sold products (liters); <strong>prodID</strong> - unique product codes obtained after product matching (data set contains 68 different prodIDs); <strong>retID</strong> - unique codes identifying outlets/retailer sale points (data set contains 5 different retIDs); <strong>description</strong> - descriptions of sold milk products (data set contains 6 different product descriptions corresponding to <em>subgroups</em> of the milk group).</p>
 <p><strong><em>5) coffee</em></strong></p>
 <p>This data set, <strong>coffee</strong>, is a collection of scanner data on the sale of coffee in one of Polish supermarkets in the period from December 2017 to October 2020. It is a data frame with 6 columns and 42561 rows. The used variables are as follows: <strong>time</strong> - dates of transactions (Year-Month-Day); <strong>prices</strong> - prices of sold products (PLN); <strong>quantities</strong> - quantities of sold products (kg); <strong>prodID</strong> - unique product codes obtained after product matching (data set contains 79 different prodIDs); <strong>retID</strong> - unique codes identifying outlets/retailer sale points (data set contains 20 different retIDs); <strong>description</strong> - descriptions of sold coffee products (data set contains 3 different product descriptions corresponding to <em>subgroups</em> of the coffee group).</p>
 <p><strong><em>6) sugar</em></strong></p>
@@ -623,7 +623,7 @@ milk3&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, mi
 </div>
 <div id="functions-for-multilateral-price-index-calculation" class="section level3">
 <h3>Functions for multilateral price index calculation</h3>
-<p>This package includes 9 functions for calculating multilateral price indices and one additional and general function (<strong>QU</strong>) which calculates the quality adjusted unit value index, i.e.:</p>
+<p>This package includes 18 functions for calculating multilateral price indices and one additional and general function (<strong>QU</strong>) which calculates the quality adjusted unit value index, i.e.:</p>
 <table>
 <thead>
 <tr class="header">
@@ -641,40 +641,76 @@ milk3&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, mi
 <td>geks</td>
 </tr>
 <tr class="odd">
+<td>WGEKS</td>
+<td>wgeks</td>
+</tr>
+<tr class="even">
 <td>GEKS-J</td>
 <td>geksj</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>GEKS-W</td>
 <td>geksw</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>GEKS-L</td>
 <td>geksl</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>WGEKS-L</td>
 <td>wgeksl</td>
 </tr>
+<tr class="even">
+<td>GEKS-GL</td>
+<td>geksgl</td>
+</tr>
 <tr class="odd">
+<td>WGEKS-GL</td>
+<td>wgeksgl</td>
+</tr>
+<tr class="even">
+<td>GEKS-AQU</td>
+<td>geksaqu</td>
+</tr>
+<tr class="odd">
+<td>WGEKS-AQU</td>
+<td>wgeksaqu</td>
+</tr>
+<tr class="even">
+<td>GEKS-AQI</td>
+<td>geksaqi</td>
+</tr>
+<tr class="odd">
+<td>WGEKS-AQI</td>
+<td>wgeksaqi</td>
+</tr>
+<tr class="even">
+<td>GEKS-GAQI</td>
+<td>geksgaqi</td>
+</tr>
+<tr class="odd">
+<td>WGEKS-GAQI</td>
+<td>wgeksgaqi</td>
+</tr>
+<tr class="even">
 <td>Geary-Khamis</td>
 <td>gk</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Quality Adjusted Unit Value</td>
 <td>QU</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Time Product Dummy</td>
 <td>tpd</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>SPQ</td>
 <td>SPQ</td>
 </tr>
 </tbody>
 </table>
-<p>The above-mentioned 8 multilateral formulas (the <strong>SPQ</strong> index is an exception) consider the time window defined by the <strong>wstart</strong> and <strong>window</strong> parameters, where <strong>window</strong> is a length of the time window (typically multilateral methods are based on a 13-month time window). It measures the price dynamics by comparing the <strong>end</strong> period to the <strong>start</strong> period (both <strong>start</strong> and <strong>end</strong> must be inside the considered time window). To get information about both price index values and corresponding dates, please see functions: <strong>price_index</strong>, <strong>price_indices</strong> or <strong>final_index</strong>. These functions do not take into account aggregating over outlets or product subgroups (to consider these types of aggregating please use functions: <strong>final_index</strong> or <strong>final_index2</strong>). Here are examples for the GEKS formula (see documentation):</p>
+<p>The above-mentioned 18 multilateral formulas (the <strong>SPQ</strong> index is an exception) consider the time window defined by the <strong>wstart</strong> and <strong>window</strong> parameters, where <strong>window</strong> is a length of the time window (typically multilateral methods are based on a 13-month time window). It measures the price dynamics by comparing the <strong>end</strong> period to the <strong>start</strong> period (both <strong>start</strong> and <strong>end</strong> must be inside the considered time window). To get information about both price index values and corresponding dates, please see functions: <strong>price_index</strong>, <strong>price_indices</strong> or <strong>final_index</strong>. These functions do not take into account aggregating over outlets or product subgroups (to consider these types of aggregating please use functions: <strong>final_index</strong> or <strong>final_index2</strong>). Here are examples for the GEKS formula (see documentation):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">geks</span>(milk, <span class="dt">start=</span><span class="st">&quot;2019-01&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2019-04&quot;</span>,<span class="dt">window=</span><span class="dv">10</span>)
 <span class="kw">geksl</span>(milk, <span class="dt">wstart=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">start=</span><span class="st">&quot;2019-03&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2019-05&quot;</span>)</code></pre></div>
 <p>The <strong>QU</strong> function returns a value of the <em>quality adjusted unit value index</em> (QU index) for the given set of adjustment factors. An additional <strong>v</strong> parameter is a data frame with adjustment factors for at least all matched <strong>prodIDs</strong>. It must contain two columns: <strong>prodID</strong> with unique product IDs and <strong>value</strong> with corresponding adjustment factors (see documentation). The following example starts from creating a data frame which includes sample adjusted factors:</p>
@@ -688,7 +724,7 @@ v&lt;-<span class="kw">data.frame</span>(prodID,values)
 </div>
 <div id="functions-for-extending-multilateral-price-indices-by-using-splicing-methods" class="section level3">
 <h3>Functions for extending multilateral price indices by using splicing methods</h3>
-<p>This package includes 8 functions for calculating splice indices:</p>
+<p>This package includes 17 functions for calculating splice indices:</p>
 <table>
 <thead>
 <tr class="header">
@@ -706,26 +742,62 @@ v&lt;-<span class="kw">data.frame</span>(prodID,values)
 <td>geks_splice</td>
 </tr>
 <tr class="odd">
+<td>Splice weighted GEKS</td>
+<td>wgeks_splice</td>
+</tr>
+<tr class="even">
 <td>Splice GEKS-J</td>
 <td>geksj_splice</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Splice GEKS-W</td>
 <td>geksw_splice</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Splice GEKS-L</td>
 <td>geksl_splice</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Splice weighted GEKS-L</td>
 <td>wgeksl_splice</td>
 </tr>
+<tr class="even">
+<td>Splice GEKS-GL</td>
+<td>geksgl_splice</td>
+</tr>
 <tr class="odd">
+<td>Splice weighted GEKS-GL</td>
+<td>wgeksgl_splice</td>
+</tr>
+<tr class="even">
+<td>Splice GEKS-AQU</td>
+<td>geksaqu_splice</td>
+</tr>
+<tr class="odd">
+<td>Splice weighted GEKS-AQU</td>
+<td>wgeksaqu_splice</td>
+</tr>
+<tr class="even">
+<td>Splice GEKS-AQI</td>
+<td>geksaqi_splice</td>
+</tr>
+<tr class="odd">
+<td>Splice weighted GEKS-AQI</td>
+<td>wgeksaqi_splice</td>
+</tr>
+<tr class="even">
+<td>Splice GEKS-GAQI</td>
+<td>geksgaqi_splice</td>
+</tr>
+<tr class="odd">
+<td>Splice weighted GEKS-GAQI</td>
+<td>wgeksgaqi_splice</td>
+</tr>
+<tr class="even">
 <td>Splice Geary-Khamis</td>
 <td>gk_splice</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Splice Time Product Dummy</td>
 <td>tpd_splice</td>
 </tr>
@@ -737,7 +809,7 @@ v&lt;-<span class="kw">data.frame</span>(prodID,values)
 </div>
 <div id="functions-for-extending-multilateral-price-indices-by-using-the-fbew-method" class="section level3">
 <h3>Functions for extending multilateral price indices by using the FBEW method</h3>
-<p>This package includes 8 functions for calculating extensions of multilateral indices by using the Fixed Base Monthly Expanding Window (FBEW) method:</p>
+<p>This package includes 17 functions for calculating extensions of multilateral indices by using the Fixed Base Monthly Expanding Window (FBEW) method:</p>
 <table>
 <thead>
 <tr class="header">
@@ -755,26 +827,62 @@ v&lt;-<span class="kw">data.frame</span>(prodID,values)
 <td>geks_fbew</td>
 </tr>
 <tr class="odd">
+<td>FBEW WGEKS</td>
+<td>wgeks_fbew</td>
+</tr>
+<tr class="even">
 <td>FBEW GEKS-J</td>
 <td>geksj_fbew</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>FBEW GEKS-W</td>
 <td>geksw_fbew</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>FBEW GEKS-L</td>
 <td>geksl_fbew</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>FBEW WGEKS-L</td>
 <td>wgeksl_fbew</td>
 </tr>
+<tr class="even">
+<td>FBEW GEKS-GL</td>
+<td>geksgl_fbew</td>
+</tr>
 <tr class="odd">
+<td>FBEW WGEKS-GL</td>
+<td>wgeksgl_fbew</td>
+</tr>
+<tr class="even">
+<td>FBEW GEKS-AQU</td>
+<td>geksaqu_fbew</td>
+</tr>
+<tr class="odd">
+<td>FBEW WGEKS-AQU</td>
+<td>wgeksaqu_fbew</td>
+</tr>
+<tr class="even">
+<td>FBEW GEKS-AQI</td>
+<td>geksaqi_fbew</td>
+</tr>
+<tr class="odd">
+<td>FBEW WGEKS-AQI</td>
+<td>wgeksaqi_fbew</td>
+</tr>
+<tr class="even">
+<td>FBEW GEKS-GAQI</td>
+<td>geksgaqi_fbew</td>
+</tr>
+<tr class="odd">
+<td>FBEW WGEKS-GAQI</td>
+<td>wgeksgaqi_fbew</td>
+</tr>
+<tr class="even">
 <td>FBEW Geary-Khamis</td>
 <td>gk_fbew</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>FBEW Time Product Dummy</td>
 <td>tpd_fbew</td>
 </tr>
@@ -788,7 +896,7 @@ v&lt;-<span class="kw">data.frame</span>(prodID,values)
 </div>
 <div id="functions-for-extending-multilateral-price-indices-by-using-the-fbmw-method" class="section level3">
 <h3>Functions for extending multilateral price indices by using the FBMW method</h3>
-<p>This package includes 8 functions for calculating extensions of multilateral indices by using the Fixed Base Moving Window (FBMW) method:</p>
+<p>This package includes 17 functions for calculating extensions of multilateral indices by using the Fixed Base Moving Window (FBMW) method:</p>
 <table>
 <thead>
 <tr class="header">
@@ -806,26 +914,62 @@ v&lt;-<span class="kw">data.frame</span>(prodID,values)
 <td>geks_fbmw</td>
 </tr>
 <tr class="odd">
+<td>FBMW WGEKS</td>
+<td>wgeks_fbmw</td>
+</tr>
+<tr class="even">
 <td>FBMW GEKS-J</td>
 <td>geksj_fbmw</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>FBMW GEKS-W</td>
 <td>geksw_fbmw</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>FBMW GEKS-L</td>
 <td>geksl_fbmw</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>FBMW WGEKS-L</td>
 <td>wgeksl_fbmw</td>
 </tr>
+<tr class="even">
+<td>FBMW GEKS-GL</td>
+<td>geksgl_fbmw</td>
+</tr>
 <tr class="odd">
+<td>FBMW WGEKS-GL</td>
+<td>wgeksgl_fbmw</td>
+</tr>
+<tr class="even">
+<td>FBMW GEKS-AQU</td>
+<td>geksaqu_fbmw</td>
+</tr>
+<tr class="odd">
+<td>FBMW WGEKS-AQU</td>
+<td>wgeksaqu_fbmw</td>
+</tr>
+<tr class="even">
+<td>FBMW GEKS-AQI</td>
+<td>geksaqi_fbmw</td>
+</tr>
+<tr class="odd">
+<td>FBMW WGEKS-AQI</td>
+<td>wgeksaqi_fbmw</td>
+</tr>
+<tr class="even">
+<td>FBMW GEKS-GAQI</td>
+<td>geksgaqi_fbmw</td>
+</tr>
+<tr class="odd">
+<td>FBMW WGEKS-GAQI</td>
+<td>wgeksgaqi_fbmw</td>
+</tr>
+<tr class="even">
 <td>FBMW Geary-Khamis</td>
 <td>gk_fbmw</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>FBMW Time Product Dummy</td>
 <td>tpd_fbmw</td>
 </tr>
@@ -833,8 +977,9 @@ v&lt;-<span class="kw">data.frame</span>(prodID,values)
 </table>
 <p>These functions return a value (or values) of the selected multilateral price index extended by using the FBMW method. They measure the price dynamics between the <strong>end</strong> and <strong>start</strong> periods and it uses a 13-month time window with a fixed base month taken as <strong>year(end)-1</strong>. If the distance between <strong>end</strong> and <strong>start</strong> exceeds 13 months, then internal Decembers play a role of chain-linking months. A month of the <strong>start</strong> parameter must be December (see documentation). To get information about both price index values and corresponding dates, please see functions: <strong>price_index</strong>, <strong>price_indices</strong> or <strong>final_index</strong>. These functions do not take into account aggregating over outlets or product subgroups (to consider these types of aggregating, please use the <strong>final_index</strong> function). For instance, let us calculate the <strong>extended CCDI</strong> index by using the FBMW method. Please note that December 2019 is the chain-linking month, i.e.:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ccdi_fbmw</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-03&quot;</span>)
-    <span class="kw">ccdi_fbmw</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>)<span class="op">*</span>
-<span class="st">    </span><span class="kw">ccdi_fbmw</span>(milk, <span class="dt">start=</span><span class="st">&quot;2019-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-03&quot;</span>)</code></pre></div>
+
+<span class="kw">ccdi_fbmw</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>)<span class="op">*</span>
+<span class="kw">ccdi_fbmw</span>(milk, <span class="dt">start=</span><span class="st">&quot;2019-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-03&quot;</span>)</code></pre></div>
 <p><a id="ad11"> </a></p>
 </div>
 <div id="general-functions-for-price-index-calculations" class="section level3">
@@ -889,9 +1034,9 @@ g2&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, milk<
              <span class="dt">figure=</span><span class="ot">TRUE</span>)</code></pre></div>
 <p><a id="ad12"> </a></p>
 </div>
-<div id="functions-for-graphical-comparison-of-price-indices" class="section level3">
-<h3>Functions for graphical comparison of price indices</h3>
-<p>This package includes 2 functions for a simple graphical comparison of price indices. The first one, i.e. <strong>compare_indices</strong> is based on the syntax of the <strong>price_indices</strong> function and thus it allows us to compare price indices calculated on the same data set. The second function, i.e. <strong>compare_final_indices</strong> has a general character since its first argument is a list of data frames which contain results obtained by using the <strong>price_index</strong>, <strong>final_index</strong> or <strong>final_index2</strong> functions.</p>
+<div id="functions-for-comparisons-of-price-indices" class="section level3">
+<h3>Functions for comparisons of price indices</h3>
+<p>This package includes two functions for a simple graphical comparison of price indices and one function for calculating distances between indices. The first one, i.e. <strong>compare_indices</strong>, is based on the syntax of the <strong>price_indices</strong> function and thus it allows us to compare price indices calculated on the same data set. The second function, i.e. <strong>compare_final_indices</strong>, has a general character since its first argument is a list of data frames which contain results obtained by using the <strong>price_index</strong>, <strong>final_index</strong> or <strong>final_index2</strong> functions. The third one, i.e. <strong>compare_distances</strong>, calculates (average) distances between price indices, i.e. the mean absolute distance or root mean square distance is calculated.</p>
 <p><strong>compare_indices</strong></p>
 <p>This function calculates selected bilateral or/and multilateral price indices and returns a figure with plots of these indices (together with <strong>dates</strong> on X-axis and a corresponding <strong>legend</strong>). The function does not take into account aggregating over outlets or product subgroups (to consider these types of aggregating please use functions: <strong>final_index</strong> and <strong>compare_final_indices</strong>). Please note that the syntax of the function corresponds to the syntax of the <strong>price_indices</strong> function (the meaning of parameters is the same - see documentation). For instance, let us compare the price dynamics for the <strong>milk</strong> dataset for the time interval: December 2018 - December 2019, calculated by using two price index formulas: the chain Jevons index and the full-window GEKS index. The above-mentioned comparison can be made as follows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">compare_indices</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="dt">bilateral=</span><span class="kw">c</span>(<span class="st">&quot;chjevons&quot;</span>),
@@ -907,6 +1052,13 @@ case2&lt;-<span class="kw">final_index</span>(<span class="dt">datasets=</span><
                    <span class="dt">interval=</span><span class="ot">TRUE</span>)</code></pre></div>
 <p>The comparison of obtained results can be made as follows (it may be time-consuming on your computer):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">compare_final_indices</span>(<span class="dt">finalindices=</span><span class="kw">list</span>(case1, case2),<span class="dt">names=</span><span class="kw">c</span>(<span class="st">&quot;TPD without aggregation&quot;</span>,<span class="st">&quot;TPD with aggregation&quot;</span>))</code></pre></div>
+<p><strong>compare_distances</strong></p>
+<p>The function calculates average distances between price indices and it returns a data frame with these values for each pair of price indices. The main <strong>data</strong> parameter is a data frame containing values of indices which are to be compared. The <strong>measure</strong> parameter specifies what measure should be used to compare the indexes. Possible parameter values are: &quot;MAD&quot; (Mean Absolute Distance) or &quot;RMSD&quot; (Root Mean Square Distance). The results may be presented in percentage points (see the <strong>pp</strong> parameter) and we can control how many decimal places are to be used in the presentation of results (see the <strong>prec</strong> parameter).</p>
+<p>For instance, let us compare the Jevons, Dutot and Carli indices calculated for the <strong>milk</strong> data set and for the time interval: December 2018 - December 2019. Let us use the MAD measure for these comparisons:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Creating a data frame with unweighted bilateral index values</span>
+df&lt;-<span class="kw">price_indices</span>(milk, <span class="dt">bilateral=</span><span class="kw">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;dutot&quot;</span>,<span class="st">&quot;carli&quot;</span>), <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="dt">interval=</span><span class="ot">TRUE</span>)
+<span class="co">#Calculating average distances between indices (in p.p)</span>
+<span class="kw">compare_distances</span>(df)</code></pre></div>
 </div>
 </div>
 </div>
