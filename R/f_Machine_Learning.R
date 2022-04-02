@@ -1,4 +1,3 @@
-
 #' @title  Building the machine learning model for product classification
 #'
 #' @description This function provides a trained machine learning model to classify products into coicop groups. In addition, the function returns the characteristics of the model and figures describing the learning process.
@@ -443,6 +442,3 @@ figure_importance = figure_importance
 )
 )
 }
-
-
-

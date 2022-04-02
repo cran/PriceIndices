@@ -274,7 +274,18 @@ knitr::opts_chunk$set(
 
 ## -----------------------------------------------------------------------------
 #  #Creating a data frame with unweighted bilateral index values
-#  df<-price_indices(milk, bilateral=c("jevons","dutot","carli"), start="2018-12",end="2019-12",interval=TRUE)
+#  df<-price_indices(milk, bilateral=c("jevons","dutot","carli"),
+#                    start="2018-12",end="2019-12",interval=TRUE)
 #  #Calculating average distances between indices (in p.p)
 #  compare_distances(df)
+
+## -----------------------------------------------------------------------------
+#  #Creating a data frame with example bilateral indices
+#  df<-price_indices(milk,
+#                    bilateral=c("jevons","laspeyres","paasche","walsh"),
+#                    start="2018-12",end="2019-12",interval=TRUE)
+#  #Calculating the target Fisher price index
+#  target_index<-fisher(milk,start="2018-12",end="2019-12",interval=TRUE)
+#  #Calculating average distances between considered indices and the Fisher index (in p.p)
+#  compare_to_target(df,target=target_index)
 

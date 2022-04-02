@@ -1056,9 +1056,21 @@ case2&lt;-<span class="kw">final_index</span>(<span class="dt">datasets=</span><
 <p>The function calculates average distances between price indices and it returns a data frame with these values for each pair of price indices. The main <strong>data</strong> parameter is a data frame containing values of indices which are to be compared. The <strong>measure</strong> parameter specifies what measure should be used to compare the indexes. Possible parameter values are: &quot;MAD&quot; (Mean Absolute Distance) or &quot;RMSD&quot; (Root Mean Square Distance). The results may be presented in percentage points (see the <strong>pp</strong> parameter) and we can control how many decimal places are to be used in the presentation of results (see the <strong>prec</strong> parameter).</p>
 <p>For instance, let us compare the Jevons, Dutot and Carli indices calculated for the <strong>milk</strong> data set and for the time interval: December 2018 - December 2019. Let us use the MAD measure for these comparisons:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Creating a data frame with unweighted bilateral index values</span>
-df&lt;-<span class="kw">price_indices</span>(milk, <span class="dt">bilateral=</span><span class="kw">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;dutot&quot;</span>,<span class="st">&quot;carli&quot;</span>), <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="dt">interval=</span><span class="ot">TRUE</span>)
+df&lt;-<span class="kw">price_indices</span>(milk, <span class="dt">bilateral=</span><span class="kw">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;dutot&quot;</span>,<span class="st">&quot;carli&quot;</span>), 
+                  <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="dt">interval=</span><span class="ot">TRUE</span>)
 <span class="co">#Calculating average distances between indices (in p.p)</span>
 <span class="kw">compare_distances</span>(df)</code></pre></div>
+<p><strong>compare_to_target</strong></p>
+<p>The function calculates average distances between considered price indices and the target price index and it returns a data frame with: average distances on the basis of all values of compared indices (<strong>distance</strong> column), average semi-distances on the basis of values of compared indices which overestimate the target index values (<strong>distance_upper</strong> column) and average semi-distances on the basis of values of compared indices which underestimate the target index values (<strong>distance_lower</strong> column).</p>
+<p>For instance, let us compare the Jevons, Laspeyres, Paasche and Walsh price indices (calculated for the <strong>milk</strong> data set and for the time interval: December 2018 - December 2019) with the target Fisher price index:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Creating a data frame with example bilateral indices</span>
+df&lt;-<span class="kw">price_indices</span>(milk, 
+                  <span class="dt">bilateral=</span><span class="kw">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;laspeyres&quot;</span>,<span class="st">&quot;paasche&quot;</span>,<span class="st">&quot;walsh&quot;</span>),
+                  <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="dt">interval=</span><span class="ot">TRUE</span>)
+<span class="co">#Calculating the target Fisher price index</span>
+target_index&lt;-<span class="kw">fisher</span>(milk,<span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="dt">interval=</span><span class="ot">TRUE</span>)
+<span class="co">#Calculating average distances between considered indices and the Fisher index (in p.p)</span>
+<span class="kw">compare_to_target</span>(df,<span class="dt">target=</span>target_index)</code></pre></div>
 </div>
 </div>
 </div>
