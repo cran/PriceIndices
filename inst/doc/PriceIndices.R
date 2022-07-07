@@ -58,14 +58,16 @@ knitr::opts_chunk$set(
 #  unique(subgroup2$description)
 
 ## ---- results=FALSE-----------------------------------------------------------
-#  my.grid=list(eta=c(0.01,0.02,0.05),subsample=c(0.5))
-#  data_train<-dplyr::filter(dataCOICOP,dataCOICOP$time<=as.Date("2020-08-01"))
-#  data_test<-dplyr::filter(dataCOICOP,dataCOICOP$time>as.Date("2020-08-01"))
+#  my.grid=list(eta=c(0.01,0.02,0.05),subsample=c(0.5,0.8))
+#  data_train<-dplyr::filter(dataCOICOP,dataCOICOP$time<=as.Date("2021-10-01"))
+#  data_test<-dplyr::filter(dataCOICOP,dataCOICOP$time==as.Date("2021-11-01"))
 #  ML<-model_classification(data_train,
 #                           data_test,
+#                           coicop="coicop6",
 #                           grid=my.grid,
-#                           indicators=c("prodID","unit","description"),
-#                           key_words=c("milk"),rounds=50)
+#                           indicators=c("description","codeIN"),
+#                           key_words=c("uht"),
+#                           rounds=60)
 
 ## -----------------------------------------------------------------------------
 #  ML$figure_training
