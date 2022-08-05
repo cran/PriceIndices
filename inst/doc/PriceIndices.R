@@ -171,6 +171,12 @@ knitr::opts_chunk$set(
 #  dissimilarity_fig(milk, start="2018-12",end="2019-12",type="pq",benchmark="start")
 
 ## -----------------------------------------------------------------------------
+#  elasticity(coffee, start = "2018-12", end = "2019-01")
+
+## -----------------------------------------------------------------------------
+#  elasticity_fig (milk, start = "2018-12", end = "2019-12", fixedbase = FALSE)
+
+## -----------------------------------------------------------------------------
 #  jevons(milk, start="2018-12", end="2020-01")
 #  jevons(milk, start="2018-12", end="2020-01", interval=TRUE)
 
