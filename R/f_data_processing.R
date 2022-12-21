@@ -7,7 +7,7 @@
 #' @param prices A character name of the column which provides product prices. 
 #' @param quantities A character name of the column which provides product quantities.
 #' @param prodID  A character name of the column which provides product IDs. The \code{prodID} column should include unique product IDs used for product matching (as numeric or character). It is not obligatory to consider this column while data preparing but it is required while price index calculating (to obtain it, please see \code{\link{data_matching}}). 
- #' @param retID A character name of the column which provides outlet IDs (retailer sale points). The \code{retID} column should include unique outlet IDs used for aggregating subindices over outlets. It is not obligatory to consider this column while data preparing but it is required while final price index calculating (to obtain it, please see the \code{\link{final_index}} or \code{\link{final_index2}} function).
+#' @param retID A character name of the column which provides outlet IDs (retailer sale points). The \code{retID} column should include unique outlet IDs used for aggregating subindices over outlets. It is not obligatory to consider this column while data preparing but it is required while final price index calculating (to obtain it, please see the \code{\link{final_index}} function).
 #' @param description A character name of the column which provides product descriptions. It is not obligatory to consider this column while data preparing but it is required while product selecting (please see the \code{\link{data_selecting}} function).
 #' @param codeIN A character name of the column which provides internal product codes (from the retailer). It is not obligatory to consider this column while data preparing but it may be required while product matching (please see the \code{\link{data_matching}} function).
 #' @param codeOUT A character name of the column which provides external product codes (e.g. GTIN or SKU). It is not obligatory to consider this column while data preparing but it may be required while product matching (please see the \code{\link{data_matching}} function).
@@ -20,7 +20,7 @@
 #' @examples 
 #' \donttest{data_preparing(milk, time="time",prices="prices",quantities="quantities")}
 #' \donttest{data_preparing(dataCOICOP, time="time",
-#' prices="prices",quantities="quantities",additional="coicop")}
+#' prices="prices",quantities="quantities",additional="coicop6")}
 #' @export
 
 data_preparing <-
@@ -149,9 +149,9 @@ data_preparing <-
 #' @param codeOUT A logical value, e.g. if there are external product codes, such as GTIN or SKU (as numeric or character) written in \code{codeOUT} column and there is a need to use that column while data preparing then, that parameter should be set to TRUE. Otherwise it is set to FALSE.
 #' @param  description A logical value, e.g. if there are product labels (as character) written in \code{description} column and there is a need to use that column while data preparing, then that parameter should be set to TRUE. Otherwise it is set to FALSE.
 #' @param  onlydescription A logical value indicating whether products with identical labels (described in the \code{description}) are to be matched.
-#' @param precision A threshold value for the Jaro-Winkler distance measure when comparing labels (its value must belong to the interval [0,1]). Two labels are treated as similar enough if their Jaro-Winkler distance exceeds the \code{precision} value. 
+#' @param precision A threshold value for the Jaro-Winkler similarity measure when comparing labels (its value must belong to the interval [0,1]). Two labels are treated as similar enough if their Jaro-Winkler similarity exceeds the \code{precision} value. 
 #' @rdname data_matching
-#' @return This function returns a data set defined in the first parameter (\code{data}) with an additional column (\code{prodID}). Two products are treated as being matched if they have the same \code{prodID} value. The procedure of generating the above-mentioned additional column depends on the set of chosen columns for matching. In most extreme case, when the \code{onlydescription} parameter value is TRUE, two products are also matched if they have identical descriptions. Other cases are as follows: \code{Case 1}: Parameters \code{codeIN}, \code{codeOUT} and \code{description} are set to TRUE. Products with two identical codes or one of the codes identical and an identical \code{description} are automatically matched. Products are also matched if they have identical one of codes and the Jaro-Winkler distance of their descriptions is bigger than the \code{precision} value.\code{Case 2}: Only one of the parameters: \code{codeIN} or \code{codeOUT} are set to TRUE and also the \code{description} parameter is set to TRUE. Products with an identical chosen code and an identical description are automatically matched. In the second stage, products are also matched if they have an identical chosen code and the Jaro-Winkler distance of their descriptions is bigger than the \code{precision} value. \code{Case 3}: Parameters \code{codeIN} and \code{codeOUT} are set to TRUE and the parameter \code{description} is set to FALSE. In this case, products are matched if they have both codes identical. \code{Case 4}: Only the parameter \code{description} is set to TRUE. This case requires the \code{onlydescription} parameter to be TRUE and then the matching process is based only on product labels (two products are matched if they have identical descriptions). \code{Case 5}:  Only one of the parameters: \code{codeIN} or \code{codeOUT} are set to TRUE and the \code{description} parameter is set to FALSE. In this case, the only reasonable option is to return the \code{prodID} column which is identical with the chosen code column. Please note that if the set of column names defined in the \code{variables} parameter is not empty, then the values of these additional columns must be identical while product matching.
+#' @return This function returns a data set defined in the first parameter (\code{data}) with an additional column (\code{prodID}). Two products are treated as being matched if they have the same \code{prodID} value. The procedure of generating the above-mentioned additional column depends on the set of chosen columns for matching. In most extreme case, when the \code{onlydescription} parameter value is TRUE, two products are also matched if they have identical descriptions. Other cases are as follows: \code{Case 1}: Parameters \code{codeIN}, \code{codeOUT} and \code{description} are set to TRUE. Products with two identical codes or one of the codes identical and an identical \code{description} are automatically matched. Products are also matched if they have identical one of codes and the Jaro-Winkler similarity of their descriptions is bigger than the \code{precision} value.\code{Case 2}: Only one of the parameters: \code{codeIN} or \code{codeOUT} are set to TRUE and also the \code{description} parameter is set to TRUE. Products with an identical chosen code and an identical description are automatically matched. In the second stage, products are also matched if they have an identical chosen code and the Jaro-Winkler similarity of their descriptions is bigger than the \code{precision} value. \code{Case 3}: Parameters \code{codeIN} and \code{codeOUT} are set to TRUE and the parameter \code{description} is set to FALSE. In this case, products are matched if they have both codes identical. \code{Case 4}: Only the parameter \code{description} is set to TRUE. This case requires the \code{onlydescription} parameter to be TRUE and then the matching process is based only on product labels (two products are matched if they have identical descriptions). \code{Case 5}:  Only one of the parameters: \code{codeIN} or \code{codeOUT} are set to TRUE and the \code{description} parameter is set to FALSE. In this case, the only reasonable option is to return the \code{prodID} column which is identical with the chosen code column. Please note that if the set of column names defined in the \code{variables} parameter is not empty, then the values of these additional columns must be identical while product matching.
 #' @examples 
 #' data_matching(dataMATCH, start="2018-12",end="2019-02",onlydescription=TRUE,interval=TRUE)
 #' \donttest{data_matching(dataMATCH, start="2018-12",end="2019-02",precision=0.98, interval=TRUE)}
@@ -176,7 +176,6 @@ data_matching <-
   if ((precision < 0) |
   (precision > 1))
   stop("parametr 'precision' must belong to [0,1]")
-  
   prodID<-NULL
   #preparing data set
   columns <- c()
@@ -224,87 +223,87 @@ data_matching <-
   #main body
   if (codeIN == TRUE & codeOUT == TRUE & description == TRUE)
   {
-  pairs <- reclin::pair_blocking(data, data, blocking_var = variables)
-  pairs <- reclin::filter_pairs_for_deduplication(pairs)
-  pairs <- reclin::compare_pairs(pairs, by = "descriptionID")
+  if (length(variables)>0) pairs <- reclin2::pair_blocking(data, on = variables,  deduplication = TRUE)
+  else pairs <- reclin2::pair(data, deduplication = TRUE)
+  pairs <- reclin2::compare_pairs(pairs, on = "descriptionID")
   pairs <-
-  reclin::compare_pairs(pairs,
-  by = "description",
-  default_comparator = reclin::jaro_winkler())
-  pairs <- reclin::compare_pairs(pairs, by = "codeOUT")
-  pairs <- reclin::compare_pairs(pairs, by = "codeIN")
+  reclin2::compare_pairs(pairs,
+  on = "description",
+  default_comparator = reclin2::jaro_winkler())
+  pairs <- reclin2::compare_pairs(pairs, on = "codeOUT")
+  pairs <- reclin2::compare_pairs(pairs, on = "codeIN")
   pairs$simsum <-
   pairs$descriptionID * pairs$codeOUT + pairs$descriptionID * pairs$codeIN +
   pairs$codeOUT * pairs$codeIN + pairs$description * pairs$codeOUT + pairs$description *
   pairs$codeIN + onlydescription * pairs$descriptionID
   pairs <-
-  reclin::select_threshold(pairs, precision, weight = "simsum", var = "select")
+  reclin2::select_threshold(pairs, threshold=precision, score = "simsum", variable = "select")
   pairs <-
-  reclin::deduplicate_equivalence(pairs, selection = "select", var = "prodID")
+  reclin2::deduplicate_equivalence(pairs, selection = "select", variable = "prodID")
   pairs$descriptionID <- NULL
   }
   else if (codeIN == TRUE & codeOUT == FALSE & description == TRUE)
   {
-  pairs <- reclin::pair_blocking(data, data, blocking_var = variables)
-  pairs <- reclin::filter_pairs_for_deduplication(pairs)
-  pairs <- reclin::compare_pairs(pairs, by = "descriptionID")
+  if (length(variables)>0) pairs <- reclin2::pair_blocking(data, on = variables, deduplication = TRUE)
+  else pairs <- reclin2::pair(data, deduplication = TRUE)
+  pairs <- reclin2::compare_pairs(pairs, on = "descriptionID")
   pairs <-
-  reclin::compare_pairs(pairs,
-  by = "description",
-  default_comparator = reclin::jaro_winkler())
-  pairs <- reclin::compare_pairs(pairs, by = "codeIN")
+  reclin2::compare_pairs(pairs,
+  on = "description",
+  default_comparator = reclin2::jaro_winkler())
+  pairs <- reclin2::compare_pairs(pairs, on = "codeIN")
   pairs$simsum <-
   pairs$descriptionID * pairs$codeIN + pairs$description * pairs$codeIN +
   onlydescription * pairs$descriptionID
   pairs <-
-  reclin::select_threshold(pairs, precision, weight = "simsum", var = "select")
+  reclin2::select_threshold(pairs, threshold=precision, score = "simsum", variable = "select")
   pairs <-
-  reclin::deduplicate_equivalence(pairs, selection = "select", var = "prodID")
+  reclin2::deduplicate_equivalence(pairs, selection = "select", variable = "prodID")
   pairs$descriptionID <- NULL
   }
   else if (codeIN == FALSE & codeOUT == TRUE & description == TRUE)
   {
-  pairs <- reclin::pair_blocking(data, data, blocking_var = variables)
-  pairs <- reclin::filter_pairs_for_deduplication(pairs)
-  pairs <- reclin::compare_pairs(pairs, by = "descriptionID")
+  if (length(variables)>0) pairs <- reclin2::pair_blocking(data, on = variables, deduplication = TRUE)
+  else pairs <- reclin2::pair(data, deduplication = TRUE)
+  pairs <- reclin2::compare_pairs(pairs, on = "descriptionID")
   pairs <-
-  reclin::compare_pairs(pairs,
-  by = "description",
-  default_comparator = reclin::jaro_winkler())
-  pairs <- reclin::compare_pairs(pairs, by = "codeOUT")
+  reclin2::compare_pairs(pairs,
+  on = "description",
+  default_comparator = reclin2::jaro_winkler())
+  pairs <- reclin2::compare_pairs(pairs, on = "codeOUT")
   pairs$simsum <-
   pairs$descriptionID * pairs$codeOUT + pairs$description * pairs$codeOUT +
   onlydescription * pairs$descriptionID
   pairs <-
-  reclin::select_threshold(pairs, precision, weight = "simsum", var = "select")
+  reclin2::select_threshold(pairs, threshold=precision, score = "simsum", variable = "select")
   pairs <-
-  reclin::deduplicate_equivalence(pairs, selection = "select", var = "prodID")
+  reclin2::deduplicate_equivalence(pairs, selection = "select", variable = "prodID")
   pairs$descriptionID <- NULL
   }
   else if (codeIN == TRUE & codeOUT == TRUE & description == FALSE)
   {
-  pairs <- reclin::pair_blocking(data, data, blocking_var = variables)
-  pairs <- reclin::filter_pairs_for_deduplication(pairs)
-  pairs <- reclin::compare_pairs(pairs, by = "codeIN")
-  pairs <- reclin::compare_pairs(pairs, by = "codeOUT")
+  if (length(variables)>0) pairs <- reclin2::pair_blocking(data, on = variables, deduplication = TRUE)
+  else pairs <- reclin2::pair(data, deduplication = TRUE)
+  pairs <- reclin2::compare_pairs(pairs, on = "codeIN")
+  pairs <- reclin2::compare_pairs(pairs, on = "codeOUT")
   pairs$simsum <- (pairs$codeIN * pairs$codeOUT)
   pairs <-
-  reclin::select_threshold(pairs, 0.5, weight = "simsum", var = "select")
+  reclin2::select_threshold(pairs, 0.5, score = "simsum", variable = "select")
   pairs <-
-  reclin::deduplicate_equivalence(pairs, selection = "select", var = "prodID")
+  reclin2::deduplicate_equivalence(pairs, selection = "select", variable = "prodID")
   }
   else if (codeIN == FALSE & codeOUT == FALSE & description == TRUE)
   {
   if (onlydescription == TRUE)
   {
-  pairs <- reclin::pair_blocking(data, data, blocking_var = variables)
-  pairs <- reclin::filter_pairs_for_deduplication(pairs)
-  pairs <- reclin::compare_pairs(pairs, by = "descriptionID")
+  if (length(variables)>0) pairs <- reclin2::pair_blocking(data, on = variables, deduplication = TRUE)
+  else pairs <- reclin2::pair(data, deduplication = TRUE)
+  pairs <- reclin2::compare_pairs(pairs, on = "descriptionID")
   pairs$simsum <- pairs$descriptionID
   pairs <-
-  reclin::select_threshold(pairs, 0.5, weight = "simsum", var = "select")
+  reclin2::select_threshold(pairs, 0.5, score = "simsum", variable = "select")
   pairs <-
-  reclin::deduplicate_equivalence(pairs, selection = "select", var = "prodID")
+  reclin2::deduplicate_equivalence(pairs, selection = "select", variable = "prodID")
   pairs$descriptionID <- NULL
   }
   else
@@ -326,23 +325,20 @@ data_matching <-
   codeOUT == FALSE &
   description == FALSE)
   stop("at least one of parameters: codeIN, codeOUT or description must be TRUE")
-
   #pairs - new dataframe with reduced dataframe with matched products (additional column:   prodID)
   #now, let us back to the oryginal dataset, i.e. 'data_oryginal'
   #names of columns which are considered in matching process
+  pairs<-data.frame(pairs)
   columns <- colnames(dplyr::select(pairs,-prodID))
-  
   #setting a pattern
   value_pattern<-pairs[,"prodID"]
   vector_pattern<-as.character(pairs[,columns[1]])
   if (length(columns)>1) for (i in 1:length(columns)) vector_pattern<-paste(vector_pattern,  as.character(pairs[,columns[i]]),sep="")
-  
   #matching
   vector_test<-as.character(data_oryginal[,columns[1]])
   if (length(columns)>1) for (i in 1:length(columns)) vector_test<-paste(vector_test,as.character(data_oryginal[,columns[i]]),sep="")
   f<-function (word) value_pattern[which(vector_pattern==word)]
   data_oryginal$prodID<-sapply(vector_test,f)
-  
   return (data_oryginal)
   }
 
@@ -1326,14 +1322,15 @@ data_matching <-
 #' @param data The user's data frame. It must contain columns: \code{time} (as Date in format: year-month-day, e.g. '2020-12-01'), \code{prices} (as positive numeric), \code{quantities} (as positive numeric) and \code{prodID} (as numeric, factor or character) with unique product IDs. 
 #' @param period The time period (as character) limited to the year and month, e.g. "2019-03".
 #' @param set The set of unique product IDs to be used for determining prices of sold products (see also \code{\link{data_matching}}). If the \code{set} is empty, the function returns prices of all products being available in \code{period}.
+#' @param ID A logical parameter indicating whether a data frame with prodIDs and prices (unit values) should be returned.
 #' @rdname prices
-#' @return The function analyzes the user's data frame and returns prices (unit value) of products with given \code{ID} and being sold in the time period indicated by the \code{period} parameter. Please note that the function returns the price values for sorted prodIDs and in the absence of a given prodID in the data set, the function returns nothing (it does not return zero).
+#' @return The function analyzes the user's data frame and returns prices (unit value) of products with given \code{ID} and being sold in the time period indicated by the \code{period} parameter. Please note, that the function returns the price values for sorted prodIDs and in the absence of a given prodID in the data set, the function returns nothing (it does not return zero). If the ID parameter is set to TRUE then the function returns a data frame with columns: \code{by} (IDs of products) and \code{uv} (unit values of products).
 #' @examples 
 #' \donttest{prices(milk, period="2019-06")}
-#' prices(milk, period="2019-12",set=c(400032, 82919))
+#' prices(milk, period="2019-12", set=c(400032, 82919), ID=TRUE)
 #' @export
 
-  prices <- function(data, period, set = c())
+  prices <- function(data, period, set = c(), ID = FALSE)
   {
   if (nrow(data) == 0)
   stop("A data frame is empty")
@@ -1354,7 +1351,8 @@ data_matching <-
   stop("There are no data in selected period")
   }
   data<-dplyr::summarise(dplyr::group_by(data, by=prodID), uv=sum(prices*quantities)/sum(quantities), .groups = 'drop')
-  return (data$uv)
+  if (ID==FALSE) return (data$uv)
+  else return(data)
   }
   
 #' @title  Providing quantities of sold products
@@ -1363,14 +1361,15 @@ data_matching <-
 #' @param data The user's data frame. It must contain columns: \code{time} (as Date in format: year-month-day, e.g. '2020-12-01'), \code{quantities} (as positive numeric) and \code{prodID} (as numeric, factor or character) with unique product IDs. 
 #' @param period The time period (as character) limited to the year and month, e.g. "2019-03".
 #' @param set The set of unique product IDs to be used for determining quantities of sold products (see also \code{\link{data_matching}}). If the \code{set} is empty, the function returns quantities of all products being available in \code{period}.
+#' @param ID A logical parameter indicating whether a data frame with prodIDs and quantities should be returned.
 #' @rdname quantities
-#' @return The function analyzes the user's data frame and returns quantities of products with given \code{ID} and being sold in the time period indicated by the \code{period} parameter. Please note that the function returns the quantity values for sorted prodIDs and in the absence of a given prodID in the data set, the function returns nothing (it does not return zero).
+#' @return The function analyzes the user's data frame and returns quantities of products with given \code{ID} and being sold in the time period indicated by the \code{period} parameter. Please note that the function returns the quantity values for sorted prodIDs and in the absence of a given prodID in the data set, the function returns nothing (it does not return zero). If the ID parameter is set to TRUE then the function returns a data frame with columns: \code{by} (IDs of products) and \code{q} (quantities of products).
 #' @examples 
 #' \donttest{quantities(milk, period="2019-06")}
-#' quantities(milk, period="2019-12",set=c(400032, 82919))
+#' quantities(milk, period="2019-12", set=c(400032, 82919), ID=TRUE)
 #' @export
 
-quantities <- function(data, period, set = c())
+quantities <- function(data, period, set = c(), ID = FALSE)
   {
   if (nrow(data) == 0)
   stop("A data frame is empty")
@@ -1391,7 +1390,8 @@ quantities <- function(data, period, set = c())
   stop("There are no data in selected period")
   }
   data<-dplyr::summarise(dplyr::group_by(data, by=prodID), q=sum(quantities), .groups = 'drop')
-  return (data$q)
+  if (ID==FALSE) return (data$q)
+  else return(data)
 }
 
 #' @title  Providing expenditures of sold products
@@ -1400,14 +1400,15 @@ quantities <- function(data, period, set = c())
 #' @param data The user's data frame. It must contain columns: \code{time} (as Date in format: year-month-day, e.g. '2020-12-01'), \code{quantities} (as positive numeric) and \code{prodID} (as numeric, factor or character) with unique product IDs. 
 #' @param period The time period (as character) limited to the year and month, e.g. "2019-03".
 #' @param set The set of unique product IDs to be used for determining expenditures of sold products (see also \code{\link{data_matching}}). If the \code{set} is empty, the function returns quantities of all products being available in \code{period}.
+#' @param ID A logical parameter indicating whether a data frame with prodIDs and quantities should be returned.
 #' @rdname expenditures
-#' @return The function analyzes the user's data frame and returns expenditures of products with given \code{ID} and being sold in the time period indicated by the \code{period} parameter. Please note that the function returns the expenditure values for sorted prodIDs and in the absence of a given prodID in the data set, the function returns nothing (it does not return zero).
+#' @return The function analyzes the user's data frame and returns expenditures of products with given \code{ID} and being sold in the time period indicated by the \code{period} parameter. Please note that the function returns the expenditure values for sorted prodIDs and in the absence of a given prodID in the data set, the function returns nothing (it does not return zero). If the ID parameter is set to TRUE then the function returns a data frame with columns: \code{by} (IDs of products) and \code{expend} (expenditures of products).
 #' @examples 
 #' \donttest{expenditures(milk, period="2019-06")}
-#' expenditures(milk, period="2019-12",set=c(400032, 82919))
+#' expenditures(milk, period="2019-12", set=c(400032, 82919), ID=TRUE)
 #' @export
 
-expenditures <- function(data, period, set = c())
+expenditures <- function(data, period, set = c(), ID = FALSE) 
   {
   if (nrow(data) == 0)
   stop("A data frame is empty")
@@ -1428,7 +1429,8 @@ expenditures <- function(data, period, set = c())
   stop("There are no data in selected period")
   }
   data<-dplyr::summarise(dplyr::group_by(data, by=prodID), expend=sum(prices*quantities), .groups = 'drop')
-  return (data$expend)
+  if (ID==FALSE) return (data$expend)
+  else return(data)
 }
 
 
@@ -1689,7 +1691,7 @@ sales_groups <-
 #' @param start The first period in the generated data frame (as character) limited to the year and month, e.g. '2019-12'.
 #' @param days A logical parameter indicating whether the trading day in a given month is to be randomised. The default value of \code{days} is FALSE, which means that each transaction for a given month takes place on the first day of the month.
 #' @rdname generate
-#' @return This function returns an artificial scanner dataset where prices and quantities are lognormally distributed. The characteristics for these lognormal distributions are set by \code{pmi}, \code{sigma}, \code{qmi} and \code{qsigma} parameters. This function works for a fixed number of products and outlets (see \code{n} and \code{r} parameters). The generated dataset is ready for further price index calculations.   
+#' @return This function returns an artificial scanner dataset where prices and quantities are lognormally distributed. The characteristics for these lognormal distributions are set by \code{pmi}, \code{psigma}, \code{qmi} and \code{qsigma} parameters. This function works for a fixed number of products and outlets (see \code{n} and \code{r} parameters). The generated dataset is ready for further price index calculations.   
 #'
 #' @examples 
 #' generate(pmi=c(1.02,1.03,1.04),psigma=c(0.05,0.09,0.02),qmi=c(3,4,4),
@@ -1757,6 +1759,96 @@ generate <-
   return (DT)
   }
   
+#' @title  Generating an artificial scanner dataset in the CES model
+#'
+#' @description This function provides artificial scanner datasets where prices are lognormally distributed and quantities are obtained under a CES utility.
+#' @param pmi A numeric vector indicating \code{mi} parameters for lognormally distributed prices from the subsequent months.
+#' @param psigma A numeric vector indicating \code{sigma} parameters for lognormally distributed prices from the subsequent months.
+#' @param prec A numeric value indicating precision, i.e. the number of decimal places, for generating prices.
+#' @param elasticity The elasticity of substitution. The default value is 0.7.
+#' @param S Sum of spending. The default value is 1000. 
+#' @param alfa A numeric vector indicating positive weights that reflect the consumer preferences.By default, this vector is randomized based on a uniform distribution. 
+#' @param n An integer parameter indicating the number of products which are to be generated.
+#' @param n0 An integer parameter indicating the first (the smallest) prodID.
+#' @param r An integer parameter indicating the number of outlets (retailer sale points) for which prices and quantities are to be generated.
+#' @param r0 n0 An integer parameter indicating the first (the smallest) retID.
+#' @param start The first period in the generated data frame (as character) limited to the year and month, e.g. '2019-12'.
+#' @param days A logical parameter indicating whether the trading day in a given month is to be randomised. The default value of \code{days} is FALSE, which means that each transaction for a given month takes place on the first day of the month.
+#' @rdname generate_CES
+#' @return This function returns an artificial scanner dataset where prices are lognormally distributed, quantities are calculated under the assumption that consumers have CES (Constant Elasticity of Substitution) preferences and their spending on all products is \code{S}. The characteristics for the lognormal price distribution are set by \code{pmi} and \code{psigma} parameters. This function works for a fixed number of products and outlets (see \code{n} and \code{r} parameters). The generated dataset is ready for further price index calculations.   
+#' @references
+#' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
+#' @examples 
+#' #Generating an artificial dataset (the elasticity of substitution is 1.25)
+#' \donttest{df<-generate_CES(pmi=c(1.02,1.03),psigma=c(0.04,0.03),
+#' elasticity=1.25,start="2020-01",n=100,days=TRUE)}
+#' #Verifying the elasticity of substitution
+#' \donttest{elasticity(df, start="2020-01",end="2020-02")}
+#' @export
+
+generate_CES <-
+  function(pmi = c(),
+  psigma = c(),
+  prec = 2,
+  elasticity=0.7,
+  S=1000,
+  alfa = c(),
+  n = 100,
+  n0 = 1,
+  r = 1,
+  r0 = 1,
+  start,
+  days = FALSE)
+  {
+  if ((length(pmi) <= 1) |
+  (length(psigma) <= 1))
+  stop("Lengths of parameters pmi and psigma must be 2 or more!")
+  if (!(length(pmi) == length(psigma)))
+  stop("Lengths of parameters pmi and psigma must be identical!")
+  if (S<=0) stop("The S parameter must be positive!")
+  if (length(alfa)>0) {
+  if (!(length(alfa)==n)) stop("Length of parameter alfa and a value of n must be identical!")  
+  if (!(sum(alfa)==1)) stop("Sum of elements of the alfa vector must be one!")
+  }
+  else
+  {
+  alfa<-stats::runif(n,0,1)
+  alfa<-alfa/sum(alfa)
+  }  
+  start <- paste(start, "-01", sep = "")
+  start <- as.Date(start)
+  #rand data frames for all periods
+  DT <- data.frame()
+  for (k in 1:length(pmi))
+  {
+  #time
+  time <- c()
+  for (i in 1:n) {
+  if (days == TRUE) {
+  nd <- 28
+  lubridate::day(start) <- sample(nd, 1)
+  }
+  time <- c(time, as.character(start))
+  }
+  time <- as.Date(time)
+  #prodID
+  prodID <- seq(n0, n0 + n - 1)
+  ret <- r0 + r - 1
+  for (i in r0:ret) {
+  #retID
+  retID <- replicate(n, i)
+  #prices
+  prices <- stats::rlnorm(n, pmi[k], psigma[k])
+  prices <- round(prices, prec)
+  #quantities
+  denom<-sum(alfa*(prices/alfa)^(1-elasticity))
+  quantities <-((S/prices)*alfa*(prices/alfa)^(1-elasticity))/denom 
+  DT <- rbind(DT, data.frame(time, prices, quantities, prodID, retID))
+  }
+  lubridate::month(start) <- lubridate::month(start) + 1
+  }
+  return (DT)
+  }
 
 #' @title  Calculating the relative price and/or quantity dissimilarity measure between periods
 #'
@@ -2159,11 +2251,11 @@ return (TRUE)
 #' @param data The user's data frame.
 #' @param join_outlets A logical value indicating whether the data aggregation over outlets should be also done.
 #' @rdname data_aggregating
-#' @return The function aggregates the user's data frame over time and/or over outlets. Consequently, we obtain monthly data, where the unit value is calculated instead of a price for each \code{prodID} observed in each month (the \code{time} column gets the Date format: "Year-Month-01"). If the parameter \code{join_outlets} is TRUE, then the function also performs aggregation over outlets (retIDs) and the \code{retID} column is removed from the data frame. The main advantage of using this function is the ability to reduce the size of the data frame and the time needed to calculate the price index.
+#' @return The function aggregates the user's data frame over time and/or over outlets. Consequently, we obtain monthly data, where the unit value is calculated instead of a price for each \code{prodID} observed in each month (the \code{time} column gets the Date format: "Year-Month-01"). If the parameter \code{join_outlets} is TRUE, then the function also performs aggregation over outlets (retIDs) and the \code{retID} column is removed from the data frame. The main advantage of using this function is the ability to reduce the size of the data frame and the time needed to calculate the price index. Please note, that unnecessary columns are removed (e.g. \code{description}).
 #' @examples 
 #' #Example 1
 #' data_aggregating(dataAGGR,join_outlets = FALSE)
-#' data_aggregating(dataAGGR,join_outlets = FALSE)
+#' data_aggregating(dataAGGR,join_outlets = TRUE)
 #' #Example 2 (data frame reduction)
 #' nrow(milk)
 #' nrow(data_aggregating(milk))
@@ -2171,44 +2263,20 @@ return (TRUE)
 
 data_aggregating<-function (data, join_outlets = TRUE)
 {
+time<-prodID<-retID<-prices2<-quantities2<-NULL
 #checking columns
 cols<-colnames(data)
 if (!("time" %in% cols) | !("prodID" %in% cols)) stop("A data frame must contain columns: time, prodID")
 if ((join_outlets==FALSE) & !("retID" %in% cols)) stop("A date frame must contain the 'retID' column")
-if ((join_outlets==FALSE) & ("retID" %in% cols)) data$retID<-as.numeric(data$retID)
 #main body
-lubridate::day(data$time)<-1
-data_time<-split(data, data$time)
-rows<-function (group)
-{
-result<-data.frame()
-data_prodID<-split(group, group$prodID)
-for (i in 1:length(data_prodID)) {
-d<-data_prodID[[i]]
-price<-sum(d$prices*d$quantities)/sum(d$quantities)
-quantity<-sum(d$quantities)  
-row<-d[1,]
-row$prices<-price
-row$quantities<-quantity
-result<-rbind(result, row)
-}
-return (result)
-}
-if (join_outlets==TRUE) {
-s<-rbind(lapply(data_time, rows))
-if ("retID" %in% cols) s$retID<-NULL
-}
-else
-{
-rows_ret<-function(outlets)
-{
-data_outlets<-split(outlets,outlets$retID)
-return (rbind(lapply(data_outlets, rows)))
-}
-s<-rbind(lapply(data_time, rows_ret))  
-}
-s<-stats::na.omit(s)
-return (s)  
+data$time<-as.character(data$time)
+data$time<-substr(data$time,0,7)
+if (join_outlets==TRUE) data_aggr<-dplyr::summarise(dplyr::group_by(data, time, prodID), prices2=sum(prices*quantities)/sum(quantities),quantities2=sum(quantities),.groups="drop")
+else data_aggr<-dplyr::summarise(dplyr::group_by(data, time, prodID, retID), prices2=sum(prices*quantities)/sum(quantities),quantities2=sum(quantities),.groups="drop")
+data_aggr$time<-paste(data_aggr$time,"-01",sep="")
+data_aggr$time<-as.Date(data_aggr$time)
+data_aggr<-dplyr::rename(data_aggr, prices=prices2, quantities=quantities2)
+return (data_aggr)
 }
 
 #' @title  Calculating the elasticity of substitution 
@@ -2217,25 +2285,34 @@ return (s)
 #' @param data The user's data frame with information about sold products. It must contain columns: \code{time} (as Date in format: year-month-day,e.g. '2020-12-01'), \code{prices} (as positive numeric), \code{quantities} (as positive numeric) and \code{prodID} (as numeric, factor or character). 
 #' @param start The base period (as character) limited to the year and month, e.g. "2020-03".
 #' @param end The research period (as character) limited to the year and month, e.g. "2020-04".
+#' @param method The index formula for which the CES index will be equated to calculate the elasticity. Acceptable options are \code{lm}, \code{f} and \code{sv}.
 #' @param left The beginning of an interval for estimation of the elasticity of substitution (its default value is -10).
 #' @param right The end of an interval for estimation of the elasticity of substitution (its default value is 10).
 #' @param precision The precision of estimation (a 'stop' condition for the procedure). A default value of this parameter is 0.000001.
 #' @rdname elasticity
-#' @return This function returns a value of the elasticity of substitution. The procedure of estimation solves the equation: LM(sigma)-CW(sigma)=0 numerically, where LM denotes the Lloyd-Moulton price index, the CW denotes a current weight counterpart of the Lloyd-Moulton price index, and sigma is the elasticity of substitution parameter, which is estimated. The procedure continues until the absolute value of the LM-CW difference is greater than the value of the 'precision' parameter.    
+#' @return This function returns a value of the elasticity of substitution. If the \code{method} parameter is set to \code{lm}, the procedure of estimation solves the equation: LM(sigma)-CW(sigma)=0 numerically, where LM denotes the Lloyd-Moulton price index, the CW denotes a current weight counterpart of the Lloyd-Moulton price index, and sigma is the elasticity of substitution parameter, which is estimated. If the \code{method} parameter is set to \code{f}, the Fisher price index formula is used instead of the CW price index. If the \code{method} parameter is set to \code{sv}, the Sato-Vartia price index formula is used instead of the CW price index.The procedure continues until the absolute value of this difference is greater than the value of the 'precision' parameter.    
 #' @references
 #' {de Haan, J., Balk, B.M., Hansen, C.B. (2010). \emph{Retrospective Approximations of Superlative Price Indexes for Years Where Expenditure Data Is Unavailable.} In: Biggeri, L., Ferrari, G. (eds) Price Indexes in Time and Space. Contributions to Statistics. Physica-Verlag HD.}
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
 #' \donttest{elasticity(coffee, start = "2018-12", end = "2019-01")}
+#' \donttest{elasticity(coffee, start = "2018-12", end = "2019-01", method = "f")}
+#' \donttest{elasticity(coffee, start = "2018-12", end = "2019-01", method = "sv")}
 #' @export
 
-elasticity<-function (data, start, end, left = -10, right = 10, precision = 0.000001)
+elasticity<-function (data, start, end, method = "lm", left = -10, right = 10, precision = 0.000001)
 {
   if (nrow(data)==0) stop("A data frame is empty!")
   if (right<=left) stop("Bad specification of 'left' and 'right' parameters!")
   if (precision<=0 | precision>0.5) stop("'precision' should be a small, positive number!")
-  superlative<-function (sigma) lm(data, start, end, sigma)-cw(data, start, end, sigma)
+  av_methods<-c("lm","f","sv")
+  if (!(method %in% av_methods)) stop("Available options for the 'method' parameter are: 'lm', 'f' or 'sv'.")
+  superlative<-function (sigma) {
+  if (method=="lm") return (lm(data, start, end, sigma)-cw(data, start, end, sigma))
+  if (method=="f") return (lm(data, start, end, sigma)-fisher(data, start, end))
+  if (method=="sv") return (lm(data, start, end, sigma)-sato_vartia(data, start, end))
+  }
   if (superlative(left)*superlative(right)>0) stop("There is no solution in the given interval!")
   ll=left
   pp=right
@@ -2248,43 +2325,6 @@ elasticity<-function (data, start, end, left = -10, right = 10, precision = 0.00
   return (x0)
 }
 
-#' @title  Calculating the elasticity of substitution 
-#'
-#' @description This function returns a value of the elasticity of substitution parameter
-#' @param data The user's data frame with information about sold products. It must contain columns: \code{time} (as Date in format: year-month-day,e.g. '2020-12-01'), \code{prices} (as positive numeric), \code{quantities} (as positive numeric) and \code{prodID} (as numeric, factor or character). 
-#' @param start The base period (as character) limited to the year and month, e.g. "2020-03".
-#' @param end The research period (as character) limited to the year and month, e.g. "2020-04".
-#' @param left The beginning of an interval for estimation of the elasticity of substitution (its default value is -10).
-#' @param right The end of an interval for estimation of the elasticity of substitution (its default value is 10).
-#' @param precision The precision of estimation (a 'stop' condition for the procedure). A default value of this parameter is 0.000001.
-#' @rdname elasticity2
-#' @return This function returns a value of the elasticity of substitution (or rather its approximation). The procedure of estimation solves the equation: LM(sigma)-PF=0 numerically, where LM denotes the Lloyd-Moulton price index, PF denotes the Fisher price index, and sigma is the elasticity of substitution parameter, which is estimated. The procedure continues until the absolute value of the LM-PF difference is greater than the value of the 'precision' parameter.    
-#' @references
-#' {de Haan, J., Balk, B.M., Hansen, C.B. (2010). \emph{Retrospective Approximations of Superlative Price Indexes for Years Where Expenditure Data Is Unavailable.} In: Biggeri, L., Ferrari, G. (eds) Price Indexes in Time and Space. Contributions to Statistics. Physica-Verlag HD.}
-#'
-#' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
-#' @examples 
-#' \donttest{elasticity2(coffee, start = "2018-12", end = "2019-01")}
-#' @export
-
-elasticity2<-function (data, start, end, left = -10, right = 10, precision = 0.000001)
-{
-  if (nrow(data)==0) stop("A data frame is empty!")
-  if (right<=left) stop("Bad specification of 'left' and 'right' parameters!")
-  if (precision<=0 | precision>0.5) stop("'precision' should be a small, positive number!")
-  
-  superlative<-function (sigma) lm(data, start, end, sigma)-fisher(data, start, end)
-  if (superlative(left)*superlative(right)>0) stop("There is no solution in the given interval!")
-  ll=left
-  pp=right
-  x0=(ll+pp)/2
-  while (abs(superlative(x0))>precision) {
-                                      if (superlative(ll)*superlative(x0)>0) ll=x0
-                                      else pp=x0
-                                      x0=(ll+pp)/2
-                                      }
-  return (x0)
-}
 
 #' @title  Presenting elasticities of substitution for time interval
 #'
@@ -2292,9 +2332,11 @@ elasticity2<-function (data, start, end, left = -10, right = 10, precision = 0.0
 #' @param data The user's data frame with information about sold products. It must contain columns: \code{time} (as Date in format: year-month-day,e.g. '2020-12-01'), \code{prices} (as positive numeric), \code{quantities} (as positive numeric) and \code{prodID} (as numeric, factor or character). 
 #' @param start The base period (as character) limited to the year and month, e.g. "2020-03".
 #' @param end The research period (as character) limited to the year and month, e.g. "2020-04".
+#' @param method A vector indicating index formulas for which the CES index will be equated to calculate the elasticity. Acceptable options are \code{lm}, \code{f} and \code{sv} or their combinations.
 #' @param fixedbase A logical parameter indicating whether the procedure is to work for subsequent months from the considered time interval (\code{fixedbase}=FALSE). Otherwise the period defined by \code{start} plays a role of fixed base month (\code{fixedbase}=TRUE)
 #' @param figure A logical parameter indicating whether the function returns a figure (TRUE) or a data frame (FALSE) with values of elasticity of substitution.
 #' @param date_breaks A string giving the distance between breaks on the X axis like "1 month" (default value) or "4 months".
+#' @param names A character string indicating names of indices used for elasticity approximation (see the \code{method} parameter).
 #' @param left The beginning of an interval for estimation of each elasticity of substitution (its default value is -10)
 #' @param right The end of an interval for estimation of each elasticity of substitution (its default value is 10)
 #' @param precision The precision of estimation (a 'stop' condition for the procedure). A default value of this parameter is 0.000001.
@@ -2305,83 +2347,48 @@ elasticity2<-function (data, start, end, left = -10, right = 10, precision = 0.0
 #'
 #' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
 #' @examples 
-#' \donttest{elasticity_fig (milk,start="2018-12",end="2019-12",figure=TRUE)}
+#' \donttest{elasticity_fig (milk,start="2018-12",end="2019-04",figure=TRUE, 
+#' method=c("lm","f","sv"),names=c("LM","Fisher", "SV"))}
 #' \donttest{elasticity_fig (milk,start="2018-12",end="2019-12",figure=FALSE)}
 #' @export
 
-elasticity_fig<-function(data, start, end, fixedbase = TRUE, figure = TRUE, date_breaks = "1 month", left = -10, right = 10, precision = 0.000001)
+elasticity_fig<-function(data, start, end, method = c("lm"), fixedbase = TRUE, figure = TRUE, date_breaks = "1 month", names=c(), left = -10, right = 10, precision = 0.000001)
 {
 value<-NULL
+formula<-NULL
 start <- paste(start, "-01", sep = "")
 end <- paste(end, "-01", sep = "")
 start <- as.Date(start)
 end <- as.Date(end)
 if (end<=start) stop ("Bad specification of dates!")
+if (length(names)>0) if (!(length(names)==length(method))) stop ("Parameters 'method' and 'names' must have identical length!")
 #vector of elasticities  
-el<-c() 
+el<-c()
 #vector of dates
 date <- seq.Date(from = start, to = end, by = "month")
 date <- format(date, format = "%Y-%m")
-if (fixedbase == TRUE) for (i in 2:length(date)) el<-c(el, elasticity(data, start = date[1], end = date[i], left = left, right = right, precision = precision))
-else for (i in 2:length(date)) el<-c(el, elasticity(data, start = date[i-1], end = date[i], left = left, right = right, precision = precision))
-date<-date[2:length(date)]
-df<-data.frame(date, el)
+df<-data.frame(date=date[2:length(date)])
+nm<-length(method) #number of methods
+if (fixedbase == TRUE) {for (k in 1:nm)
+  {el<-c()
+  for (i in 2:length(date)) el<-c(el,elasticity(data, start = date[1], end = date[i], method = method[k], left = left, right = right, precision = precision))
+  df[,k+1]<-el
+  }}
+else {for (k in 1:nm)
+  {el<-c()
+  for (i in 2:length(date)) el<-c(el,elasticity(data, start = date[i-1], end = date[i], method = method[k], left = left, right = right, precision = precision))
+  df[,k+1]<-el 
+}}
+if (length(names)==0) colnames(df)<-c("date",method)
+else colnames(df)<-c("date",names)
 if (figure == FALSE) return (df)
 else {
 df$date<-as.Date(paste(df$date,"-01",sep = ""))
 df<-reshape::melt(df, id.var = 'date') 
 colnames(df)<-c("date","formula","value")
-fig<-ggplot2::ggplot(df, ggplot2::aes(x = date, y = value)) + ggplot2::geom_point()+ggplot2::geom_line()+ggplot2::labs(x = "date",y = "elasticity of substitution")+ggplot2::scale_x_date(date_labels = "%Y %m",date_breaks = date_breaks)+ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))   
+fig<-ggplot2::ggplot(df, ggplot2::aes(x = date, y = value, col = formula)) + ggplot2::geom_point()+ggplot2::geom_line()+ggplot2::labs(x = "date",y = "elasticity of substitution")+ggplot2::scale_x_date(date_labels = "%Y %m",date_breaks = date_breaks)+ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))   
 return (fig)  
      }
 }
 
-#' @title  Presenting elasticities of substitution for time interval
-#'
-#' @description The function provides a data frame or a figure presenting elasticities of substitution calculated for time interval.
-#' @param data The user's data frame with information about sold products. It must contain columns: \code{time} (as Date in format: year-month-day,e.g. '2020-12-01'), \code{prices} (as positive numeric), \code{quantities} (as positive numeric) and \code{prodID} (as numeric, factor or character). 
-#' @param start The base period (as character) limited to the year and month, e.g. "2020-03".
-#' @param end The research period (as character) limited to the year and month, e.g. "2020-04".
-#' @param fixedbase A logical parameter indicating whether the procedure is to work for subsequent months from the considered time interval (\code{fixedbase}=FALSE). Otherwise the period defined by \code{start} plays a role of fixed base month (\code{fixedbase}=TRUE)
-#' @param figure A logical parameter indicating whether the function returns a figure (TRUE) or a data frame (FALSE) with values of elasticity of substitution.
-#' @param date_breaks A string giving the distance between breaks on the X axis like "1 month" (default value) or "4 months".
-#' @param left The beginning of an interval for estimation of the elasticity of substitution (its default value is -10)
-#' @param right The end of an interval for estimation of the elasticity of substitution (its default value is 10)
-#' @param precision The precision of estimation (a 'stop' condition for the procedure). A default value of this parameter is 0.000001.
-#' @rdname elasticity2_fig
-#' @return The function provides a data frame or a figure presenting elasticities of substitution calculated for time interval (see the \code{figure} parameter). The elasticities of substitution can be calculated for subsequent months or for a fixed base month (see the \code{start} parameter) and rest of months from the given time interval (it depends on the \code{fixedbase} parameter). The above-mentioned parameters for compared months are calculated by using the \code{elasticity2} function.    
-#' @references
-#' {de Haan, J., Balk, B.M., Hansen, C.B. (2010). \emph{Retrospective Approximations of Superlative Price Indexes for Years Where Expenditure Data Is Unavailable.} In: Biggeri, L., Ferrari, G. (eds) Price Indexes in Time and Space. Contributions to Statistics. Physica-Verlag HD.}
-#'
-#' {(2004). \emph{Consumer Price Index Manual. Theory and practice}. ILO/IMF/OECD/UNECE/Eurostat/The World Bank, International Labour Office (ILO), Geneva.}
-#' @examples 
-#' \donttest{elasticity2_fig (milk,start="2018-12",end="2019-12",figure=TRUE)}
-#' \donttest{elasticity2_fig (milk,start="2018-12",end="2019-12",figure=FALSE)}
-#' @export
 
-elasticity2_fig<-function(data, start, end, fixedbase = TRUE, figure = TRUE, date_breaks = "1 month", left = -10, right = 10, precision = 0.000001)
-{
-value<-NULL
-start <- paste(start, "-01", sep = "")
-end <- paste(end, "-01", sep = "")
-start <- as.Date(start)
-end <- as.Date(end)
-if (end<=start) stop ("Bad specification of dates!")
-#vector of elasticities  
-el<-c() 
-#vector of dates
-date <- seq.Date(from = start, to = end, by = "month")
-date <- format(date, format = "%Y-%m")
-if (fixedbase == TRUE) for (i in 2:length(date)) el<-c(el, elasticity2(data, start = date[1], end = date[i], left = left, right = right, precision = precision))
-else for (i in 2:length(date)) el<-c(el, elasticity2(data, start = date[i-1], end = date[i], left = left, right = right, precision = precision))
-date<-date[2:length(date)]
-df<-data.frame(date, el)
-if (figure == FALSE) return (df)
-else {
-df$date<-as.Date(paste(df$date,"-01",sep = ""))
-df<-reshape::melt(df, id.var = 'date') 
-colnames(df)<-c("date","formula","value")
-fig<-ggplot2::ggplot(df, ggplot2::aes(x = date, y = value)) + ggplot2::geom_point()+ggplot2::geom_line()+ggplot2::labs(x = "date",y = "elasticity of substitution")+ggplot2::scale_x_date(date_labels = "%Y %m",date_breaks = date_breaks)+ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))   
-return (fig)  
-     }
-}

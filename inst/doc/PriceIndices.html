@@ -115,7 +115,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="priceindices-a-package-for-bilateral-and-multilateral-price-index-calculations" class="section level1">
 <h1>PriceIndices – a Package for Bilateral and Multilateral Price Index Calculations</h1>
 <p><strong>author: Jacek Białek, University of Lodz, Statistics Poland</strong> <!-- badges: start --> <!-- badges: end --></p>
-<p>Goals of PriceIndices are as follows: a) data processing before price index calculations; b) bilateral and multilateral price index calculations; c) extending multilateral price indices. You can download the package documentation from <a href="https://github.com/JacekBialek/important_documents/blob/main/PriceIndices_manual.pdf">here</a>. This vignette with all graphical results can be download from <a href="https://github.com/JacekBialek/important_documents/blob/main/README.pdf">here</a>.</p>
+<p>Goals of PriceIndices are as follows: a) data processing before price index calculations; b) bilateral and multilateral price index calculations; c) extending multilateral price indices. You can download the package documentation from <a href="https://github.com/JacekBialek/important_documents/blob/main/PriceIndices_manual.pdf">here</a>. Too read more about the package please see (and cite :)) papers:</p>
+<p>Białek, J. (2021). PriceIndices – a New R Package for Bilateral and Multilateral Price Index Calculations, Statistika – Statistics and Economy Journal, Vol. 2/2021, 122-141, Czech Statistical Office, Praga.</p>
+<p>Białek, J. (2022). Scanner data processing in a newest version of the PriceIndices package, Statistical Journal of the IAOS, 38 (4), 1369-1397, DOI: 10.3233/SJI-220963.</p>
 <div id="installation" class="section level2">
 <h2>Installation</h2>
 <p>You can install the released version of <strong>PriceIndices</strong> from CRAN with:</p>
@@ -171,12 +173,20 @@ remotes<span class="op">::</span><span class="kw">install_github</span>(<span cl
 <span class="kw">head</span>(dataset)</code></pre></div>
 <p>From the other hand you can use <strong>tindex</strong> function to obtain the theoretical value of the unweighted price index for lognormally distributed prices (the month defined by <strong>start</strong> parameter plays a role of the fixed base period). The characteristics for these lognormal distributions are set by <strong>pmi</strong> and <strong>sigma</strong> parameters. The <strong>ratio</strong> parameter is a logical parameter indicating how we define the theoretical unweighted price index. If it is set to TRUE then the resulting value is a ratio of expected price values from compared months; otherwise the resulting value is the expected value of the ratio of prices from compared months.The function provides a data frame consisting of dates and corresponding expected values of the theoretical unweighted price index. For example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tindex</span>(<span class="dt">pmi=</span><span class="kw">c</span>(<span class="fl">1.02</span>,<span class="fl">1.03</span>,<span class="fl">1.04</span>),<span class="dt">psigma=</span><span class="kw">c</span>(<span class="fl">0.05</span>,<span class="fl">0.09</span>,<span class="fl">0.02</span>),<span class="dt">start=</span><span class="st">&quot;2020-01&quot;</span>,<span class="dt">ratio=</span><span class="ot">FALSE</span>)</code></pre></div>
+<p>The User may also generate an artificial scanner dataset where prices are lognormally distributed and quantities are calculated under the assumption that consumers have CES (Constant Elasticity of Substitution) preferences and their spending on all products is fixed (see the <strong>generate_CES</strong> function). Please watch the following example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Generating an artificial dataset (the elasticity of substitution is 1.25)</span>
+df&lt;-<span class="kw">generate_CES</span>(<span class="dt">pmi=</span><span class="kw">c</span>(<span class="fl">1.02</span>,<span class="fl">1.03</span>),<span class="dt">psigma=</span><span class="kw">c</span>(<span class="fl">0.04</span>,<span class="fl">0.03</span>),
+<span class="dt">elasticity=</span><span class="fl">1.25</span>,<span class="dt">start=</span><span class="st">&quot;2020-01&quot;</span>,<span class="dt">n=</span><span class="dv">100</span>,<span class="dt">days=</span><span class="ot">TRUE</span>)
+<span class="kw">head</span>(df)</code></pre></div>
+<p>Now, we can verify the value of elasticity of substitution using this generated dataset:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Verifying the elasticity of substitution</span>
+<span class="kw">elasticity</span>(df, <span class="dt">start=</span><span class="st">&quot;2020-01&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2020-02&quot;</span>)</code></pre></div>
 <p><a id="ad2"> </a></p>
 </div>
 <div id="functions-for-data-processing" class="section level3">
 <h3>Functions for data processing</h3>
 <p><strong>data_preparing</strong></p>
-<p>This function returns a prepared data frame based on the user's data set (you can check if your data set it is suitable for further price index calculation by using <strong>data_check</strong> function). The resulting data frame is ready for further data processing (such as data selecting, matching or filtering) and it is also ready for price index calculations (if only it contains the required columns). The resulting data frame is free from missing values, zero or negative prices and quantities. As a result, the column <strong>time</strong> is set to be <strong>Date</strong> type (in format: 'Year-Month-01'), while the columns <strong>prices</strong> and <strong>quantities</strong> are set to be <em>numeric</em>. If the <em>description</em> parameter is set to <em>TRUE</em> then the column <strong>description</strong> is set to be <em>character</em> type (otherwise it is deleted). Please note that the <strong>milk</strong> set is an already prepared dataset but let us assume for a moment that we want to make sure that it does not contain missing values and we do not need the column <strong>description</strong> for further calculations. For this purpose, we use the <strong>data_preparing</strong> function as follows:</p>
+<p>This function returns a prepared data frame based on the user's data set (you can check if your data set it is suitable for further price index calculation by using <strong>data_check</strong> function). The resulting data frame is ready for further data processing (such as data selecting, matching or filtering) and it is also ready for price index calculations (if only it contains the required columns). The resulting data frame is free from missing values, zero or negative prices and quantities. As a result, the column <strong>time</strong> is set to be <strong>Date</strong> type (in format: 'Year-Month-01'), while the columns <strong>prices</strong> and <strong>quantities</strong> are set to be <strong>numeric</strong>. If the <strong>description</strong> parameter is set to <em>TRUE</em> then the column <strong>description</strong> is set to be <strong>character</strong> type (otherwise it is deleted). Please note that the <strong>milk</strong> set is an already prepared dataset but let us assume for a moment that we want to make sure that it does not contain missing values and we do not need the column <strong>description</strong> for further calculations. For this purpose, we use the <strong>data_preparing</strong> function as follows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">data_preparing</span>(milk, <span class="dt">time=</span><span class="st">&quot;time&quot;</span>,<span class="dt">prices=</span><span class="st">&quot;prices&quot;</span>,<span class="dt">quantities=</span><span class="st">&quot;quantities&quot;</span>))</code></pre></div>
 <p><strong>data_aggregating</strong></p>
 <p>The function aggregates the user's data frame over time and/or over outlets. Consequently, we obtain monthly data, where the unit value is calculated instead of a price for each <strong>prodID</strong> observed in each month (the time column gets the Date format: &quot;Year-Month-01&quot;). If paramter <strong>join_outlets</strong> is <em>TRUE</em>, then the function also performs aggregation over outlets (<em>retIDs</em>) and the <strong>retID</strong> column is removed from the data frame. The main advantage of using this function is the ability to reduce the size of the data frame and the time needed to calculate the price index. For instance, let us consider the following data set:</p>
@@ -193,7 +203,7 @@ data&lt;-<span class="kw">data_unit</span>(dataU,<span class="dt">units=</span><
 <span class="co"># Normalization of grammage units</span>
 <span class="kw">data_norm</span>(data, <span class="dt">rules=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;ml&quot;</span>,<span class="st">&quot;l&quot;</span>,<span class="dv">1000</span>),<span class="kw">c</span>(<span class="st">&quot;g&quot;</span>,<span class="st">&quot;kg&quot;</span>,<span class="dv">1000</span>)))</code></pre></div>
 <p><strong>data_selecting</strong></p>
-<p>The function returns a subset of the user's data set obtained by selection based on keywords and phrases defined by parameters: <strong>include</strong>, <strong>must</strong> and <strong>exclude</strong> (an additional column <strong>coicop</strong> is optional). Providing values of these parameters, please remember that the procedure distinguishes between uppercase and lowercase letters only when <strong>sensitivity</strong> is set to TRUE.</p>
+<p>The function returns a subset of the user's data set obtained by selection based on keywords and phrases defined by parameters: <strong>include</strong>, <strong>must</strong> and <strong>exclude</strong> (an additional column <strong>coicop</strong> is optional). Providing values of these parameters, please remember that the procedure distinguishes between uppercase and lowercase letters only when <strong>sensitivity</strong> is set to <em>TRUE</em>.</p>
 <p>For instance, please use</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">subgroup1&lt;-<span class="kw">data_selecting</span>(milk, <span class="dt">include=</span><span class="kw">c</span>(<span class="st">&quot;milk&quot;</span>), <span class="dt">must=</span><span class="kw">c</span>(<span class="st">&quot;UHT&quot;</span>))
 <span class="kw">head</span>(subgroup1)</code></pre></div>
@@ -205,7 +215,7 @@ data&lt;-<span class="kw">data_unit</span>(dataU,<span class="dt">units=</span><
 <p>to obtain the subset of <strong>milk</strong> with products which are not <em>pasteurized</em> and which are not <strong>goat</strong>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">unique</span>(subgroup2<span class="op">$</span>description)</code></pre></div>
 <p><strong>data_classifying</strong></p>
-<p>This function predicts product COICOP levels using the selected machine learning model (see the <strong>model</strong> parameter). It provides the indicated data set with an additional column, i.e. <em>coicop_predicted</em>. The selected model must be built previously (see the <strong>model_classification</strong> function) and after the training process it can be saved on your disk (see the <strong>save_model</strong> function) and then loaded at any time (see the <strong>load_model</strong> function). Please note that the machine learning process is based on the XGBoost algorithm (from the XGBoost package) which is an implementation of gradient boosted decision trees designed for speed and performance. For example, let us build a machine learning model</p>
+<p>This function predicts product COICOP levels (or any other defined product levels) using the selected machine learning model (see the <strong>model</strong> parameter). It provides the indicated data set with an additional column, i.e. <em>coicop_predicted</em>. The selected model must be built previously (see the <strong>model_classification</strong> function) and after the training process it can be saved on your disk (see the <strong>save_model</strong> function) and then loaded at any time (see the <strong>load_model</strong> function). Please note that the machine learning process is based on the XGBoost algorithm (from the XGBoost package) which is an implementation of gradient boosted decision trees designed for speed and performance. For example, let us build a machine learning model</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my.grid=<span class="kw">list</span>(<span class="dt">eta=</span><span class="kw">c</span>(<span class="fl">0.01</span>,<span class="fl">0.02</span>,<span class="fl">0.05</span>),<span class="dt">subsample=</span><span class="kw">c</span>(<span class="fl">0.5</span>,<span class="fl">0.8</span>))
 data_train&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(dataCOICOP,dataCOICOP<span class="op">$</span>time<span class="op">&lt;=</span><span class="kw">as.Date</span>(<span class="st">&quot;2021-10-01&quot;</span>))
 data_test&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(dataCOICOP,dataCOICOP<span class="op">$</span>time<span class="op">==</span><span class="kw">as.Date</span>(<span class="st">&quot;2021-11-01&quot;</span>))
@@ -220,13 +230,20 @@ ML&lt;-<span class="kw">model_classification</span>(data_train,
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ML<span class="op">$</span>figure_training</code></pre></div>
 <p>or we can observe the importance of the used indicators:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ML<span class="op">$</span>figure_importance</code></pre></div>
-<p>We can save the model on the disk, load it and use it at any time by using <strong>save_model()</strong> and <strong>load_model()</strong> functions. We can use the model for COICOP predictions</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data_predicted&lt;-<span class="kw">data_classifying</span>(ML, data_test)
+<p>Now, let us save the model on the disk. After saving the model we can load it and use at any time:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Setting a temporary directory as a working directory</span>
+wd&lt;-<span class="kw">tempdir</span>()
+<span class="kw">setwd</span>(wd)
+<span class="co">#Saving and loading the model</span>
+<span class="kw">save_model</span>(ML, <span class="dt">dir=</span><span class="st">&quot;My_model&quot;</span>)
+ML_fromPC&lt;-<span class="kw">load_model</span>(<span class="st">&quot;My_model&quot;</span>)
+<span class="co">#Prediction</span>
+data_predicted&lt;-<span class="kw">data_classifying</span>(ML_fromPC, data_test)
 <span class="kw">head</span>(data_predicted)</code></pre></div>
 <p><strong>data_matching</strong></p>
 <p>If you have a dataset with information about products sold but they are not matched you can use the <strong>data_matching</strong> function. In an optimal situation, your data frame contains the <strong>codeIN</strong>, <strong>codeOUT</strong> and <strong>description</strong> columns (see documentation), which in practice will contain <em>retailer codes</em>, <em>GTIN</em> or <em>SKU</em> codes and <em>product labels</em>, respectively. The <strong>data_matching</strong> function returns a data set defined in the first parameter (<em>data</em>) with an additional column (<em>prodID</em>). Two products are treated as being matched if they have the same prodID value. The procedure of generating the above-mentioned additional column depends on the set of chosen columns for matching (see documentation for details). For instance, let us suppose you want to obtain matched products from the following, artificial data set:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(dataMATCH)</code></pre></div>
-<p>Let us assume that products with two identical codes (<strong>codeIN</strong> and <strong>codeOUT</strong>) or one of the codes identical and an identical description are automatically matched. Products are also matched if they have one of the codes identical and the <em>Jaro-Winkler distance</em> of their descriptions is bigger than the fixed <strong>precision</strong> value (see documentation - <em>Case 1</em>). Let us also suppose that you want to match all products sold in the interval: December 2018 - February 2019. If you use the <strong>data_matching</strong> function (as below), an additional column (<strong>prodID</strong>) will be added to your data frame:</p>
+<p>Let us assume that products with two identical codes (<strong>codeIN</strong> and <strong>codeOUT</strong>) or one of the codes identical and an identical description are automatically matched. Products are also matched if they have one of the codes identical and the <em>Jaro-Winkler similarity</em> of their descriptions is bigger than the fixed <strong>precision</strong> value (see documentation - <em>Case 1</em>). Let us also suppose that you want to match all products sold in the interval: December 2018 - February 2019. If you use the <strong>data_matching</strong> function (as below), an additional column (<strong>prodID</strong>) will be added to your data frame:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data1&lt;-<span class="kw">data_matching</span>(dataMATCH, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-02&quot;</span>, <span class="dt">codeIN=</span><span class="ot">TRUE</span>, <span class="dt">codeOUT=</span><span class="ot">TRUE</span>, <span class="dt">precision=</span>.<span class="dv">98</span>, <span class="dt">interval=</span><span class="ot">TRUE</span>)
 <span class="kw">head</span>(data1)</code></pre></div>
 <p>Let us now suppose you do not want to consider <strong>codeIN</strong> while matching and that products with an identical <strong>description</strong> are to be matched too:</p>
@@ -279,8 +296,8 @@ filter4&lt;-<span class="kw">data_filtering</span>(milk,<span class="dt">start=<
 <p>The function returns prices (unit value) of products with a given ID (<strong>prodID</strong> column) and being sold in the time period indicated by the <strong>period</strong> parameter. The <strong>set</strong> parameter means a set of unique product IDs to be used for determining prices of sold products. If the set is empty the function returns prices of all products being available in the <strong>period</strong>. Please note that the function returns the price values for sorted prodIDs and in the absence of a given prodID in the data set, the function returns nothing (it does not return zero).To get prices (unit values) of all available milk products sold in July, 2019, please use:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">prices</span>(milk, <span class="dt">period=</span><span class="st">&quot;2019-06&quot;</span>)</code></pre></div>
 <p><strong>quantities</strong></p>
-<p>The function returns quantities of products with a given ID (<strong>prodID</strong> column) and being sold in the time period indicated by the <strong>period</strong> parameter. The <strong>set</strong> parameter means a set of unique product IDs to be used for determining prices of sold products. If the set is empty the function returns quantities of all products being available in the <strong>period</strong>. Please note that the function returns the quantity values for sorted prodIDs and in the absence of a given prodID in the data set, the function returns nothing (it does not return zero). To get quantities of milk products with prodIDs: 400032, 71772 and 82919, and sold in July, 2019, please use:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">quantities</span>(milk, <span class="dt">period=</span><span class="st">&quot;2019-06&quot;</span>, <span class="dt">set=</span><span class="kw">c</span>(<span class="dv">400032</span>, <span class="dv">71772</span>, <span class="dv">82919</span>))</code></pre></div>
+<p>The function returns quantities of products with a given ID (<strong>prodID</strong> column) and being sold in the time period indicated by the <strong>period</strong> parameter. The <strong>set</strong> parameter means a set of unique product IDs to be used for determining prices of sold products. If the set is empty the function returns quantities of all products being available in the <strong>period</strong>. Please note that the function returns the quantity values for sorted prodIDs and in the absence of a given prodID in the data set, the function returns nothing (it does not return zero). To get a data frame containing quantities of milk products with prodIDs: 400032, 71772 and 82919, and sold in July, 2019, please use:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">quantities</span>(milk, <span class="dt">period=</span><span class="st">&quot;2019-06&quot;</span>, <span class="dt">set=</span><span class="kw">c</span>(<span class="dv">400032</span>, <span class="dv">71772</span>, <span class="dv">82919</span>), <span class="dt">ID=</span><span class="ot">TRUE</span>)</code></pre></div>
 <p><strong>sales</strong></p>
 <p>The function returns values of sales of products with a given ID (<strong>prodID</strong> column) and being sold in the time period indicated by <strong>period</strong> parameter. The <strong>set</strong> parameter means a set of unique product IDs to be used for determining prices of sold products. If the set is empty the function returns values of sales of all products being available in the <strong>period</strong> (see also <strong>expenditures</strong> function which returns the expenditure values for sorted prodIDs). To get values of sales of milk products with prodIDs: 400032, 71772 and 82919, and sold in July, 2019, please use:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sales</span>(milk, <span class="dt">period=</span><span class="st">&quot;2019-06&quot;</span>, <span class="dt">set=</span><span class="kw">c</span>(<span class="dv">400032</span>, <span class="dv">71772</span>, <span class="dv">82919</span>))</code></pre></div>
@@ -311,11 +328,12 @@ milk3&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, mi
 <p>This function presents values of the relative price and/or quantity dissimilarity measure over time. The user can choose a benchmark period (defined by <strong>benchmark</strong>) and the type of dissimilarity measure is to be calculated (defined by <strong>type</strong>). The obtained results of dissimilarities over time can be presented in a dataframe form or via a figure (the default value of <strong>figure</strong> is TRUE which results a figure). For instance:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dissimilarity_fig</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="dt">type=</span><span class="st">&quot;pq&quot;</span>,<span class="dt">benchmark=</span><span class="st">&quot;start&quot;</span>)</code></pre></div>
 <p><strong>elasticity</strong></p>
-<p>This function returns a value of the elasticity of substitution. The procedure of estimation solves the equation: LM(sigma)-CW(sigma)=0 numerically, where LM denotes the Lloyd-Moulton price index, the CW denotes a current weight counterpart of the Lloyd-Moulton price index, and sigma is the elasticity of substitution parameter, which is estimated (see also <strong>elasticity2</strong>). For example:</p>
+<p>This function returns a value of the elasticity of substitution. If the <strong>method</strong> parameter is set to <strong>lm</strong> (it is a default value), the procedure of estimation solves the equation: LM(sigma)-CW(sigma)=0 numerically, where LM denotes the Lloyd-Moulton price index, the CW denotes a current weight counterpart of the Lloyd-Moulton price index, and sigma is the elasticity of substitution parameter, which is estimated. If the <strong>method</strong> parameter is set to <strong>f</strong>, the Fisher price index formula is used instead of the CW price index. If the <strong>method</strong> parameter is set to <strong>sv</strong>, the Sato-Vartia price index formula is used instead of the CW price index.The procedure continues until the absolute value of this difference is greater than the value of the 'precision' parameter. For example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">elasticity</span>(coffee, <span class="dt">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;2019-01&quot;</span>)</code></pre></div>
 <p><strong>elasticity_fig</strong></p>
-<p>The function provides a data frame or a figure presenting elasticities of substitution calculated for time interval (see the <strong>figure</strong> parameter). The elasticities of substitution can be calculated for subsequent months or for a fixed base month (see the <strong>start</strong> parameter) and rest of months from the given time interval (it depends on the <strong>fixedbase</strong> parameter). The presented function is based on the <strong>elasticity</strong> function, but see also <strong>elasticity2_fig</strong>. For instance, to get elasticities of substitution calculated for milk products for subsequent months we run:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">elasticity_fig</span> (milk, <span class="dt">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="dt">fixedbase =</span> <span class="ot">FALSE</span>)</code></pre></div>
+<p>The function provides a data frame or a figure presenting elasticities of substitution calculated for time interval (see the <strong>figure</strong> parameter). The elasticities of substitution can be calculated for subsequent months or for a fixed base month (see the <strong>start</strong> parameter) and rest of months from the given time interval (it depends on the <strong>fixedbase</strong> parameter). The presented function is based on the <strong>elasticity</strong> function. For instance, to get elasticities of substitution calculated for milk products for subsequent months we run:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">elasticity_fig</span> (milk,<span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-04&quot;</span>,<span class="dt">figure=</span><span class="ot">TRUE</span>, 
+<span class="dt">method=</span><span class="kw">c</span>(<span class="st">&quot;lm&quot;</span>,<span class="st">&quot;f&quot;</span>,<span class="st">&quot;sv&quot;</span>),<span class="dt">names=</span><span class="kw">c</span>(<span class="st">&quot;LM&quot;</span>,<span class="st">&quot;Fisher&quot;</span>, <span class="st">&quot;SV&quot;</span>))</code></pre></div>
 <p><a id="ad4"> </a></p>
 </div>
 <div id="functions-for-bilateral-unweighted-price-index-calculation" class="section level3">
@@ -355,14 +373,14 @@ milk3&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, mi
 </tr>
 </tbody>
 </table>
-<p>Each of these functions returns a value (or vector of values) of the choosen unweighted bilateral price index depending on the <strong>interval</strong> parameter. If the interval parameter is set to TRUE, the function returns a vector of price index values without dates. To get information about both price index values and corresponding dates please see general functions: <strong>price_index</strong>, <strong>price_indices</strong> or <strong>final_index</strong>. None of these functions takes into account aggregating over outlets or product subgroups (to consider these types of aggregating please use the <strong>final_index</strong> function.) Below are examples of calculations for the Jevons index (in the second case a <em>fixed base month</em> is set to December 2018):</p>
+<p>Each of these functions returns a value (or vector of values) of the choosen unweighted bilateral price index depending on the <strong>interval</strong> parameter. If the interval parameter is set to TRUE, the function returns a vector of price index values without dates. To get information about both price index values and corresponding dates please see general functions: <strong>price_indices</strong> or <strong>final_index</strong>. None of these functions takes into account aggregating over outlets or product subgroups (to consider these types of aggregating please use the <strong>final_index</strong> function.) Below are examples of calculations for the Jevons index (in the second case a <em>fixed base month</em> is set to December 2018):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">jevons</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-01&quot;</span>)
 <span class="kw">jevons</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-01&quot;</span>, <span class="dt">interval=</span><span class="ot">TRUE</span>)</code></pre></div>
 <p><a id="ad5"> </a></p>
 </div>
 <div id="functions-for-bilateral-weighted-price-index-calculation" class="section level3">
 <h3>Functions for bilateral weighted price index calculation</h3>
-<p>This package includes 26 functions for calculating the following bilateral weighted price indices:</p>
+<p>This package includes 30 functions for calculating the following bilateral weighted price indices:</p>
 <table>
 <thead>
 <tr class="header">
@@ -475,9 +493,26 @@ milk3&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, mi
 <td>Young</td>
 <td>young</td>
 </tr>
+<tr class="odd">
+<td>Quadratic mean of order r price index</td>
+<td>QMp</td>
+</tr>
+<tr class="even">
+<td>Implicit quadratic mean of order r price index</td>
+<td>IQMp</td>
+</tr>
+<tr class="odd">
+<td>Value Index</td>
+<td>value_index</td>
+</tr>
+<tr class="even">
+<td>Unit Value Index</td>
+<td>unit_value_index</td>
+</tr>
 </tbody>
 </table>
-<p>Each of these functions returns a value (or vector of values) of the choosen weighted bilateral price index depending on the <strong>interval</strong> parameter. If interval parameter is set to TRUE, the function returns a vector of price index values without dates. To get information about both price index values and corresponding dates please see general functions: <strong>price_index</strong>, <strong>price_indices</strong> or <strong>final_index</strong>. None of these functions takes into account aggregating over outlets or product subgroups (to consider these types of aggregating please use the <strong>final_index</strong> function.) Below are examples of calculations for the Fisher, the Lloyd-Moulton and the Lowe indices (in the last case, the <em>fixed base month</em> is set to December 2019 and the <em>prior</em> period is December 2018):</p>
+<p>and the general quadratic mean of order r quantity index: QMq.</p>
+<p>Each of these functions returns a value (or vector of values) of the choosen weighted bilateral price index depending on the <strong>interval</strong> parameter. If interval parameter is set to TRUE, the function returns a vector of price index values without dates. To get information about both price index values and corresponding dates please see general functions: <strong>price_indices</strong> or <strong>final_index</strong>. None of these functions takes into account aggregating over outlets or product subgroups (to consider these types of aggregating please use the <strong>final_index</strong> function.) Below are examples of calculations for the Fisher, the Lloyd-Moulton and the Lowe indices (in the last case, the <em>fixed base month</em> is set to December 2019 and the <em>prior</em> period is December 2018):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fisher</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-01&quot;</span>)
 <span class="kw">lloyd_moulton</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-01&quot;</span>, <span class="dt">sigma=</span><span class="fl">0.9</span>)
 <span class="kw">lowe</span>(milk, <span class="dt">start=</span><span class="st">&quot;2019-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-02&quot;</span>, <span class="dt">base=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">interval=</span><span class="ot">TRUE</span>)</code></pre></div>
@@ -485,7 +520,7 @@ milk3&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, mi
 </div>
 <div id="functions-for-chain-price-index-calculation" class="section level3">
 <h3>Functions for chain price index calculation</h3>
-<p>This package includes 32 functions for calculating the following chain price indices (weighted and unweighted):</p>
+<p>This package includes 35 functions for calculating the following chain indices (weighted and unweighted):</p>
 <table>
 <thead>
 <tr class="header">
@@ -622,6 +657,18 @@ milk3&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, mi
 <td>Chain Young</td>
 <td>chyoung</td>
 </tr>
+<tr class="odd">
+<td>Chain quadratic mean of order r price index</td>
+<td>chQMp</td>
+</tr>
+<tr class="even">
+<td>Chain implicit quadratic mean of order r price index</td>
+<td>chIQMp</td>
+</tr>
+<tr class="odd">
+<td>Chain quadratic mean of order r quantity index</td>
+<td>chQMq</td>
+</tr>
 </tbody>
 </table>
 <p>Each time, the <strong>interval</strong> parameter has a logical value indicating whether the function is to compare the research period defined by <strong>end</strong> to the base period defined by <strong>start</strong> (then <strong>interval</strong> is set to FALSE and it is a default value) or all fixed base indices are to be calculated. In this second case, all months from the time interval <strong><start,end></strong> are considered and <strong>start</strong> defines the base period (<strong>interval</strong> is set to TRUE). Here are examples for the Fisher chain index:</p>
@@ -631,7 +678,7 @@ milk3&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, mi
 </div>
 <div id="functions-for-multilateral-price-index-calculation" class="section level3">
 <h3>Functions for multilateral price index calculation</h3>
-<p>This package includes 18 functions for calculating multilateral price indices and one additional and general function (<strong>QU</strong>) which calculates the quality adjusted unit value index, i.e.:</p>
+<p>This package includes 22 functions for calculating multilateral price indices and one additional and general function (<strong>QU</strong>) which calculates the quality adjusted unit value index, i.e.:</p>
 <table>
 <thead>
 <tr class="header">
@@ -697,20 +744,36 @@ milk3&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, mi
 <td>geksgaqi</td>
 </tr>
 <tr class="odd">
+<td>GEKS-IQM</td>
+<td>geksiqm</td>
+</tr>
+<tr class="even">
+<td>GEKS-QM</td>
+<td>geksqm</td>
+</tr>
+<tr class="odd">
+<td>GEKS-LM</td>
+<td>gekslm</td>
+</tr>
+<tr class="even">
 <td>WGEKS-GAQI</td>
 <td>wgeksgaqi</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Geary-Khamis</td>
 <td>gk</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Quality Adjusted Unit Value</td>
 <td>QU</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Time Product Dummy</td>
 <td>tpd</td>
+</tr>
+<tr class="even">
+<td>Unweighted Time Product Dummy</td>
+<td>utpd</td>
 </tr>
 <tr class="odd">
 <td>SPQ</td>
@@ -718,7 +781,7 @@ milk3&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, mi
 </tr>
 </tbody>
 </table>
-<p>The above-mentioned 18 multilateral formulas (the <strong>SPQ</strong> index is an exception) consider the time window defined by the <strong>wstart</strong> and <strong>window</strong> parameters, where <strong>window</strong> is a length of the time window (typically multilateral methods are based on a 13-month time window). It measures the price dynamics by comparing the <strong>end</strong> period to the <strong>start</strong> period (both <strong>start</strong> and <strong>end</strong> must be inside the considered time window). To get information about both price index values and corresponding dates, please see functions: <strong>price_index</strong>, <strong>price_indices</strong> or <strong>final_index</strong>. These functions do not take into account aggregating over outlets or product subgroups (to consider these types of aggregating please use functions: <strong>final_index</strong> or <strong>final_index2</strong>). Here are examples for the GEKS formula (see documentation):</p>
+<p>The above-mentioned 21 multilateral formulas (the <strong>SPQ</strong> index is an exception) consider the time window defined by the <strong>wstart</strong> and <strong>window</strong> parameters, where <strong>window</strong> is a length of the time window (typically multilateral methods are based on a 13-month time window). It measures the price dynamics by comparing the <strong>end</strong> period to the <strong>start</strong> period (both <strong>start</strong> and <strong>end</strong> must be inside the considered time window). To get information about both price index values and corresponding dates, please see functions: <strong>price_indices</strong> or <strong>final_index</strong>. These functions do not take into account aggregating over outlets or product subgroups (to consider these types of aggregating please use function: <strong>final_index</strong> ). Here are examples for the GEKS formula (see documentation):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">geks</span>(milk, <span class="dt">start=</span><span class="st">&quot;2019-01&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2019-04&quot;</span>,<span class="dt">window=</span><span class="dv">10</span>)
 <span class="kw">geksl</span>(milk, <span class="dt">wstart=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">start=</span><span class="st">&quot;2019-03&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2019-05&quot;</span>)</code></pre></div>
 <p>The <strong>QU</strong> function returns a value of the <em>quality adjusted unit value index</em> (QU index) for the given set of adjustment factors. An additional <strong>v</strong> parameter is a data frame with adjustment factors for at least all matched <strong>prodIDs</strong>. It must contain two columns: <strong>prodID</strong> with unique product IDs and <strong>value</strong> with corresponding adjustment factors (see documentation). The following example starts from creating a data frame which includes sample adjusted factors:</p>
@@ -732,7 +795,7 @@ v&lt;-<span class="kw">data.frame</span>(prodID,values)
 </div>
 <div id="functions-for-extending-multilateral-price-indices-by-using-splicing-methods" class="section level3">
 <h3>Functions for extending multilateral price indices by using splicing methods</h3>
-<p>This package includes 17 functions for calculating splice indices:</p>
+<p>This package includes 21 functions for calculating splice indices:</p>
 <table>
 <thead>
 <tr class="header">
@@ -802,22 +865,38 @@ v&lt;-<span class="kw">data.frame</span>(prodID,values)
 <td>wgeksgaqi_splice</td>
 </tr>
 <tr class="even">
+<td>Splice GEKS-IQM</td>
+<td>geksiqm_splice</td>
+</tr>
+<tr class="odd">
+<td>Splice GEKS-QM</td>
+<td>geksqm_splice</td>
+</tr>
+<tr class="even">
+<td>Splice GEKS-LM</td>
+<td>gekslm_splice</td>
+</tr>
+<tr class="odd">
 <td>Splice Geary-Khamis</td>
 <td>gk_splice</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Splice Time Product Dummy</td>
 <td>tpd_splice</td>
 </tr>
+<tr class="odd">
+<td>Splice unweighted Time Product Dummy</td>
+<td>utpd_splice</td>
+</tr>
 </tbody>
 </table>
-<p>These functions return a value (or values) of the selected multilateral price index extended by using window splicing methods (defined by the <strong>splice</strong> parameter). Available splicing methods are: <strong>movement splice</strong>, <strong>window splice</strong>, <strong>half splice</strong>, <strong>mean splice</strong> and their additional variants: <strong>window splice on published indices (WISP)</strong>, <strong>half splice on published indices (HASP)</strong> and <strong>mean splice on published indices</strong> (see documentation). The first considered time window is defined by the <strong>start</strong> and <strong>window</strong> parameters, where <strong>window</strong> is a length of the time window (typically multilateral methods are based on a 13-month time window). Functions measure the price dynamics by comparing the <strong>end</strong> period to the <strong>start</strong> period, i.e. if the time interval <strong><start, end></strong> exceeds the defined time window then splicing methods are used. If the <strong>interval</strong> parameter is set to TRUE, then all fixed base multilateral indices are presented (the fixed base month is defined by <strong>start</strong>). To get information about both price index values and corresponding dates, please see functions: <strong>price_index</strong>, <strong>price_indices</strong> or <strong>final_index</strong>. These functions do not take into account aggregating over outlets or product subgroups (to consider these types of aggregating, please use the <strong>final_index</strong> function). For instance, let us calculate the <strong>extended Time Product Dummy</strong> index by using the <strong>half splice method</strong> with a 10-month time window:</p>
+<p>These functions return a value (or values) of the selected multilateral price index extended by using window splicing methods (defined by the <strong>splice</strong> parameter). Available splicing methods are: <strong>movement splice</strong>, <strong>window splice</strong>, <strong>half splice</strong>, <strong>mean splice</strong> and their additional variants: <strong>window splice on published indices (WISP)</strong>, <strong>half splice on published indices (HASP)</strong> and <strong>mean splice on published indices</strong> (see documentation). The first considered time window is defined by the <strong>start</strong> and <strong>window</strong> parameters, where <strong>window</strong> is a length of the time window (typically multilateral methods are based on a 13-month time window). Functions measure the price dynamics by comparing the <strong>end</strong> period to the <strong>start</strong> period, i.e. if the time interval <strong><start, end></strong> exceeds the defined time window then splicing methods are used. If the <strong>interval</strong> parameter is set to TRUE, then all fixed base multilateral indices are presented (the fixed base month is defined by <strong>start</strong>). To get information about both price index values and corresponding dates, please see functions: <strong>price_indices</strong> or <strong>final_index</strong>. These functions do not take into account aggregating over outlets or product subgroups (to consider these types of aggregating, please use the <strong>final_index</strong> function). For instance, let us calculate the <strong>extended Time Product Dummy</strong> index by using the <strong>half splice method</strong> with a 10-month time window:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tpd_splice</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-02&quot;</span>,<span class="dt">window=</span><span class="dv">10</span>,<span class="dt">splice=</span><span class="st">&quot;half&quot;</span>,<span class="dt">interval=</span><span class="ot">TRUE</span>)</code></pre></div>
 <p><a id="ad9"> </a></p>
 </div>
 <div id="functions-for-extending-multilateral-price-indices-by-using-the-fbew-method" class="section level3">
 <h3>Functions for extending multilateral price indices by using the FBEW method</h3>
-<p>This package includes 17 functions for calculating extensions of multilateral indices by using the Fixed Base Monthly Expanding Window (FBEW) method:</p>
+<p>This package includes 21 functions for calculating extensions of multilateral indices by using the Fixed Base Monthly Expanding Window (FBEW) method:</p>
 <table>
 <thead>
 <tr class="header">
@@ -887,16 +966,32 @@ v&lt;-<span class="kw">data.frame</span>(prodID,values)
 <td>wgeksgaqi_fbew</td>
 </tr>
 <tr class="even">
+<td>FBEW GEKS-QM</td>
+<td>geksqm_fbew</td>
+</tr>
+<tr class="odd">
+<td>FBEW GEKS-IQM</td>
+<td>geksiqm_fbew</td>
+</tr>
+<tr class="even">
+<td>FBEW GEKS-LM</td>
+<td>gekslm_fbew</td>
+</tr>
+<tr class="odd">
 <td>FBEW Geary-Khamis</td>
 <td>gk_fbew</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>FBEW Time Product Dummy</td>
 <td>tpd_fbew</td>
 </tr>
+<tr class="odd">
+<td>FBEW unweighted Time Product Dummy</td>
+<td>utpd_fbew</td>
+</tr>
 </tbody>
 </table>
-<p>These functions return a value (or values) of the selected multilateral price index extended by using the FBEW method. The FBEW method uses a time window with a fixed base month every year (December). The window is enlarged every month with one month in order to include information from a new month. The full window length (13 months) is reached in December of each year. These functions measure the price dynamics between the <strong>end</strong> and <strong>start</strong> periods. A month of the <strong>start</strong> parameter must be December (see documentation). If the distance between <strong>end</strong> and <strong>start</strong> exceeds 13 months, then internal Decembers play a role of chain-linking months. To get information about both price index values and corresponding dates please see functions: <strong>price_index</strong>, <strong>price_indices</strong> or <strong>final_index</strong>. These functions do not take into account aggregating over outlets or product subgroups (to consider these types of aggregating, please use the <strong>final_index</strong> function). For instance, let us calculate the <strong>extended GEKS</strong> index by using the FBEW method. Please note that December 2019 is the chain-linking month, i.e.:</p>
+<p>These functions return a value (or values) of the selected multilateral price index extended by using the FBEW method. The FBEW method uses a time window with a fixed base month every year (December). The window is enlarged every month with one month in order to include information from a new month. The full window length (13 months) is reached in December of each year. These functions measure the price dynamics between the <strong>end</strong> and <strong>start</strong> periods. A month of the <strong>start</strong> parameter must be December (see documentation). If the distance between <strong>end</strong> and <strong>start</strong> exceeds 13 months, then internal Decembers play a role of chain-linking months. To get information about both price index values and corresponding dates please see functions: <strong>price_indices</strong> or <strong>final_index</strong>. These functions do not take into account aggregating over outlets or product subgroups (to consider these types of aggregating, please use the <strong>final_index</strong> function). For instance, let us calculate the <strong>extended GEKS</strong> index by using the FBEW method. Please note that December 2019 is the chain-linking month, i.e.:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">geks_fbew</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-03&quot;</span>)
   <span class="kw">geks_fbew</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>)<span class="op">*</span>
 <span class="st">  </span><span class="kw">geks_fbew</span>(milk, <span class="dt">start=</span><span class="st">&quot;2019-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-03&quot;</span>)</code></pre></div>
@@ -904,7 +999,7 @@ v&lt;-<span class="kw">data.frame</span>(prodID,values)
 </div>
 <div id="functions-for-extending-multilateral-price-indices-by-using-the-fbmw-method" class="section level3">
 <h3>Functions for extending multilateral price indices by using the FBMW method</h3>
-<p>This package includes 17 functions for calculating extensions of multilateral indices by using the Fixed Base Moving Window (FBMW) method:</p>
+<p>This package includes 21 functions for calculating extensions of multilateral indices by using the Fixed Base Moving Window (FBMW) method:</p>
 <table>
 <thead>
 <tr class="header">
@@ -974,98 +1069,93 @@ v&lt;-<span class="kw">data.frame</span>(prodID,values)
 <td>wgeksgaqi_fbmw</td>
 </tr>
 <tr class="even">
+<td>FBMW GEKS-IQM</td>
+<td>geksiqm_fbmw</td>
+</tr>
+<tr class="odd">
+<td>FBMW GEKS-QM</td>
+<td>geksqm_fbmw</td>
+</tr>
+<tr class="even">
+<td>FBMW GEKS-LM</td>
+<td>gekslm_fbmw</td>
+</tr>
+<tr class="odd">
 <td>FBMW Geary-Khamis</td>
 <td>gk_fbmw</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>FBMW Time Product Dummy</td>
 <td>tpd_fbmw</td>
 </tr>
+<tr class="odd">
+<td>FBMW unweighted Time Product Dummy</td>
+<td>utpd_fbmw</td>
+</tr>
 </tbody>
 </table>
-<p>These functions return a value (or values) of the selected multilateral price index extended by using the FBMW method. They measure the price dynamics between the <strong>end</strong> and <strong>start</strong> periods and it uses a 13-month time window with a fixed base month taken as <strong>year(end)-1</strong>. If the distance between <strong>end</strong> and <strong>start</strong> exceeds 13 months, then internal Decembers play a role of chain-linking months. A month of the <strong>start</strong> parameter must be December (see documentation). To get information about both price index values and corresponding dates, please see functions: <strong>price_index</strong>, <strong>price_indices</strong> or <strong>final_index</strong>. These functions do not take into account aggregating over outlets or product subgroups (to consider these types of aggregating, please use the <strong>final_index</strong> function). For instance, let us calculate the <strong>extended CCDI</strong> index by using the FBMW method. Please note that December 2019 is the chain-linking month, i.e.:</p>
+<p>These functions return a value (or values) of the selected multilateral price index extended by using the FBMW method. They measure the price dynamics between the <strong>end</strong> and <strong>start</strong> periods and it uses a 13-month time window with a fixed base month taken as <strong>year(end)-1</strong>. If the distance between <strong>end</strong> and <strong>start</strong> exceeds 13 months, then internal Decembers play a role of chain-linking months. A month of the <strong>start</strong> parameter must be December (see documentation). To get information about both price index values and corresponding dates, please see functions: <strong>price_indices</strong> or <strong>final_index</strong>. These functions do not take into account aggregating over outlets or product subgroups (to consider these types of aggregating, please use the <strong>final_index</strong> function). For instance, let us calculate the <strong>extended CCDI</strong> index by using the FBMW method. Please note that December 2019 is the chain-linking month, i.e.:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ccdi_fbmw</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-03&quot;</span>)
-
-<span class="kw">ccdi_fbmw</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>)<span class="op">*</span>
-<span class="kw">ccdi_fbmw</span>(milk, <span class="dt">start=</span><span class="st">&quot;2019-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-03&quot;</span>)</code></pre></div>
+    <span class="kw">ccdi_fbmw</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>)<span class="op">*</span>
+<span class="st">    </span><span class="kw">ccdi_fbmw</span>(milk, <span class="dt">start=</span><span class="st">&quot;2019-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-03&quot;</span>)</code></pre></div>
 <p><a id="ad11"> </a></p>
 </div>
 <div id="general-functions-for-price-index-calculations" class="section level3">
 <h3>General functions for price index calculations</h3>
-<p>This package includes 3 general functions for price index calculation. The <strong>start</strong> and <strong>end</strong> parameters indicate the base and the research period respectively. These function provide value or values (depending on the <strong>interval</strong> parameter) of the selected price index formula or formulas. If the <strong>interval</strong> parameter is set to <strong>TRUE</strong> then it returns a data frame with two columns: <strong>dates</strong> and <strong>index values</strong>. Functions <strong>price_index</strong> and <strong>price_indices</strong> do not take into account aggregating over outlets or product subgroups and to consider these types of aggregating, please use functions: <strong>final_index</strong> or <strong>final_index2</strong>.</p>
-<p><strong>price_index</strong></p>
-<p>This function returns a value or values of the selected price index. The <strong>formula</strong> parameter is a character string indicating the price index formula is to be calculated (see documentation). If the selected price index formula needs some additional information it should be defined by additional parameters: <strong>window</strong> and <strong>splice</strong> (connected with multilateral indices), <strong>base</strong> (adequate for the Young and the Lowe indices) or <strong>sigma</strong> (for the Lloyd-Moulton or the AG mean indices). Sample use:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">price_index</span>(milk, <span class="dt">start=</span><span class="st">&quot;2019-05&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2019-06&quot;</span>, <span class="dt">formula=</span><span class="st">&quot;fisher&quot;</span>)
-<span class="kw">price_index</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-02&quot;</span>,
-            <span class="dt">formula=</span><span class="st">&quot;tpd_splice&quot;</span>,<span class="dt">splice=</span><span class="st">&quot;movement&quot;</span>,<span class="dt">interval=</span><span class="ot">TRUE</span>)</code></pre></div>
+<p>This package includes 3 general functions for price index calculation. The <strong>start</strong> and <strong>end</strong> parameters indicate the base and the research period respectively. These function provide value or values (depending on the <strong>interval</strong> parameter) of the selected price index formula or formulas. If the <strong>interval</strong> parameter is set to <strong>TRUE</strong> then it returns a data frame with two columns: <strong>dates</strong> and <strong>index values</strong>. Function <strong>price_indices</strong> does not take into account aggregating over outlets or product subgroups and to consider these types of aggregating, please use function: <strong>final_index</strong>.</p>
 <p><strong>price_indices</strong></p>
-<p>This is an extended version of the <strong>price_index</strong> function because it allows us to compare many price index formulas by using one command. The general character of this function mean that, for instance, your one command may calculate two CES indices for two different values of <strong>sigma</strong> parameter (the elasticity of substitution) or you can select several splice indices and calculate them by using different window lengths and different splicing method. You can control names of columns in the resulting data frame by defining additional parameters: <strong>namebilateral</strong>, <strong>namebindex</strong>, <strong>namecesindex</strong>, <strong>namefbmulti</strong>, <strong>namesplicemulti</strong> although their default values correspond to the used price index formulas. Please note that this function is not the most general in the package, i.e. all selected price indices are calculated for the same data set defined by the <strong>data</strong> parameter and the aggregation over subgroups or outlets are not taken into consideration here (to consider it, please use functions: <strong>final_index</strong> or <strong>final_index2</strong>).</p>
-<p>For instance, let us use the <strong>milk</strong> data set and let us calculate the price dynamics for the time interval December 2019 - August 2020) using the following price index formulas: the <strong>Fisher</strong> index, the <strong>Young</strong> index with the prior period set to December 2018, the <strong>AG mean</strong> index with the elasticity of substitution parameter <strong>sigma=0.5</strong>, the full-window <strong>GEKS</strong> index with a 9-month window length, the full-window <strong>Geary-Khamis</strong> index with a 9-month window length, the splice <strong>TPD</strong> index using a 6-month time window and being extended by using the <strong>movement splice</strong> method:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">price_indices</span>(milk, <span class="dt">start=</span><span class="st">&quot;2019-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2020-08&quot;</span>, <span class="dt">bilateral=</span><span class="kw">c</span>(<span class="st">&quot;fisher&quot;</span>), 
-              <span class="dt">bindex=</span><span class="kw">c</span>(<span class="st">&quot;young&quot;</span>), <span class="dt">base=</span><span class="kw">c</span>(<span class="st">&quot;2018-12&quot;</span>), 
-              <span class="dt">cesindex=</span><span class="kw">c</span>(<span class="st">&quot;agmean&quot;</span>), <span class="dt">sigma=</span><span class="kw">c</span>(<span class="fl">0.5</span>), 
-              <span class="dt">fbmulti=</span><span class="kw">c</span>(<span class="st">&quot;geks&quot;</span>, <span class="st">&quot;gk&quot;</span>), <span class="dt">fbwindow=</span><span class="kw">c</span>(<span class="dv">9</span>,<span class="dv">9</span>), 
-              <span class="dt">splicemulti=</span><span class="kw">c</span>(<span class="st">&quot;tpd_splice&quot;</span>),<span class="dt">splicewindow=</span><span class="kw">c</span>(<span class="dv">6</span>), 
-              <span class="dt">splice=</span><span class="kw">c</span>(<span class="st">&quot;movement&quot;</span>), <span class="dt">interval=</span><span class="ot">TRUE</span>)</code></pre></div>
+<p>This function allows us to compare many price index formulas by using one command. The general character of this function mean that, for instance, your one command may calculate two CES indices for two different values of <strong>sigma</strong> parameter (the elasticity of substitution) or you can select several splice indices and calculate them by using different window lengths and different splicing method. You can control names of columns in the resulting data frame by defining additional parameters: <strong>names</strong>. Please note that this function is not the most general in the package, i.e. all selected price indices are calculated for the same data set defined by the <strong>data</strong> parameter and the aggregation over subgroups or outlets are not taken into consideration here (to consider it, please use function: <strong>final_index</strong>).</p>
+<p>For instance:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">price_indices</span>(milk, 
+         <span class="dt">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;2019-12&quot;</span>,
+         <span class="dt">formula=</span><span class="kw">c</span>(<span class="st">&quot;geks&quot;</span>,<span class="st">&quot;ccdi&quot;</span>,<span class="st">&quot;hybrid&quot;</span>,<span class="st">&quot;fisher&quot;</span>,
+         <span class="st">&quot;QMp&quot;</span>,<span class="st">&quot;young&quot;</span>,<span class="st">&quot;geksl_fbew&quot;</span>),
+         <span class="dt">window =</span> <span class="kw">c</span>(<span class="dv">13</span>, <span class="dv">13</span>),
+         <span class="dt">base =</span> <span class="kw">c</span>(<span class="st">&quot;2019-03&quot;</span>, <span class="st">&quot;2019-03&quot;</span>),
+         <span class="dt">r=</span><span class="kw">c</span>(<span class="dv">3</span>), <span class="dt">interval=</span><span class="ot">TRUE</span>)</code></pre></div>
+<p>or</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">price_indices</span>(coffee, 
+         <span class="dt">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;2019-12&quot;</span>,
+         <span class="dt">formula=</span><span class="kw">c</span>(<span class="st">&quot;laspeyres&quot;</span>,<span class="st">&quot;paasche&quot;</span>,<span class="st">&quot;fisher&quot;</span>),
+         <span class="dt">interval=</span><span class="ot">FALSE</span>)</code></pre></div>
 <p><strong>final_index</strong></p>
-<p>This function returns a value or values of the selected (final) price index taking into consideration aggregation over product subgroups and/or over outlets (retailer sale points defined in the <strong>retID</strong> column). If the <strong>interval</strong> parameter is set to TRUE, then it returns a data frame with two columns: dates and final index values (after optional aggregating). Please note that different index formulas may use different time intervals (or time periods) for calculations and, each time, if the <strong>aggrret</strong> parameter differs from &quot;none&quot;, aggregation over outlets is done for the set of retIDs being available during all considered months. Moreover, for each outlet, i.e. each <strong>retID</strong> code, the set of considered <strong>prodID</strong> codes is limited to those codes which are available simultaneously in all considered months.</p>
-<p><strong>Details:</strong> the <strong>datasets</strong> parameter defines the user's list of data frames with subgroups of sold products (see documentation). The <strong>formula</strong> parameter is a character string indicating the price index formula is to be calculated (see documentation). If the selected price index formula needs some additional information, it should be defined by additional parameters: <strong>window</strong> and <strong>splice</strong> (connected with multilateral indices), <strong>base</strong> (adequate for the Young and the Lowe indices) or <strong>sigma</strong> (for the Lloyd-Moulton or the AG mean indices). The <strong>aggrret</strong> parameter is a character string indicating the formula for aggregation over outlets (retailer sale points defined in the <strong>retID</strong> column). Available options are: <strong>none</strong>, <strong>laspeyres</strong>, <strong>paasche</strong>, <strong>geolaspeyres</strong>, <strong>geopaasche</strong>, <strong>fisher</strong>, <strong>tornqvist</strong>, <strong>arithmetic</strong> and <strong>geometric</strong>. The first option means that there is no aggregating over outlets. The last two options mean unweighted methods of aggregating, i.e. the arithmetic or the geometric mean is used. Similarly, the <strong>aggrsets</strong> parameter is a character string indicating the formula for aggregation over product subgroups with identical options as previously.</p>
-<p><strong>Example</strong>. Let us define two subgroups of <strong>milk</strong>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">g1&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, milk<span class="op">$</span>description<span class="op">==</span><span class="st">&quot;full-fat milk UHT&quot;</span>)
-g2&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, milk<span class="op">$</span>description<span class="op">==</span><span class="st">&quot;low-fat milk UHT&quot;</span>)</code></pre></div>
-<p>Now, for the fixed time interval: December 2018 - May 2019, let us calculate the (final) chain Walsh price index (the fixed base month is December 2018) taking into consideration the Laspeyres aggregation over subgroups <strong>g1</strong> and <strong>g2</strong> and the Fisher aggregation over outlets:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">final_index</span>(<span class="dt">datasets=</span><span class="kw">list</span>(g1,g2), <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2019-05&quot;</span>, 
-            <span class="dt">formula=</span><span class="st">&quot;chwalsh&quot;</span>, 
-            <span class="dt">aggrsets =</span> <span class="st">&quot;laspeyres&quot;</span>, <span class="dt">aggrret =</span> <span class="st">&quot;fisher&quot;</span>, 
-            <span class="dt">interval=</span><span class="ot">TRUE</span>)</code></pre></div>
-<p><strong>final_index2</strong></p>
-<p>This function returns a value or values of the selected (final) price index taking into consideration aggregation over product subgroups and/or over outlets. Optionally, the function returns a data frame or a figure presenting calculated indices, i.e. the price index for the whole data set and price indices for product subgroups. If the <strong>interval</strong> parameter is set to TRUE, then it returns a data frame (or a figure) with dates and final index values (after optional aggregating). Please note that different index formulas may use different time intervals (or time periods) for calculations and, each time, if the <strong>aggrret</strong> parameter differs from &quot;none&quot;, aggregation over outlets is done for the set of retIDs being available during all considered months. Moreover, for each outlet, i.e. each <strong>retID</strong> code, the set of considered <strong>prodID</strong> codes is limited to those codes which are available simultaneously in all considered months.</p>
-<p><strong>Details:</strong> the <strong>data</strong> parameter defines the user's data frame with subgroups of sold products (see documentation). The <strong>by</strong> parameter indicates a grouping variable name, i.e. this column is used for creating subgroups of products. The <strong>all</strong> parameter is a logical value indicating whether the the selected price index is to be calculated only for the whole set of products or also for created subgroups of products (then <strong>all</strong> is set to TRUE). The <strong>formula</strong> parameter is a character string indicating the price index formula is to be calculated (see documentation). If the selected price index formula needs some additional information, it should be defined by additional parameters: <strong>window</strong> and <strong>splice</strong> (connected with multilateral indices), <strong>base</strong> (adequate for the Young and the Lowe indices) or <strong>sigma</strong> (for the Lloyd-Moulton or the AG mean indices). The <strong>aggrret</strong> parameter is a character string indicating the formula for aggregation over outlets (retailer sale points defined in the <strong>retID</strong> column). Available options are: <strong>none</strong>, <strong>laspeyres</strong>, <strong>paasche</strong>, <strong>geolaspeyres</strong>, <strong>geopaasche</strong>, <strong>fisher</strong>, <strong>tornqvist</strong>, <strong>arithmetic</strong> and <strong>geometric</strong>. The first option means that there is no aggregating over outlets. The last two options mean unweighted methods of aggregating, i.e. the arithmetic or the geometric mean is used. Similarly, the <strong>aggrsets</strong> parameter is a character string indicating the formula for aggregation over product subgroups with identical options as previously. Finally, the <strong>figure</strong> parameter is a logical value indicating whether the function returns a figure presenting all calculated indices (it works if <strong>all</strong> and <strong>interval</strong> are set to TRUE)</p>
-<p><strong>Examples</strong>. Let us calculate the final Fisher price index (with Laspeyres-type aggregation over subgroups) for the whole data set on <strong>coffee</strong> and for each product subgroup:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">final_index2</span>(<span class="dt">data=</span>coffee, <span class="dt">by=</span><span class="st">&quot;description&quot;</span>,<span class="dt">all=</span><span class="ot">TRUE</span>,
-             <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>, 
-             <span class="dt">formula=</span><span class="st">&quot;fisher&quot;</span>,
-             <span class="dt">interval=</span><span class="ot">TRUE</span>,
-             <span class="dt">aggrsets=</span><span class="st">&quot;laspeyres&quot;</span>,<span class="dt">aggrret=</span><span class="st">&quot;none&quot;</span>,
-             <span class="dt">figure=</span><span class="ot">FALSE</span>)</code></pre></div>
-<p>and that can be presented in a figure:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">final_index2</span>(<span class="dt">data=</span>coffee, <span class="dt">by=</span><span class="st">&quot;description&quot;</span>,<span class="dt">all=</span><span class="ot">TRUE</span>,
-             <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>, <span class="dt">formula=</span><span class="st">&quot;fisher&quot;</span>,
-             <span class="dt">interval=</span><span class="ot">TRUE</span>,
-             <span class="dt">aggrsets=</span><span class="st">&quot;laspeyres&quot;</span>,<span class="dt">aggrret=</span><span class="st">&quot;none&quot;</span>,
-             <span class="dt">figure=</span><span class="ot">TRUE</span>)</code></pre></div>
-<p>Now, let us calculate and plot the same price index (with no aggregation) for each <strong>retID</strong>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">final_index2</span>(<span class="dt">data=</span>coffee, <span class="dt">by=</span><span class="st">&quot;retID&quot;</span>,<span class="dt">all=</span><span class="ot">TRUE</span>,
-             <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>, <span class="dt">formula=</span><span class="st">&quot;fisher&quot;</span>,
-             <span class="dt">interval=</span><span class="ot">TRUE</span>,
-             <span class="dt">aggrsets=</span><span class="st">&quot;none&quot;</span>,<span class="dt">aggrret=</span><span class="st">&quot;none&quot;</span>,
-             <span class="dt">figure=</span><span class="ot">TRUE</span>)</code></pre></div>
+<p>This general function returns a value or values of the selected final price index for the selected type of aggregation of partial results. If the interval parameter is set to TRUE, then it returns a data frame where its first column indicates dates and the remaining columns show corresponding values of all selected price index. A final price index formula can be any index formula which is available in the PriceIdices packages (bilateral or multilateral). The formula used for aggregating partial index results is selected by the <strong>aggr</strong> parameter and the User decides on directions of aggregation (see <strong>outlets</strong> and <strong>groups</strong> parameters).</p>
+<p><strong>Example</strong>. Let us calculate the final Fisher price index (with Laspeyres-type aggregation over outlets and product subgroups) for the data set on <strong>milk</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">final_index</span>(milk, <span class="dt">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;2019-12&quot;</span>, 
+         <span class="dt">formula =</span> <span class="st">&quot;fisher&quot;</span>, <span class="dt">groups =</span> <span class="ot">TRUE</span>, <span class="dt">outlets =</span> <span class="ot">TRUE</span>, 
+         <span class="dt">aggr =</span> <span class="st">&quot;laspeyres&quot;</span>, <span class="dt">by =</span> <span class="st">&quot;description&quot;</span>, 
+         <span class="dt">interval =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <p><a id="ad12"> </a></p>
 </div>
 <div id="functions-for-comparisons-of-price-indices" class="section level3">
 <h3>Functions for comparisons of price indices</h3>
-<p>This package includes two functions for a simple graphical comparison of price indices and one function for calculating distances between indices. The first one, i.e. <strong>compare_indices</strong>, is based on the syntax of the <strong>price_indices</strong> function and thus it allows us to compare price indices calculated on the same data set. The second function, i.e. <strong>compare_final_indices</strong>, has a general character since its first argument is a list of data frames which contain results obtained by using the <strong>price_index</strong>, <strong>final_index</strong> or <strong>final_index2</strong> functions. The third one, i.e. <strong>compare_distances</strong>, calculates (average) distances between price indices, i.e. the mean absolute distance or root mean square distance is calculated.</p>
-<p><strong>compare_indices</strong></p>
-<p>This function calculates selected bilateral or/and multilateral price indices and returns a figure with plots of these indices (together with <strong>dates</strong> on X-axis and a corresponding <strong>legend</strong>). The function does not take into account aggregating over outlets or product subgroups (to consider these types of aggregating please use functions: <strong>final_index</strong> and <strong>compare_final_indices</strong>). Please note that the syntax of the function corresponds to the syntax of the <strong>price_indices</strong> function (the meaning of parameters is the same - see documentation). For instance, let us compare the price dynamics for the <strong>milk</strong> dataset for the time interval: December 2018 - December 2019, calculated by using two price index formulas: the chain Jevons index and the full-window GEKS index. The above-mentioned comparison can be made as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">compare_indices</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="dt">bilateral=</span><span class="kw">c</span>(<span class="st">&quot;chjevons&quot;</span>),
-                <span class="dt">fbmulti=</span><span class="kw">c</span>(<span class="st">&quot;geks&quot;</span>),<span class="dt">fbwindow=</span><span class="kw">c</span>(<span class="dv">13</span>), 
-                <span class="dt">namebilateral=</span><span class="kw">c</span>(<span class="st">&quot;Chain Jevons&quot;</span>), <span class="dt">namefbmulti=</span><span class="kw">c</span>(<span class="st">&quot;Full GEKS&quot;</span>))</code></pre></div>
-<p><strong>compare_final_indices</strong></p>
-<p>This function returns a figure with plots of previously calculated price indices. It allows for graphical comparison of price index values which were previously calculated and now are provided as data frames. To be more precise: the <strong>finalindices</strong> parameter is a list of data frames with previously calculated price indices. Each data frame must consist of two columns, i.e. the first column must include dates limited to the year and month and the second column must indicate price index values for corresponding dates. The above-mentioned single data frame may be created manually in the previous step or it may be a result of functions: <strong>price_index</strong> or <strong>final_index</strong>. All considered data frames must have an identical number of rows. The <strong>names</strong> parameter is a vector of character strings describing names of presented indices.</p>
-<p>For instance, let us compare the impact of the aggregating over outlets on the price index results (e.g. the Fisher formula is the assumed aggregating method). For this purpose, let us calculate the full-window <strong>TPD index</strong> in two cases: <strong>case1</strong> without the above-mentioned aggregation and <strong>case2</strong> which considers that aggregation. We use the <strong>milk</strong> dataset and the yearly time interval:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">case1&lt;-<span class="kw">price_index</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,
-                   <span class="dt">formula=</span><span class="st">&quot;tpd&quot;</span>, <span class="dt">interval=</span><span class="ot">TRUE</span>)
-case2&lt;-<span class="kw">final_index</span>(<span class="dt">datasets=</span><span class="kw">list</span>(milk), <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>, 
-                   <span class="dt">formula=</span><span class="st">&quot;tpd&quot;</span>, <span class="dt">aggrsets=</span><span class="st">&quot;none&quot;</span>, <span class="dt">aggrret =</span> <span class="st">&quot;fisher&quot;</span>, 
+<p>This package includes two functions for a simple graphical comparison of price indices and two functions for calculating distances between indices. The first one, i.e. <strong>compare_indices_df</strong>, is based on the syntax of the <strong>price_indices</strong> function and thus it allows us to compare price indices calculated on the same data set. The second function, i.e. <strong>compare_indices_list</strong>, has a general character since its first argument is a list of data frames which contain results obtained by using the <strong>price_indices</strong> or <strong>final_index</strong> functions. The third one, i.e. <strong>compare_distances</strong>, calculates (average) distances between price indices, i.e. the mean absolute distance or root mean square distance is calculated. The last function, <strong>compare_to_target</strong> allows to compute distances between indices from the selected index group and the indicated target price index.</p>
+<p><strong>compare_indices_df</strong> and <strong>compare_indices_list</strong></p>
+<p>These function return a figure with plots of selected price indices, which are provided as a data frame (<strong>compare_indices_df</strong>) or a list of data frames (<strong>compare_indices_list</strong>). For instance, let us compare the Laspeyres and Paasche indices calculated for the data set on milk:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df&lt;-<span class="kw">price_indices</span>(milk, <span class="dt">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;2019-12&quot;</span>, 
+<span class="dt">formula=</span><span class="kw">c</span>(<span class="st">&quot;laspeyres&quot;</span>, <span class="st">&quot;fisher&quot;</span>), <span class="dt">interval =</span> <span class="ot">TRUE</span>)
+<span class="kw">compare_indices_df</span>(df)</code></pre></div>
+<p>Now, let us compare the impact of the aggregating over outlets on the price index results (e.g. the Laspeyres formula is the assumed aggregating method). For this purpose, let us calculate the Fisher price index in two cases: <strong>case1</strong> without the above-mentioned aggregation and <strong>case2</strong> which considers that aggregation. We use the <strong>milk</strong> dataset and the yearly time interval:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">case1&lt;-<span class="kw">price_indices</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,
+                   <span class="dt">formula=</span><span class="st">&quot;fisher&quot;</span>, <span class="dt">interval=</span><span class="ot">TRUE</span>)
+case2&lt;-<span class="kw">final_index</span>(milk, <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>, 
+                   <span class="dt">formula=</span><span class="st">&quot;fisher&quot;</span>,
+                   <span class="dt">outlets=</span><span class="ot">TRUE</span>, 
+                   <span class="dt">aggr =</span> <span class="st">&quot;laspeyres&quot;</span>, 
                    <span class="dt">interval=</span><span class="ot">TRUE</span>)</code></pre></div>
-<p>The comparison of obtained results can be made as follows (it may be time-consuming on your computer):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">compare_final_indices</span>(<span class="dt">finalindices=</span><span class="kw">list</span>(case1, case2),<span class="dt">names=</span><span class="kw">c</span>(<span class="st">&quot;TPD without aggregation&quot;</span>,<span class="st">&quot;TPD with aggregation&quot;</span>))</code></pre></div>
+<p>The comparison of obtained results can be made as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">compare_indices_list</span>(<span class="dt">data=</span><span class="kw">list</span>(case1, case2), 
+                <span class="dt">names=</span><span class="kw">c</span>(<span class="st">&quot;Fisher without aggregation&quot;</span>,
+                <span class="st">&quot;Fisher with aggregation&quot;</span>))</code></pre></div>
 <p><strong>compare_distances</strong></p>
 <p>The function calculates average distances between price indices and it returns a data frame with these values for each pair of price indices. The main <strong>data</strong> parameter is a data frame containing values of indices which are to be compared. The <strong>measure</strong> parameter specifies what measure should be used to compare the indexes. Possible parameter values are: &quot;MAD&quot; (Mean Absolute Distance) or &quot;RMSD&quot; (Root Mean Square Distance). The results may be presented in percentage points (see the <strong>pp</strong> parameter) and we can control how many decimal places are to be used in the presentation of results (see the <strong>prec</strong> parameter).</p>
 <p>For instance, let us compare the Jevons, Dutot and Carli indices calculated for the <strong>milk</strong> data set and for the time interval: December 2018 - December 2019. Let us use the MAD measure for these comparisons:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Creating a data frame with unweighted bilateral index values</span>
-df&lt;-<span class="kw">price_indices</span>(milk, <span class="dt">bilateral=</span><span class="kw">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;dutot&quot;</span>,<span class="st">&quot;carli&quot;</span>), 
-                  <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="dt">interval=</span><span class="ot">TRUE</span>)
+df&lt;-<span class="kw">price_indices</span>(milk, 
+                  <span class="dt">formula=</span><span class="kw">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;dutot&quot;</span>,<span class="st">&quot;carli&quot;</span>), 
+                  <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,
+                  <span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,
+                  <span class="dt">interval=</span><span class="ot">TRUE</span>)
 <span class="co">#Calculating average distances between indices (in p.p)</span>
 <span class="kw">compare_distances</span>(df)</code></pre></div>
 <p><strong>compare_to_target</strong></p>
@@ -1073,7 +1163,7 @@ df&lt;-<span class="kw">price_indices</span>(milk, <span class="dt">bilateral=</
 <p>For instance, let us compare the Jevons, Laspeyres, Paasche and Walsh price indices (calculated for the <strong>milk</strong> data set and for the time interval: December 2018 - December 2019) with the target Fisher price index:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Creating a data frame with example bilateral indices</span>
 df&lt;-<span class="kw">price_indices</span>(milk, 
-                  <span class="dt">bilateral=</span><span class="kw">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;laspeyres&quot;</span>,<span class="st">&quot;paasche&quot;</span>,<span class="st">&quot;walsh&quot;</span>),
+                  <span class="dt">formula=</span><span class="kw">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;laspeyres&quot;</span>,<span class="st">&quot;paasche&quot;</span>,<span class="st">&quot;walsh&quot;</span>),
                   <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="dt">interval=</span><span class="ot">TRUE</span>)
 <span class="co">#Calculating the target Fisher price index</span>
 target_index&lt;-<span class="kw">fisher</span>(milk,<span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="dt">interval=</span><span class="ot">TRUE</span>)

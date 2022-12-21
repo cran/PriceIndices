@@ -26,6 +26,16 @@ knitr::opts_chunk$set(
 #  tindex(pmi=c(1.02,1.03,1.04),psigma=c(0.05,0.09,0.02),start="2020-01",ratio=FALSE)
 
 ## -----------------------------------------------------------------------------
+#  #Generating an artificial dataset (the elasticity of substitution is 1.25)
+#  df<-generate_CES(pmi=c(1.02,1.03),psigma=c(0.04,0.03),
+#  elasticity=1.25,start="2020-01",n=100,days=TRUE)
+#  head(df)
+
+## -----------------------------------------------------------------------------
+#  #Verifying the elasticity of substitution
+#  elasticity(df, start="2020-01",end="2020-02")
+
+## -----------------------------------------------------------------------------
 #  head(data_preparing(milk, time="time",prices="prices",quantities="quantities"))
 
 ## -----------------------------------------------------------------------------
@@ -76,7 +86,14 @@ knitr::opts_chunk$set(
 #  ML$figure_importance
 
 ## -----------------------------------------------------------------------------
-#  data_predicted<-data_classifying(ML, data_test)
+#  #Setting a temporary directory as a working directory
+#  wd<-tempdir()
+#  setwd(wd)
+#  #Saving and loading the model
+#  save_model(ML, dir="My_model")
+#  ML_fromPC<-load_model("My_model")
+#  #Prediction
+#  data_predicted<-data_classifying(ML_fromPC, data_test)
 #  head(data_predicted)
 
 ## -----------------------------------------------------------------------------
@@ -138,7 +155,7 @@ knitr::opts_chunk$set(
 #  prices(milk, period="2019-06")
 
 ## -----------------------------------------------------------------------------
-#  quantities(milk, period="2019-06", set=c(400032, 71772, 82919))
+#  quantities(milk, period="2019-06", set=c(400032, 71772, 82919), ID=TRUE)
 
 ## -----------------------------------------------------------------------------
 #  sales(milk, period="2019-06", set=c(400032, 71772, 82919))
@@ -174,7 +191,8 @@ knitr::opts_chunk$set(
 #  elasticity(coffee, start = "2018-12", end = "2019-01")
 
 ## -----------------------------------------------------------------------------
-#  elasticity_fig (milk, start = "2018-12", end = "2019-12", fixedbase = FALSE)
+#  elasticity_fig (milk,start="2018-12",end="2019-04",figure=TRUE,
+#  method=c("lm","f","sv"),names=c("LM","Fisher", "SV"))
 
 ## -----------------------------------------------------------------------------
 #  jevons(milk, start="2018-12", end="2020-01")
@@ -213,84 +231,65 @@ knitr::opts_chunk$set(
 
 ## -----------------------------------------------------------------------------
 #  ccdi_fbmw(milk, start="2018-12", end="2020-03")
-#  
-#  ccdi_fbmw(milk, start="2018-12", end="2019-12")*
-#  ccdi_fbmw(milk, start="2019-12", end="2020-03")
+#      ccdi_fbmw(milk, start="2018-12", end="2019-12")*
+#      ccdi_fbmw(milk, start="2019-12", end="2020-03")
 
 ## -----------------------------------------------------------------------------
-#  price_index(milk, start="2019-05", end="2019-06", formula="fisher")
-#  price_index(milk, start="2018-12", end="2020-02",
-#              formula="tpd_splice",splice="movement",interval=TRUE)
+#  price_indices(milk,
+#           start = "2018-12", end = "2019-12",
+#           formula=c("geks","ccdi","hybrid","fisher",
+#           "QMp","young","geksl_fbew"),
+#           window = c(13, 13),
+#           base = c("2019-03", "2019-03"),
+#           r=c(3), interval=TRUE)
 
 ## -----------------------------------------------------------------------------
-#  price_indices(milk, start="2019-12", end="2020-08", bilateral=c("fisher"),
-#                bindex=c("young"), base=c("2018-12"),
-#                cesindex=c("agmean"), sigma=c(0.5),
-#                fbmulti=c("geks", "gk"), fbwindow=c(9,9),
-#                splicemulti=c("tpd_splice"),splicewindow=c(6),
-#                splice=c("movement"), interval=TRUE)
+#  price_indices(coffee,
+#           start = "2018-12", end = "2019-12",
+#           formula=c("laspeyres","paasche","fisher"),
+#           interval=FALSE)
 
 ## -----------------------------------------------------------------------------
-#  g1<-dplyr::filter(milk, milk$description=="full-fat milk UHT")
-#  g2<-dplyr::filter(milk, milk$description=="low-fat milk UHT")
-
-## -----------------------------------------------------------------------------
-#  final_index(datasets=list(g1,g2), start="2018-12", end="2019-05",
-#              formula="chwalsh",
-#              aggrsets = "laspeyres", aggrret = "fisher",
-#              interval=TRUE)
-
-## -----------------------------------------------------------------------------
-#  final_index2(data=coffee, by="description",all=TRUE,
-#               start="2018-12",end="2019-12",
-#               formula="fisher",
-#               interval=TRUE,
-#               aggrsets="laspeyres",aggrret="none",
-#               figure=FALSE)
+#  final_index(milk, start = "2018-12", end = "2019-12",
+#           formula = "fisher", groups = TRUE, outlets = TRUE,
+#           aggr = "laspeyres", by = "description",
+#           interval = TRUE)
 #  
 
 ## -----------------------------------------------------------------------------
-#  final_index2(data=coffee, by="description",all=TRUE,
-#               start="2018-12",end="2019-12", formula="fisher",
-#               interval=TRUE,
-#               aggrsets="laspeyres",aggrret="none",
-#               figure=TRUE)
-#  
+#  df<-price_indices(milk, start = "2018-12", end = "2019-12",
+#  formula=c("laspeyres", "fisher"), interval = TRUE)
+#  compare_indices_df(df)
 
 ## -----------------------------------------------------------------------------
-#  final_index2(data=coffee, by="retID",all=TRUE,
-#               start="2018-12",end="2019-12", formula="fisher",
-#               interval=TRUE,
-#               aggrsets="none",aggrret="none",
-#               figure=TRUE)
-
-## -----------------------------------------------------------------------------
-#  compare_indices(milk, start="2018-12",end="2019-12",bilateral=c("chjevons"),
-#                  fbmulti=c("geks"),fbwindow=c(13),
-#                  namebilateral=c("Chain Jevons"), namefbmulti=c("Full GEKS"))
-
-## -----------------------------------------------------------------------------
-#  case1<-price_index(milk, start="2018-12",end="2019-12",
-#                     formula="tpd", interval=TRUE)
-#  case2<-final_index(datasets=list(milk), start="2018-12", end="2019-12",
-#                     formula="tpd", aggrsets="none", aggrret = "fisher",
+#  case1<-price_indices(milk, start="2018-12",end="2019-12",
+#                     formula="fisher", interval=TRUE)
+#  case2<-final_index(milk, start="2018-12", end="2019-12",
+#                     formula="fisher",
+#                     outlets=TRUE,
+#                     aggr = "laspeyres",
 #                     interval=TRUE)
 #  
 
 ## -----------------------------------------------------------------------------
-#  compare_final_indices(finalindices=list(case1, case2),names=c("TPD without aggregation","TPD with aggregation"))
+#  compare_indices_list(data=list(case1, case2),
+#                  names=c("Fisher without aggregation",
+#                  "Fisher with aggregation"))
 
 ## -----------------------------------------------------------------------------
 #  #Creating a data frame with unweighted bilateral index values
-#  df<-price_indices(milk, bilateral=c("jevons","dutot","carli"),
-#                    start="2018-12",end="2019-12",interval=TRUE)
+#  df<-price_indices(milk,
+#                    formula=c("jevons","dutot","carli"),
+#                    start="2018-12",
+#                    end="2019-12",
+#                    interval=TRUE)
 #  #Calculating average distances between indices (in p.p)
 #  compare_distances(df)
 
 ## -----------------------------------------------------------------------------
 #  #Creating a data frame with example bilateral indices
 #  df<-price_indices(milk,
-#                    bilateral=c("jevons","laspeyres","paasche","walsh"),
+#                    formula=c("jevons","laspeyres","paasche","walsh"),
 #                    start="2018-12",end="2019-12",interval=TRUE)
 #  #Calculating the target Fisher price index
 #  target_index<-fisher(milk,start="2018-12",end="2019-12",interval=TRUE)
