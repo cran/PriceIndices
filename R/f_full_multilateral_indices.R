@@ -273,14 +273,14 @@ geksj <-
    ID_tt_start<-intersect(p_list[[tt]]$by, p_list[[d_start]]$by)
    pm_start<-dplyr::filter(p_list[[d_start]], by %in% ID_tt_start)$uv
    pm_tt<-dplyr::filter(p_list[[tt]], by %in% ID_tt_start)$uv
-   pm_J<-(prod(pm_start/pm_tt))^(1/length(pm_start))
+   pm_J<-prod((pm_start/pm_tt)^(1/length(pm_start)))
    return (1/pm_J)  
    }
    if (tt==d_start) {
    ID_tt_end<-intersect(p_list[[tt]]$by, p_list[[d_end]]$by)   
    pl_end<-dplyr::filter(p_list[[d_end]], by %in% ID_tt_end)$uv
    pl_tt<-dplyr::filter(p_list[[tt]], by %in% ID_tt_end)$uv
-   pl_J<-(prod(pl_end/pl_tt))^(1/length(pl_end))
+   pl_J<-prod((pl_end/pl_tt)^(1/length(pl_end)))
    return (pl_J)   
    }
    if ((!(tt==d_end)) & (!(tt==d_start)))  
@@ -290,8 +290,8 @@ geksj <-
    pl_tt<-dplyr::filter(p_list[[tt]], by %in% ID_tt_end)$uv
    pm_start<-dplyr::filter(p_list[[d_start]], by %in% ID_tt_start)$uv
    pm_tt<-dplyr::filter(p_list[[tt]], by %in% ID_tt_start)$uv
-   pl_J<-(prod(pl_end/pl_tt))^(1/length(pl_end))
-   pm_J<-(prod(pm_start/pm_tt))^(1/length(pm_start))
+   pl_J<-prod((pl_end/pl_tt)^(1/length(pl_end)))
+   pm_J<-prod((pm_start/pm_tt)^(1/length(pm_start)))
    return (pl_J/pm_J)
   }
   }
@@ -532,15 +532,8 @@ gk <-
   index1 <- rep(1, window)
   index2 <- rep(2, window)
   #set of dates
-  dates <- c()
-  wst <- wstart
-  while (wst <= wend)
-  {
-  t <- substr(wst, 0, 7)
-  dates <- c(dates, t)
-  lubridate::month(wst) <-
-  lubridate::month(wst) + 1
-  }
+  dates <- seq.Date(from = wstart, to = wend, by = "month")
+  dates<-substr(dates, 0, 7)
   d2<-d
   d2$time<-as.character(d2$time)
   d2$time<-substr(d2$time,0,7)
@@ -566,7 +559,6 @@ gk <-
   }
 
 
-  
 #' @title  Calculating the multilateral TPD price index
 #'
 #' @description This function returns a value of the multilateral TPD (Time Product Dummy) price index.
@@ -625,17 +617,9 @@ tpd <-
   if (length(products) < 2)
   stop ("At least two prodIDs must be available during the considered time interval")
   #main body
-  dates <-
-  c()  #vector with all dates written as 7 signs from the time interval [1,T]
-  wst <- wstart
-  lubridate::month(wst) <-
-  lubridate::month(wst) + 1
-  while (wst <= wend)
-  {
-  dates <- c(dates, substr(wst, 0, 7))
-  lubridate::month(wst) <-
-  lubridate::month(wst) + 1
-  }
+  dates <- seq.Date(from = wstart, to = wend, by = "month")
+  dates<-substr(dates, 0, 7)
+  dates<-dates[2:length(dates)]
   d$time<-as.character(d$time)
   d$time<-substr(d$time, 0, 7)
   #dates of availability of products
@@ -775,17 +759,9 @@ utpd <-
   if (length(products) < 2)
   stop ("At least two prodIDs must be available during the considered time interval")
   #main body
-  dates <-
-  c()  #vector with all dates written as 7 signs from the time interval [1,T]
-  wst <- wstart
-  lubridate::month(wst) <-
-  lubridate::month(wst) + 1
-  while (wst <= wend)
-  {
-  dates <- c(dates, substr(wst, 0, 7))
-  lubridate::month(wst) <-
-  lubridate::month(wst) + 1
-  }
+  dates <- seq.Date(from = wstart, to = wend, by = "month")
+  dates<-substr(dates, 0, 7)
+  dates<-dates[2:length(dates)]
   d$time<-as.character(d$time)
   d$time<-substr(d$time, 0, 7)
   #dates of availability of products
@@ -1539,14 +1515,9 @@ geksaqu <-
   stop("parameters must satisfy: end<wstart+window")
   start <- substr(start, 0, 7)
   end <- substr(end, 0, 7)
-  dates <- c()
-  while (wstart <= wend)
-  {
-  t <- substr(wstart, 0, 7)
-  dates <- c(dates, t)
-  lubridate::month(wstart) <-
-  lubridate::month(wstart) + 1
-  }
+  dates <- seq.Date(from = wstart, to = wend, by = "month")
+  dates<-substr(dates, 0, 7)
+  data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
@@ -1615,14 +1586,9 @@ wgeksaqu <-
   stop("parameters must satisfy: end<wstart+window")
   start <- substr(start, 0, 7)
   end <- substr(end, 0, 7)
-  dates <- c()
-  while (wstart <= wend)
-  {
-  t <- substr(wstart, 0, 7)
-  dates <- c(dates, t)
-  lubridate::month(wstart) <-
-  lubridate::month(wstart) + 1
-  }
+  dates <- seq.Date(from = wstart, to = wend, by = "month")
+  dates<-substr(dates, 0, 7)
+  data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
@@ -1698,14 +1664,9 @@ geksaqi <-
   stop("parameters must satisfy: end<wstart+window")
   start <- substr(start, 0, 7)
   end <- substr(end, 0, 7)
-  dates <- c()
-  while (wstart <= wend)
-  {
-  t <- substr(wstart, 0, 7)
-  dates <- c(dates, t)
-  lubridate::month(wstart) <-
-  lubridate::month(wstart) + 1
-  }
+  dates <- seq.Date(from = wstart, to = wend, by = "month")
+  dates<-substr(dates, 0, 7)
+  data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
@@ -1775,15 +1736,9 @@ wgeksaqi <-
   stop("parameters must satisfy: end<wstart+window")
   start <- substr(start, 0, 7)
   end <- substr(end, 0, 7)
-  dates <- c()
-  while (wstart <= wend)
-  {
-  t <- substr(wstart, 0, 7)
-  dates <- c(dates, t)
-  lubridate::month(wstart) <-
-  lubridate::month(wstart) + 1
-  }
-  
+  dates <- seq.Date(from = wstart, to = wend, by = "month")
+  dates<-substr(dates, 0, 7)
+  data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
@@ -1856,14 +1811,9 @@ geksgaqi <-
   stop("parameters must satisfy: end<wstart+window")
   start <- substr(start, 0, 7)
   end <- substr(end, 0, 7)
-  dates <- c()
-  while (wstart <= wend)
-  {
-  t <- substr(wstart, 0, 7)
-  dates <- c(dates, t)
-  lubridate::month(wstart) <-
-  lubridate::month(wstart) + 1
-  }
+  dates <- seq.Date(from = wstart, to = wend, by = "month")
+  dates<-substr(dates, 0, 7)
+  data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
@@ -1930,15 +1880,9 @@ wgeksgaqi <-
   stop("parameters must satisfy: end<wstart+window")
   start <- substr(start, 0, 7)
   end <- substr(end, 0, 7)
-  dates <- c()
-  while (wstart <= wend)
-  {
-  t <- substr(wstart, 0, 7)
-  dates <- c(dates, t)
-  lubridate::month(wstart) <-
-  lubridate::month(wstart) + 1
-  }
-  
+  dates <- seq.Date(from = wstart, to = wend, by = "month")
+  dates<-substr(dates, 0, 7)
+  data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
@@ -2015,13 +1959,8 @@ geksiqm <-
   start <- substr(start, 0, 7)
   end <- substr(end, 0, 7)
   dates <- c()
-  while (wstart <= wend)
-  {
-  t <- substr(wstart, 0, 7)
-  dates <- c(dates, t)
-  lubridate::month(wstart) <-
-  lubridate::month(wstart) + 1
-  }
+  dates <- seq.Date(from = wstart, to = wend, by = "month")
+  dates<-substr(dates, 0, 7)
   #main body
   gks <-
   function (tt)
@@ -2088,14 +2027,8 @@ geksqm <-
   stop("parameters must satisfy: end<wstart+window")
   start <- substr(start, 0, 7)
   end <- substr(end, 0, 7)
-  dates <- c()
-  while (wstart <= wend)
-  {
-  t <- substr(wstart, 0, 7)
-  dates <- c(dates, t)
-  lubridate::month(wstart) <-
-  lubridate::month(wstart) + 1
-  }
+  dates <- seq.Date(from = wstart, to = wend, by = "month")
+  dates<-substr(dates, 0, 7)
   #main body
   gks <-
   function (tt)
@@ -2105,8 +2038,6 @@ geksqm <-
   geks_qm <- geks_qm ^ (1 / window)
   return(geks_qm)
   }
-
-
 
 
 #' @title  Calculating the multilateral GEKS-LM price index
@@ -2167,14 +2098,8 @@ gekslm <-
   stop("parameters must satisfy: end<wstart+window")
   start <- substr(start, 0, 7)
   end <- substr(end, 0, 7)
-  dates <- c()
-  while (wstart <= wend)
-  {
-  t <- substr(wstart, 0, 7)
-  dates <- c(dates, t)
-  lubridate::month(wstart) <-
-  lubridate::month(wstart) + 1
-  }
+  dates <- seq.Date(from = wstart, to = wend, by = "month")
+  dates<-substr(dates, 0, 7)
   #main body
   gks <-
   function (tt)

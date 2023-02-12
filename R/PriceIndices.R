@@ -399,6 +399,12 @@
 #'
 #' \code{\link{tpd_fbmw}}
 #'
+#' @section Functions for bilateral indicator calculations:
+#' \code{\link{bennet}} 
+#'
+#' @section Functions for multilateral indicator calculations:
+#' \code{\link{mbennet}} 
+#'
 #' @section General functions for price index calculations:
 #' \code{\link{price_indices}}
 #'
@@ -408,6 +414,8 @@
 #' \code{\link{compare_indices_df}} 
 #'
 #' \code{\link{compare_indices_list}}
+#'
+#' \code{\link{compare_indices_jk}}
 #'
 #' \code{\link{compare_distances}}
 #'

@@ -296,3 +296,27 @@ knitr::opts_chunk$set(
 #  #Calculating average distances between considered indices and the Fisher index (in p.p)
 #  compare_to_target(df,target=target_index)
 
+## -----------------------------------------------------------------------------
+#  #creating a list with jackknife results
+#  comparison<-compare_indices_jk(milk,
+#  formula=c("jevons","fisher","geks"),
+#  start="2018-12",
+#  end="2019-12",
+#  window=c(13),
+#  names=c("Jevons","Fisher","GEKS"),
+#  by="retID",
+#  title="Jackknife box-plots for milk products")
+#  #displaying a data frame with basic characteristics of the calculated indices
+#  comparison$results
+
+## -----------------------------------------------------------------------------
+#  #displaying box-plotes created for the price index values obtained by using the jackknife method:
+#  comparison$figure
+
+## -----------------------------------------------------------------------------
+#  bennet(milk, start = "2018-12", end = "2019-12", interval=TRUE)
+
+## -----------------------------------------------------------------------------
+#  milk$prodID<-milk$description
+#  bennet(milk, start = "2018-12", end = "2019-12", contributions = TRUE)
+

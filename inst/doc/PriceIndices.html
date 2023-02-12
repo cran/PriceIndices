@@ -132,15 +132,16 @@ remotes<span class="op">::</span><span class="kw">install_github</span>(<span cl
 <li><a href="#ad1">Data sets included in the package and generating artificial scanner data sets</a></li>
 <li><a href="#ad2">Functions for data processing</a></li>
 <li><a href="#ad3">Functions providing dataset characteristics</a></li>
-<li><a href="#ad4">Functions for bilateral unweighted price index calculation</a></li>
-<li><a href="#ad5">Functions for bilateral weighted price index calculation</a></li>
-<li><a href="#ad6">Functions for chain price index calculation</a></li>
-<li><a href="#ad7">Functions for multilateral price index calculation</a></li>
+<li><a href="#ad4">Functions for bilateral unweighted price index calculations</a></li>
+<li><a href="#ad5">Functions for bilateral weighted price index calculations</a></li>
+<li><a href="#ad6">Functions for chain price index calculations</a></li>
+<li><a href="#ad7">Functions for multilateral price index calculations</a></li>
 <li><a href="#ad8">Functions for extending multilateral price indices by using splicing methods</a></li>
 <li><a href="#ad9">Functions for extending multilateral price indices by using the FBEW method</a></li>
 <li><a href="#ad10">Functions for extending multilateral price indices by using the FBMW method</a></li>
 <li><a href="#ad11">General functions for price index calculations</a></li>
 <li><a href="#ad12">Functions for comparisons of price indices</a></li>
+<li><a href="#ad13">Functions for price and quantity indicator calculations</a></li>
 </ol>
 <p><a id="ad1"> </a></p>
 <div id="data-sets-included-in-the-package-and-generating-artificial-scanner-data-sets" class="section level3">
@@ -1169,6 +1170,27 @@ df&lt;-<span class="kw">price_indices</span>(milk,
 target_index&lt;-<span class="kw">fisher</span>(milk,<span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="dt">interval=</span><span class="ot">TRUE</span>)
 <span class="co">#Calculating average distances between considered indices and the Fisher index (in p.p)</span>
 <span class="kw">compare_to_target</span>(df,<span class="dt">target=</span>target_index)</code></pre></div>
+<p><strong>compare_indices_jk</strong></p>
+<p>This function presents a comparison of selected indices obtained by using the jackknife method. In particular, it returns a list with two elements: <strong>results</strong>, which is a data frame with basic characteristics of the calculated indices (including the <strong>jackknife estimates</strong> for selected price indices), and <strong>figure</strong> which presents a box-plot for the considered indices. The User may control a way of creating product subgroups (subsamples) via the <strong>by</strong> parameter (in the classical jackknife method <strong>by</strong> should indicate <strong>prodID</strong>). Please follow the example, in which the Jevons, Fisher and GEKS indices are compared by using the jackknife method:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#creating a list with jackknife results</span>
+comparison&lt;-<span class="kw">compare_indices_jk</span>(milk,
+<span class="dt">formula=</span><span class="kw">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;fisher&quot;</span>,<span class="st">&quot;geks&quot;</span>),
+<span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>,
+<span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>, 
+<span class="dt">window=</span><span class="kw">c</span>(<span class="dv">13</span>),
+<span class="dt">names=</span><span class="kw">c</span>(<span class="st">&quot;Jevons&quot;</span>,<span class="st">&quot;Fisher&quot;</span>,<span class="st">&quot;GEKS&quot;</span>), 
+<span class="dt">by=</span><span class="st">&quot;retID&quot;</span>,
+<span class="dt">title=</span><span class="st">&quot;Jackknife box-plots for milk products&quot;</span>)
+<span class="co">#displaying a data frame with basic characteristics of the calculated indices</span>
+comparison<span class="op">$</span>results</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#displaying box-plotes created for the price index values obtained by using the jackknife method:</span>
+comparison<span class="op">$</span>figure</code></pre></div>
+<p><a id="ad13"> </a></p>
+<p>There are two package functions for calculating price and quantity indicators. The <strong>bennet</strong> function returns the (bilateral) Bennet price and quantity indicators and optionally also the price and quantity contributions of individual products. The <strong>mbennet</strong> function returns the multilateral (transitive) Bennet price and quantity indicators and optionally also the price and quantity contributions of individual products. For instance, the following command calculates the Bennet price and quantity indicators for milk products:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">bennet</span>(milk, <span class="dt">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="dt">interval=</span><span class="ot">TRUE</span>)</code></pre></div>
+<p>where price and quantity contributions of each subgroups of milk products can be obtained as follows:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">milk<span class="op">$</span>prodID&lt;-milk<span class="op">$</span>description
+<span class="kw">bennet</span>(milk, <span class="dt">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="dt">contributions =</span> <span class="ot">TRUE</span>)</code></pre></div>
 </div>
 </div>
 </div>
