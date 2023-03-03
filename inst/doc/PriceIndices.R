@@ -39,6 +39,22 @@ knitr::opts_chunk$set(
 #  head(data_preparing(milk, time="time",prices="prices",quantities="quantities"))
 
 ## -----------------------------------------------------------------------------
+#  #Creating a data frame with zero prices (df)
+#  data<-dplyr::filter(milk,time>=as.Date("2018-12-01") & time<=as.Date("2019-03-01"))
+#  sample<-dplyr::sample_n(data, 100)
+#  rest<-setdiff(data, sample)
+#  sample$prices<-0
+#  df<-rbind(sample, rest)
+#  #The Fisher price index calculated for the original data set
+#  fisher(df, "2018-12","2019-03")
+#  #Zero price imputations:
+#  df2<-data_imputing(df, start="2018-12", end="2019-03",
+#                zero_prices=TRUE,
+#                outlets=TRUE)
+#  #The Fisher price index calculated for the data set with imputed prices:
+#  fisher(df2, "2018-12","2019-03")
+
+## -----------------------------------------------------------------------------
 #  dataAGGR
 
 ## -----------------------------------------------------------------------------
@@ -75,7 +91,7 @@ knitr::opts_chunk$set(
 #                           data_test,
 #                           coicop="coicop6",
 #                           grid=my.grid,
-#                           indicators=c("description","codeIN"),
+#                           indicators=c("description","codeIN","grammage"),
 #                           key_words=c("uht"),
 #                           rounds=60)
 
@@ -150,6 +166,19 @@ knitr::opts_chunk$set(
 
 ## -----------------------------------------------------------------------------
 #  matched_fig(milk, start="2018-12", end="2019-04", type="prodID", figure=FALSE)
+
+## -----------------------------------------------------------------------------
+#  list<-products(milk, "2018-12","2019-12")
+#  list$statistics
+
+## -----------------------------------------------------------------------------
+#  list$figure
+
+## -----------------------------------------------------------------------------
+#  products_fig(milk, "2018-12","2019-12",
+#  fixed_base=TRUE, contributions=FALSE,
+#  show=c("new","disappearing","matched","available"))
+#  
 
 ## -----------------------------------------------------------------------------
 #  prices(milk, period="2019-06")
