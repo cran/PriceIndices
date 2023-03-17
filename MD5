@@ -1,6 +1,6 @@
-243c2c48308a50fffbd6dee942f87751 *DESCRIPTION
+fd494aa460e3ced223d4c03102553a2d *DESCRIPTION
 3ce1046daf954441c8a0ec9d2ef6cc46 *NAMESPACE
-226f95210a331d8296fb783763a7ef09 *NEWS.md
+d12afdbb77ae8e600eaf964f8dd4f2bd *NEWS.md
 4df6572fbc33ab744b6de373ff8d12a1 *R/PriceIndices.R
 ce162692b25e5e08211bc85cc80516eb *R/coffee.R
 c485513cf3ba6b2eb2662e0e7500aa87 *R/dataAGGR.R
@@ -12,11 +12,11 @@ d1b400e0bae192b6bf9b8a168e6e5523 *R/f_bilateral_indicators.R
 a9d3c13590a67e611c4ff2ffbd9a47c2 *R/f_bilateral_indices.R
 0c83e66f9b06bdcbc48cb5db1fddf3aa *R/f_chain_indices.R
 b57959c884e4775a32d8a37c45395ad9 *R/f_comparing_indices.R
-b503e0925e7d3ca94124e6bc0cf1e5f3 *R/f_data_processing.R
+6254abe0f37662e677cf3d021539052a *R/f_data_processing.R
 fd2c07f5f08285f51ea42980dd4530d9 *R/f_extensions_multilateral_indices.R
 bb2b8550091c96af15c17053e259e086 *R/f_full_multilateral_indices.R
-85c72a03c37f3a5580d61d100725e4c4 *R/f_general.R
-12a466b9b9508628ab2aff2e2b1b9bbc *R/f_internal.R
+8fca4a3be93e36afd21c8e2b0b473eaf *R/f_general.R
+dbb72c98150e62a266481c2bdfae25ec *R/f_internal.R
 739036253d4ba8340a7835c9c4ae2f7a *R/f_multilateral_indicators.R
 aa4c712bedd4238538cb0711caae9569 *R/milk.R
 dc69e37c90ba56a8b2a46367b50e5ede *R/sugar.R
@@ -99,7 +99,7 @@ c81673ffba7896f9b92ad3e4d3d98781 *man/dataMATCH.Rd
 3308b1a7ab2c6808d706dfdb194fb392 *man/data_check.Rd
 f3920079e50b1957ac83b6199e75b846 *man/data_classifying.Rd
 3956579f443c8247763a3967a0bfb19c *man/data_filtering.Rd
-f855d60448c24d9a35132221cc0943dc *man/data_imputing.Rd
+ea4a5e1a391c16d463edb5c522223d5e *man/data_imputing.Rd
 4c0e4709d9215a918d85949160f8545f *man/data_matching.Rd
 b1d254bcce8b90270dfe1e78de00558e *man/data_norm.Rd
 bfb55a7767594b3fb814daef9984c0f5 *man/data_preparing.Rd
@@ -111,7 +111,7 @@ af569fc5326968c56bf47a020c3485ce *man/data_unit.Rd
 5b717cb85cf9c4376ecc8c2eb0f82eed *man/drobisch.Rd
 c69d1eac11f80c8366780d5c7a611506 *man/dutot.Rd
 b486c42c06794a91be4ffb73842fb1bb *man/elasticity.Rd
-cb29250a292e17b755854a418983872c *man/elasticity_fig.Rd
+60ba669bd475dbab7a901a45c71e8083 *man/elasticity_fig.Rd
 99c1c6fb8ab773a3f06f41d35ebfb1a9 *man/expenditures.Rd
 f2c98e913fcc103b5c3c9f401f2932f6 *man/figures/README-unnamed-chunk-19-1.png
 202701827478eb859b48ba5a94d044ab *man/figures/README-unnamed-chunk-20-1.png
@@ -203,7 +203,7 @@ dc8601607a6ebf033802fe9bc803bf9f *man/model_classification.Rd
 4d98aae8408e271744c67f262b990e0b *man/palgrave.Rd
 92623b988a871682562ce88757ca3114 *man/pqcor.Rd
 cb13741c20aa6796e9d693069badc1ef *man/pqcor_fig.Rd
-c32de7431fd13fe3c4b96eacc34b7323 *man/price_indices.Rd
+a89802df53ea2599c6d06d7565b18838 *man/price_indices.Rd
 8992307b63fe870f03ca4dc965a2b59e *man/prices.Rd
 5a418954ec07d2b1e4bc0eed2f45a8cb *man/products.Rd
 4bb28fe90f02ded8fc5faba3e34fc73f *man/products_fig.Rd
