@@ -334,13 +334,22 @@ knitr::opts_chunk$set(
 #  window=c(13),
 #  names=c("Jevons","Fisher","GEKS"),
 #  by="retID",
-#  title="Jackknife box-plots for milk products")
-#  #displaying a data frame with basic characteristics of the calculated indices
-#  comparison$results
+#  title_iterations="Box-plots for iteration values",
+#  title_pseudovalues="Box-plots for pseudovalues")
+#  #displaying a data frame with basic characteristics of the calculated iteration index values
+#  comparison$iterations
 
 ## -----------------------------------------------------------------------------
-#  #displaying box-plotes created for the price index values obtained by using the jackknife method:
-#  comparison$figure
+#  #displaying a data frame with basic characteristics of the calculated index pseudovalues obtained in the jackknife procedure
+#  comparison$pseudovalues
+
+## -----------------------------------------------------------------------------
+#  #displaying box-plotes created for the calculated iteration index values
+#  comparison$figure_iterations
+
+## -----------------------------------------------------------------------------
+#  #displaying box-plotes created for the calculated index pseudovalues obtained in the jackknife procedure
+#  comparison$figure_pseudovalues
 
 ## -----------------------------------------------------------------------------
 #  bennet(milk, start = "2018-12", end = "2019-12", interval=TRUE)
@@ -348,4 +357,11 @@ knitr::opts_chunk$set(
 ## -----------------------------------------------------------------------------
 #  milk$prodID<-milk$description
 #  bennet(milk, start = "2018-12", end = "2019-12", contributions = TRUE)
+
+## -----------------------------------------------------------------------------
+#  montgomery(coffee, start = "2018-12", end = "2019-12", interval=TRUE)
+
+## -----------------------------------------------------------------------------
+#  coffee$prodID<-coffee$description
+#  montgomery(coffee, start = "2018-12", end = "2019-12", contributions = TRUE)
 
