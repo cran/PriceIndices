@@ -61,11 +61,11 @@ knitr::opts_chunk$set(
 #  data_aggregating(dataAGGR)
 
 ## -----------------------------------------------------------------------------
-#  data_unit(dataU,units=c("g","ml","kg","l"),multiplication="x")
+#  data_unit(dataU,units=c("g|ml|kg|l"),multiplication="x")
 
 ## -----------------------------------------------------------------------------
 #  # Preparing a data set
-#  data<-data_unit(dataU,units=c("g","ml","kg","l"),multiplication="x")
+#  data<-data_unit(dataU,units=c("g|ml|kg|l"),multiplication="x")
 #  # Normalization of grammage units
 #  data_norm(data, rules=list(c("ml","l",1000),c("g","kg",1000)))
 
@@ -89,7 +89,7 @@ knitr::opts_chunk$set(
 #  data_test<-dplyr::filter(dataCOICOP,dataCOICOP$time==as.Date("2021-11-01"))
 #  ML<-model_classification(data_train,
 #                           data_test,
-#                           coicop="coicop6",
+#                           class="coicop6",
 #                           grid=my.grid,
 #                           indicators=c("description","codeIN","grammage"),
 #                           key_words=c("uht"),
@@ -151,6 +151,29 @@ knitr::opts_chunk$set(
 #                           filters=c("extremeprices"),pquantiles=c(0.01,0.99),
 #                           interval=TRUE, retailers=TRUE)
 #  nrow(filter1B)
+
+## -----------------------------------------------------------------------------
+#  sugar.<-dplyr::filter(sugar, time==as.Date("2018-12-01") | time==as.Date("2019-12-01"))
+#  nrow(sugar.)
+#  sugar_<-data_reducing(sugar., start="2018-12", end="2019-12",by="description", minN=5)
+#  nrow(sugar_)
+
+## -----------------------------------------------------------------------------
+#  #Data matching over time
+#  df<-data_matching(data=dataDOWNSIZED, start="2024-01", end="2024-02",
+#  codeIN=TRUE,codeOUT=TRUE,description=TRUE,
+#  onlydescription=FALSE,precision=0.9,interval=FALSE)
+#  # Extraction of information about grammage
+#  df<-data_unit(df,units=c("g|ml|kg|l"),multiplication="x")
+#  # Price standardization
+#  df<-data_norm(df, rules=list(c("ml","l",1000),c("g","kg",1000)))
+#  # Downsized products detection
+#  result<-shrinkflation(data=df, start="2024-01","2024-02", prec=3, interval=FALSE)
+#  result$changes
+#  #result$products_downsized
+#  #result$df_downsized
+#  #result$df_reduced
+#  result$df_summary
 
 ## -----------------------------------------------------------------------------
 #  available(milk, period1="2018-12", period2="2019-12", type="retID",interval=TRUE)
