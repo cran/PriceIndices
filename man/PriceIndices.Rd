@@ -18,7 +18,7 @@ The list of package functions is as follows:
 
 \code{\link{dataCOICOP}}
 
-\code{\link{dataDOWNSIZED}} 
+\code{\link{data_DOWN_UP_SIZED}} 
 
 \code{\link{milk}} 
 
@@ -108,6 +108,8 @@ The list of package functions is as follows:
 \code{\link{jevons}}
 
 \code{\link{harmonic}}
+
+\code{\link{dikhanov}}
 }
 
 \section{Functions for bilateral weighted price index calculation}{
@@ -178,6 +180,8 @@ The list of package functions is as follows:
 \code{\link{chjevons}}
 
 \code{\link{chharmonic}}
+
+\code{\link{chdikhanov}}
 
 \code{\link{chagmean}} 
 

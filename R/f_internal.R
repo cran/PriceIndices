@@ -47,6 +47,8 @@ price_index <-
   set <- harmonic(data, start, end)
   if (formula == "bmw")
   set <- bmw(data, start, end)
+  if (formula == "dikhanov")
+  set <- dikhanov(data, start, end)
   #weighted formulas
   if (formula == "laspeyres")
   set <- laspeyres(data, start, end)
@@ -121,6 +123,8 @@ price_index <-
   set <- chcswd(data, start, end)
   if (formula == "chbmw")
   set <- chbmw(data, start, end)
+  if (formula == "chdikhanov")
+  set <- chdikhanov(data, start, end)
   if (formula == "chharmonic")
   set <- chharmonic(data, start, end)
   if (formula == "chlaspeyres")
@@ -373,6 +377,8 @@ price_index <-
   set <- harmonic(data, start, end, interval)
   if (formula == "bmw")
   set <- bmw(data, start, end, interval)
+  if (formula == "dikhanov")
+  set <- dikhanov(data, start, end, interval)
   #weighted formulas
   if (formula == "laspeyres")
   set <- laspeyres(data, start, end, interval)
@@ -447,6 +453,8 @@ price_index <-
   set <- chcswd(data, start, end, interval)
   if (formula == "chbmw")
   set <- chbmw(data, start, end, interval)
+  if (formula == "chdikhanov")
+  set <- chdikhanov(data, start, end, interval)
   if (formula == "chharmonic")
   set <- chharmonic(data, start, end, interval)
   if (formula == "chlaspeyres")
@@ -1757,8 +1765,8 @@ aqu <-
   )
   )
   id <-
-  matched(data, start, end, type = "prodID", interval = FALSE)
-  data<-dplyr::filter(data, prodID %in% id) 
+  matched(data, period1 = start, period2 = end, type = "prodID", interval = FALSE)
+  data<-dplyr::filter(data, prodID %in% id)  
   price_end <-
   prices(data, period = end)
   quantity_start <-
@@ -1868,7 +1876,7 @@ aqi <-
   )
   )
   id <-
-  matched(data, start, end, type = "prodID", interval = FALSE)
+  matched(data, period1 = start, period2 = end, type = "prodID", interval = FALSE)
   data<-dplyr::filter(data, prodID %in% id) 
   price_start <-
   prices(data, period = start)
@@ -1980,9 +1988,9 @@ gaqi <-
   lubridate::year(data$time) == lubridate::year(end) &
   lubridate::month(data$time) == lubridate::month(end)
   )
-  )
+  ) 
   id <-
-  matched(data, start, end, type = "prodID", interval = FALSE)
+  matched(data, period1 = start, period2 = end, type = "prodID", interval = FALSE)
   data<-dplyr::filter(data, prodID %in% id) 
   price_start <-
   prices(data, period = start)
@@ -2634,7 +2642,7 @@ wgeks_num <-
   dates<-substr(dates, 0, 7)
   #main body
   wgks_num <-
-  function (tt) fisher(data, start=tt, end=end)
+  function (tt) fisher(data, tt, end)
   vec <- sapply(dates, wgks_num)
   sales_in_time <-
   function (tt)
@@ -2693,7 +2701,7 @@ wgeks_denom <-
   dates<-substr(dates, 0, 7)
   #main body
   wgks_denom <-
-  function (tt) fisher(data, start=tt, end=start)
+  function (tt) fisher(data, tt, start)
   vec <- sapply(dates, wgks_denom)
   sales_in_time <-
   function (tt)
@@ -2854,7 +2862,7 @@ wgeksl_num <-
   dates<-substr(dates, 0, 7)
   #main body
   wgksl_num <-
-  function (tt) nl(data, start=tt, end=end)
+  function (tt) nl(data, tt, end)
   vec <- sapply(dates, wgksl_num)
   sales_in_time <-
   function (tt)
@@ -2913,7 +2921,7 @@ wgeksl_denom <-
   dates<-substr(dates, 0, 7)
   #main body
   wgksl_denom <-
-  function (tt) nl(data, start=tt, end=start)
+  function (tt) nl(data, tt, start)
   vec <- sapply(dates, wgksl_denom)
   sales_in_time <-
   function (tt)
@@ -3074,7 +3082,7 @@ wgeksgl_num <-
   dates<-substr(dates, 0, 7)
   #main body
   wgksgl_num <-
-  function (tt) geolaspeyres(data, start=tt, end=end)
+  function (tt) geolaspeyres(data, tt, end)
   vec <- sapply(dates, wgksgl_num)
   sales_in_time <-
   function (tt)
@@ -3133,7 +3141,7 @@ wgeksgl_denom <-
   dates<-substr(dates, 0, 7)
   #main body
   wgksgl_denom <-
-  function (tt) geolaspeyres(data, start=tt, end=start)
+  function (tt) geolaspeyres(data, tt, start)
   vec <- sapply(dates, wgksgl_denom)
   sales_in_time <-
   function (tt)
@@ -3191,12 +3199,13 @@ geksaqu_num <-
   end <- substr(end, 0, 7)
   dates <- seq.Date(from = wstart, to = wend, by = "month")
   dates<-substr(dates, 0, 7)
+  lubridate::day(wend) <- lubridate::days_in_month(wend)
   data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop") 
   #main body
   gksaqu_num <-
-  function (tt) aqu(data, start=tt, end=end,v)
+  function (tt) aqu(data, tt, end,v)
   vec <- sapply(dates, gksaqu_num)
   geksaqu_num <- prod(vec)
   geksaqu_num <- geksaqu_num ^ (1 / window)
@@ -3247,12 +3256,13 @@ geksaqu_denom <-
   end <- substr(end, 0, 7)
   dates <- seq.Date(from = wstart, to = wend, by = "month")
   dates<-substr(dates, 0, 7)
+  lubridate::day(wend) <- lubridate::days_in_month(wend)
   data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
   gksaqu_denom <-
-  function (tt) aqu(data, start=tt, end=start,v)
+  function (tt) aqu(data, tt, start, v)
   vec <- sapply(dates, gksaqu_denom)
   geksaqu_denom <- prod(vec)
   geksaqu_denom <- geksaqu_denom ^ (1 / window)
@@ -3302,12 +3312,13 @@ wgeksaqu_num <-
   end <- substr(end, 0, 7)
   dates <- seq.Date(from = wstart, to = wend, by = "month")
   dates<-substr(dates, 0, 7)
+  lubridate::day(wend) <- lubridate::days_in_month(wend)
   data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
   wgksaqu_num <-
-  function (tt) aqu(data, start=tt, end=end,v)
+  function (tt) aqu(data, tt, end, v)
   vec <- sapply(dates, wgksaqu_num)
   sales_in_time <-
   function (tt)
@@ -3363,12 +3374,13 @@ wgeksaqu_denom <-
   end <- substr(end, 0, 7)
   dates <- seq.Date(from = wstart, to = wend, by = "month")
   dates<-substr(dates, 0, 7)
+  lubridate::day(wend) <- lubridate::days_in_month(wend)
   data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
   wgksaqu_denom <-
-  function (tt) aqu(data, start=tt, end=start,v)
+  function (tt) aqu(data, tt, start, v)
   vec <- sapply(dates, wgksaqu_denom)
   sales_in_time <-
   function (tt)
@@ -3424,12 +3436,13 @@ geksaqi_num <-
   end <- substr(end, 0, 7)
   dates <- seq.Date(from = wstart, to = wend, by = "month")
   dates<-substr(dates, 0, 7)
+  lubridate::day(wend) <- lubridate::days_in_month(wend)
   data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
   gksaqi_num <-
-  function (tt) aqi(data, start=tt, end=end,v)
+  function (tt) aqi(data, tt, end, v)
   vec <- sapply(dates, gksaqi_num)
   geksaqi_num <- prod(vec)
   geksaqi_num <- geksaqi_num ^ (1 / window)
@@ -3480,12 +3493,13 @@ geksaqi_denom <-
   end <- substr(end, 0, 7)
   dates <- seq.Date(from = wstart, to = wend, by = "month")
   dates<-substr(dates, 0, 7)
+  lubridate::day(wend) <- lubridate::days_in_month(wend)
   data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
   gksaqi_denom <-
-  function (tt) aqi(data, start=tt, end=start,v)
+  function (tt) aqi(data, tt, start, v)
   vec <- sapply(dates, gksaqi_denom)
   geksaqi_denom <- prod(vec)
   geksaqi_denom <- geksaqi_denom ^ (1 / window)
@@ -3536,12 +3550,13 @@ wgeksaqi_num <-
   end <- substr(end, 0, 7)
   dates <- seq.Date(from = wstart, to = wend, by = "month")
   dates<-substr(dates, 0, 7)
+  lubridate::day(wend) <- lubridate::days_in_month(wend)
   data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
   wgksaqi_num <-
-  function (tt) aqi(data, start=tt, end=end,v)
+  function (tt) aqi(data, tt, end, v)
   vec <- sapply(dates, wgksaqi_num)
   sales_in_time <-
   function (tt)
@@ -3597,12 +3612,13 @@ wgeksaqi_denom <-
   end <- substr(end, 0, 7)
   dates <- seq.Date(from = wstart, to = wend, by = "month")
   dates<-substr(dates, 0, 7)
+  lubridate::day(wend) <- lubridate::days_in_month(wend)
   data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
   wgksaqi_denom <-
-  function (tt) aqi(data, start=tt, end=start,v)
+  function (tt) aqi(data, tt, start, v)
   vec <- sapply(dates, wgksaqi_denom)
   sales_in_time <-
   function (tt)
@@ -3659,12 +3675,13 @@ geksgaqi_num <-
   end <- substr(end, 0, 7)
   dates <- seq.Date(from = wstart, to = wend, by = "month")
   dates<-substr(dates, 0, 7)
+  lubridate::day(wend) <- lubridate::days_in_month(wend)
   data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
   gksgaqi_num <-
-  function (tt) gaqi(data, start=tt, end=end,v)
+  function (tt) gaqi(data, tt, end,v)
   vec <- sapply(dates, gksgaqi_num)
   geksgaqi_num <- prod(vec)
   geksgaqi_num <- geksgaqi_num ^ (1 / window)
@@ -3715,12 +3732,13 @@ geksgaqi_denom <-
   end <- substr(end, 0, 7)
   dates <- seq.Date(from = wstart, to = wend, by = "month")
   dates<-substr(dates, 0, 7)
+  lubridate::day(wend) <- lubridate::days_in_month(wend)
   data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
   gksgaqi_denom <-
-  function (tt) gaqi(data, start=tt, end=start,v)
+  function (tt) gaqi(data, tt, start, v)
   vec <- sapply(dates, gksgaqi_denom)
   geksgaqi_denom <- prod(vec)
   geksgaqi_denom <- geksgaqi_denom ^ (1 / window)
@@ -3770,12 +3788,13 @@ wgeksgaqi_num <-
   end <- substr(end, 0, 7)
   dates <- seq.Date(from = wstart, to = wend, by = "month")
   dates<-substr(dates, 0, 7)
+  lubridate::day(wend) <- lubridate::days_in_month(wend)
   data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
   wgksgaqi_num <-
-  function (tt) gaqi(data, start=tt, end=end,v)
+  function (tt) gaqi(data, tt, end, v)
   vec <- sapply(dates, wgksgaqi_num)
   sales_in_time <-
   function (tt)
@@ -3831,12 +3850,13 @@ wgeksgaqi_denom <-
   end <- substr(end, 0, 7)
   dates <- seq.Date(from = wstart, to = wend, by = "month")
   dates<-substr(dates, 0, 7)
+  lubridate::day(wend) <- lubridate::days_in_month(wend)
   data<-dplyr::filter(data, data$time>=wstart & data$time<=wend)
   #data frame with quality adjusted factors
   v<-dplyr::summarise(dplyr::group_by(data,  prodID),values=sum(prices*quantities)/sum(quantities),.groups="drop")
   #main body
   wgksgaqi_denom <-
-  function (tt) gaqi(data, start=tt, end=start,v)
+  function (tt) gaqi(data, tt, start, v)
   vec <- sapply(dates, wgksgaqi_denom)
   sales_in_time <-
   function (tt)
@@ -4899,3 +4919,35 @@ mmontgomery_internal <-
                      Price_indicator=sum(list_df$price_contributions),
                   Quantity_indicator=sum(list_df$quantity_contributions)))    
   }
+
+
+#' An additional function used in the 'shrinkflation' function
+#' @param n Number of replicated strings
+#' @param string A string which is replicated
+#' @param initial An additional parameter which helps in decision about a need of string replicating 
+#' @noRd
+
+replicate_str<-function(n, string, initial) 
+{ if (length(initial)>1) return (string)
+  else {
+  str<-c()
+  for (i in 1:n) str<-c(str, string)
+  str<-paste(str, collapse=" , ")
+  return (str)
+  }
+}
+
+#' An additional function used in the 'shrinkflation' function
+#' @param x First numeric vector
+#' @param y Second numeric vector
+#' @noRd
+
+ratios<-function (x,y)
+{ if (length(x)*length(y)==1) return ((y/x-1)*100)
+  else {
+    ratios.<-c()
+    for (iy in 1:length(y))
+      for (ix in 1:length(x)) ratios.<-c(ratios., (y[iy]/x[ix]-1)*100) 
+  }
+  return (ratios.)
+}

@@ -154,8 +154,8 @@ remotes<span class="op">::</span><span class="kw">install_github</span>(<span cl
 <p>The second one, <strong>dataMATCH</strong>, can be used to demonstrate the <strong>data_matching</strong> function and it will be described in the next part of the guidelines. Generally, this artificial data set contains the following columns: <strong>time</strong> - dates of transactions (Year-Month-Day); <strong>prices</strong> - prices of sold products; <strong>quantities</strong> - quantities of sold products; <strong>codeIN</strong> - internal product codes from the retailer; <strong>codeOUT</strong> - external product codes, e.g. GTIN or SKU in the real case; <strong>description</strong> - descriptions of sold products, eg. 'product A', 'product B', etc.</p>
 <p><strong><em>3) dataCOICOP</em></strong></p>
 <p>The third one, <strong>dataCOICOP</strong>, is a ollection of real scanner data on the sale of milk products sold in a period: Dec, 2020 - Feb, 2022. It is a data frame with 10 columns and 139600 rows. The used variables are as follows: <strong>time</strong> - dates of transactions (Year-Month-Day); <strong>prices</strong> - prices of sold products (PLN); <strong>quantities</strong> - quantities of sold products; <strong>description</strong> - descriptions of sold products (original: in Polish); <strong>codeID</strong> - retailer product codes; <strong>retID</strong> - IDs of retailer outlets; <strong>grammage</strong> - product grammages; <strong>unit</strong> - sales units, e.g. 'kg', 'ml', etc.; <strong>category</strong> - product categories (in English) corresponding to COICOP 6 levels; <strong>coicop6</strong> - identifiers of local COICOP 6 groups (6 levels). Please note that this data set can serve as a training or testing set in product classification using machine learning methods (see the functions: <strong>model_classification</strong> and <strong>data_classifying</strong>).</p>
-<p><strong><em>4) dataDOWNSIZED</em></strong></p>
-<p>This data set, <strong>dataDOWNSIZED</strong>, is a collection of scanner data on the sale of coffee in the period from January 2024 to February 2024 and it contains downsized products (see the <strong>shrinkflation</strong> function). It is a data frame with 6 columns and 22 rows. The used variables are as follows: <strong>time</strong> - dates of transactions (Year-Month-Day), <strong>prices</strong> - prices of sold products [PLN], <strong>quantities</strong> - quantities of sold products (in units resulting the product description), <strong>codeIN</strong> - unique internal product codes (retaler product codes), <strong>codeOUT</strong> - unique external product codes (e.g. GTIN, EAN, SKU), <strong>description</strong> - descriptions of sold coffee products.</p>
+<p><strong><em>4) data_DOWN_UP_SIZED</em></strong></p>
+<p>This data set, <strong>data_DOWN_UP_SIZED</strong>, is a collection of scanner data on the sale of coffee in the period from January 2024 to February 2024 and it contains downsized products (see the <strong>shrinkflation</strong> function). It is a data frame with 6 columns and 51 rows. The used variables are as follows: <strong>time</strong> - dates of transactions (Year-Month-Day), <strong>prices</strong> - prices of sold products [PLN], <strong>quantities</strong> - quantities of sold products (in units resulting the product description), <strong>codeIN</strong> - unique internal product codes (retaler product codes), <strong>codeOUT</strong> - unique external product codes (e.g. GTIN, EAN, SKU), <strong>description</strong> - descriptions of sold coffee products.</p>
 <p><strong><em>5) milk</em></strong></p>
 <p>This data set, <strong>milk</strong>, is a collection of scaner data on the sale of milk in one of Polish supermarkets in the period from December 2018 to August 2020. It is a data frame with 6 columns and 4386 rows. The used variables are as follows: <strong>time</strong> - dates of transactions (Year-Month-Day); <strong>prices</strong> - prices of sold products (PLN); <strong>quantities</strong> - quantities of sold products (liters); <strong>prodID</strong> - unique product codes obtained after product matching (data set contains 68 different prodIDs); <strong>retID</strong> - unique codes identifying outlets/retailer sale points (data set contains 5 different retIDs); <strong>description</strong> - descriptions of sold milk products (data set contains 6 different product descriptions corresponding to <em>subgroups</em> of the milk group).</p>
 <p><strong><em>6) coffee</em></strong></p>
@@ -300,21 +300,23 @@ filter4&lt;-<span class="kw">data_filtering</span>(milk,<span class="dt">start=<
 <span class="kw">nrow</span>(sugar.)
 sugar_&lt;-<span class="kw">data_reducing</span>(sugar., <span class="dt">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="dt">by=</span><span class="st">&quot;description&quot;</span>, <span class="dt">minN=</span><span class="dv">5</span>)
 <span class="kw">nrow</span>(sugar_)</code></pre></div>
-<p>The second function, <strong>shrinkflation</strong>, detects and summarises downsized products. It returns a list containing the following objects: <strong>changes</strong> with detailed information on downsized products, <strong>products_downsized</strong> with prodIDs of downsized products, <strong>df_downsized</strong> being a subset of the data frame with only downsized products, <strong>df_reduced</strong> which is the difference of the input data frame and the data frame containing the downsized products, and <strong>df_summary</strong> which provides basic statistics for detected downsized products (including their share in the total number of products). For instance:</p>
+<p>The second function, <strong>shrinkflation</strong>, detects and summarises downsized and upsized products. The function detects phenomena such as: <strong>shrinkflation</strong>, <strong>shrinkdeflation</strong>, <strong>sharkflation</strong>,<strong>unshrinkdeflation</strong>, <strong>unshrinkflation</strong>, <strong>sharkdeflation</strong> (see the <strong>type</strong> parameter). It returns a list containing the following objects: <strong>df_changes</strong> - data frame with detailed information on downsized and upsized products with the whole history of size changes, <strong>df_type</strong> - data frame with recognized type of products, <strong>df_overview</strong> - a table with basic summary of all detected products grouped by the <strong>type</strong> parameter, <strong>products_detected</strong> with prodIDs of products indicated by the <strong>type</strong> parameter, <strong>df_detected</strong> being a subset of the data frame with only detected products, <strong>df_reduced</strong> which is the difference of the input data frame and the data frame containing the detected products, and <strong>df_summary</strong> which provides basic statistics for all detected downsized and upsized products (including their share in the total number of products and mean price and size changes). For instance:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Data matching over time</span>
-df&lt;-<span class="kw">data_matching</span>(<span class="dt">data=</span>dataDOWNSIZED, <span class="dt">start=</span><span class="st">&quot;2024-01&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2024-02&quot;</span>, 
-<span class="dt">codeIN=</span><span class="ot">TRUE</span>,<span class="dt">codeOUT=</span><span class="ot">TRUE</span>,<span class="dt">description=</span><span class="ot">TRUE</span>, 
-<span class="dt">onlydescription=</span><span class="ot">FALSE</span>,<span class="dt">precision=</span><span class="fl">0.9</span>,<span class="dt">interval=</span><span class="ot">FALSE</span>)
+df&lt;-<span class="kw">data_matching</span>(<span class="dt">data=</span>data_DOWN_UP_SIZED, <span class="dt">start=</span><span class="st">&quot;2024-01&quot;</span>, <span class="dt">end=</span><span class="st">&quot;2024-02&quot;</span>, 
+                  <span class="dt">codeIN=</span><span class="ot">TRUE</span>,<span class="dt">codeOUT=</span><span class="ot">TRUE</span>,<span class="dt">description=</span><span class="ot">TRUE</span>,
+                  <span class="dt">onlydescription=</span><span class="ot">FALSE</span>,<span class="dt">precision=</span><span class="fl">0.9</span>,<span class="dt">interval=</span><span class="ot">FALSE</span>)
 <span class="co"># Extraction of information about grammage</span>
 df&lt;-<span class="kw">data_unit</span>(df,<span class="dt">units=</span><span class="kw">c</span>(<span class="st">&quot;g|ml|kg|l&quot;</span>),<span class="dt">multiplication=</span><span class="st">&quot;x&quot;</span>)
 <span class="co"># Price standardization</span>
 df&lt;-<span class="kw">data_norm</span>(df, <span class="dt">rules=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;ml&quot;</span>,<span class="st">&quot;l&quot;</span>,<span class="dv">1000</span>),<span class="kw">c</span>(<span class="st">&quot;g&quot;</span>,<span class="st">&quot;kg&quot;</span>,<span class="dv">1000</span>)))
-<span class="co"># Downsized products detection</span>
-result&lt;-<span class="kw">shrinkflation</span>(<span class="dt">data=</span>df, <span class="dt">start=</span><span class="st">&quot;2024-01&quot;</span>,<span class="st">&quot;2024-02&quot;</span>, <span class="dt">prec=</span><span class="dv">3</span>, <span class="dt">interval=</span><span class="ot">FALSE</span>)
-result<span class="op">$</span>changes
-<span class="co">#result$products_downsized</span>
-<span class="co">#result$df_downsized</span>
-<span class="co">#result$df_reduced</span>
+<span class="co"># Downsized and upsized products detection</span>
+result&lt;-<span class="kw">shrinkflation</span>(<span class="dt">data=</span>df, <span class="dt">start=</span><span class="st">&quot;2024-01&quot;</span>,<span class="st">&quot;2024-02&quot;</span>, <span class="dt">prec=</span><span class="dv">3</span>, <span class="dt">interval=</span><span class="ot">FALSE</span>, <span class="dt">type=</span><span class="st">&quot;shrinkflation&quot;</span>)
+<span class="co"># result$df_changes</span>
+result<span class="op">$</span>df_type
+result<span class="op">$</span>df_overview
+<span class="co"># result$products_detected</span>
+<span class="co"># result$df_detected</span>
+<span class="co"># result$df_reduced</span>
 result<span class="op">$</span>df_summary</code></pre></div>
 <p><a id="ad3"> </a></p>
 </div>
@@ -389,7 +391,7 @@ milk3&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, mi
 </div>
 <div id="functions-for-bilateral-unweighted-price-index-calculation" class="section level3">
 <h3>Functions for bilateral unweighted price index calculation</h3>
-<p>This package includes 6 functions for calculating the following bilateral unweighted price indices:</p>
+<p>This package includes 7 functions for calculating the following bilateral unweighted price indices:</p>
 <table>
 <thead>
 <tr class="header">
@@ -421,6 +423,10 @@ milk3&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, mi
 <tr class="even">
 <td>Harmonic</td>
 <td>harmonic</td>
+</tr>
+<tr class="odd">
+<td>Dikhanov (2021, 2024)</td>
+<td>dikhanov</td>
 </tr>
 </tbody>
 </table>
@@ -571,7 +577,7 @@ milk3&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, mi
 </div>
 <div id="functions-for-chain-price-index-calculation" class="section level3">
 <h3>Functions for chain price index calculation</h3>
-<p>This package includes 35 functions for calculating the following chain indices (weighted and unweighted):</p>
+<p>This package includes 36 functions for calculating the following chain indices (weighted and unweighted):</p>
 <table>
 <thead>
 <tr class="header">
@@ -605,118 +611,122 @@ milk3&lt;-dplyr<span class="op">::</span><span class="kw">filter</span>(milk, mi
 <td>chharmonic</td>
 </tr>
 <tr class="odd">
+<td>Chain Dikhanov</td>
+<td>chdikhanov</td>
+</tr>
+<tr class="even">
 <td>Chain AG Mean</td>
 <td>chagmean</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Banajree</td>
 <td>chbanajree</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Bialek</td>
 <td>chbialek</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Davies</td>
 <td>chdavies</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Drobisch</td>
 <td>chdrobisch</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Fisher</td>
 <td>chfisher</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Geary-Khamis</td>
 <td>chgeary_khamis</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Geo-Laspeyres</td>
 <td>chgeolaspeyres</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Geo-Lowe</td>
 <td>chgeolowe</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Geo-Paasche</td>
 <td>chgeopaasche</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Geo-Young</td>
 <td>chgeoyoung</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Geo-hybrid</td>
 <td>chgeohybrid</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Hybrid</td>
 <td>chhybrid</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Laspeyres</td>
 <td>chlaspeyres</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Lehr</td>
 <td>chlehr</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Lloyd-Moulton</td>
 <td>chlloyd_moulton</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Lowe</td>
 <td>chlowe</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Marshall-Edgeworth</td>
 <td>chmarshall_edgeworth</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Paasche</td>
 <td>chpaasche</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Palgrave</td>
 <td>chpalgrave</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Sato-Vartia</td>
 <td>chsato_vartia</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Stuvel</td>
 <td>chstuvel</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Tornqvist</td>
 <td>chtornqvist</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Vartia</td>
 <td>chvartia</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Walsh</td>
 <td>chwalsh</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Young</td>
 <td>chyoung</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain quadratic mean of order r price index</td>
 <td>chQMp</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain implicit quadratic mean of order r price index</td>
 <td>chIQMp</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain quadratic mean of order r quantity index</td>
 <td>chQMq</td>
 </tr>

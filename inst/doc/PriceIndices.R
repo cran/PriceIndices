@@ -160,19 +160,21 @@ knitr::opts_chunk$set(
 
 ## -----------------------------------------------------------------------------
 #  #Data matching over time
-#  df<-data_matching(data=dataDOWNSIZED, start="2024-01", end="2024-02",
-#  codeIN=TRUE,codeOUT=TRUE,description=TRUE,
-#  onlydescription=FALSE,precision=0.9,interval=FALSE)
+#  df<-data_matching(data=data_DOWN_UP_SIZED, start="2024-01", end="2024-02",
+#                    codeIN=TRUE,codeOUT=TRUE,description=TRUE,
+#                    onlydescription=FALSE,precision=0.9,interval=FALSE)
 #  # Extraction of information about grammage
 #  df<-data_unit(df,units=c("g|ml|kg|l"),multiplication="x")
 #  # Price standardization
 #  df<-data_norm(df, rules=list(c("ml","l",1000),c("g","kg",1000)))
-#  # Downsized products detection
-#  result<-shrinkflation(data=df, start="2024-01","2024-02", prec=3, interval=FALSE)
-#  result$changes
-#  #result$products_downsized
-#  #result$df_downsized
-#  #result$df_reduced
+#  # Downsized and upsized products detection
+#  result<-shrinkflation(data=df, start="2024-01","2024-02", prec=3, interval=FALSE, type="shrinkflation")
+#  # result$df_changes
+#  result$df_type
+#  result$df_overview
+#  # result$products_detected
+#  # result$df_detected
+#  # result$df_reduced
 #  result$df_summary
 
 ## -----------------------------------------------------------------------------
