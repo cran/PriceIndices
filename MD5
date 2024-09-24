@@ -1,6 +1,6 @@
-f0a8cb79bd32bbf28f2b700d4c79aa02 *DESCRIPTION
+963f805d2a4f48844016e620a434af04 *DESCRIPTION
 dc36a1005af734fe1946f14c9f7d1a77 *NAMESPACE
-f407b50d4eea6c57502ea6b5680e40e5 *NEWS.md
+0ee5ee87af710c11becacf4ec0872142 *NEWS.md
 22acb6f17b919fe59e178f55f9007ff4 *R/PriceIndices.R
 ce162692b25e5e08211bc85cc80516eb *R/coffee.R
 c485513cf3ba6b2eb2662e0e7500aa87 *R/dataAGGR.R
@@ -13,8 +13,8 @@ d0832a12d4ca5f606fda8838b3884f52 *R/f_Machine_Learning.R
 538e73236dd929483249e4689f2ab76a *R/f_bilateral_indices.R
 a8143c4326e9bf1e41349a1c6ecebae4 *R/f_chain_indices.R
 29b4aca6e8df1a89f3097380bc8d06a0 *R/f_comparing_indices.R
-b9d24cd74ad3b3d3957bd562f99b9c9e *R/f_data_processing.R
-8c7f8833e51226ffe61db4cef6f96172 *R/f_extensions_multilateral_indices.R
+8c4018f0596219ff73d39956b88ef189 *R/f_data_processing.R
+bf360b26d4e08a275d5fc16cfdd1d3f5 *R/f_extensions_multilateral_indices.R
 519bdd61782644152d400bf41b1666f3 *R/f_full_multilateral_indices.R
 f5e5b5a3bae76e0ccf6f3668d80ea1cc *R/f_general.R
 601099ca8c7676210095f68eb81f68ac *R/f_internal.R
