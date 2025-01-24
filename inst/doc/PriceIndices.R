@@ -266,6 +266,12 @@ knitr::opts_chunk$set(
 #  geksl(milk, wstart="2018-12", start="2019-03", end="2019-05")
 
 ## -----------------------------------------------------------------------------
+#  milk.<-milk
+#  milk.$prodID<-milk.$description
+#  m_decomposition(milk., start="2018-12", end="2019-12",
+#                  formula=c("geks","ccdi"))$multiplicative
+
+## -----------------------------------------------------------------------------
 #  prodID<-base::unique(milk$prodID)
 #  values<-stats::runif(length(prodID),1,2)
 #  v<-data.frame(prodID,values)

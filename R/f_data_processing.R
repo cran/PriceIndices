@@ -484,7 +484,7 @@ data_matching <-
 #' @return The function returns a subset of the user's data set obtained by selection based on keywords and phrases defined by parameters: \code{include}, \code{must} and \code{exclude} (an additional column \code{coicop} is optional). Providing values of these parameters, please remember that the procedure distinguishes between uppercase and lowercase letters only when \code{sensitivity} is set to TRUE.
 #' @examples 
 #' data_selecting(milk, include=c("milk"), must=c("UHT"))
-#' data_selecting(milk, must=c("milk"), exclude=c("paust"))
+#' data_selecting(milk, must=c("milk"), exclude=c("past"))
 #' @export
 
  data_selecting <-
@@ -497,55 +497,42 @@ data_matching <-
     {
     if (nrow(data) == 0)
     stop("A data frame is empty")
+    description<-NULL
     if (sensitivity == FALSE)
+    {
     data$description <- tolower(data$description)
-    if (length(must) == 0)
-    set3 <- data
-    else
-    {
-    if (sensitivity == FALSE)
-    must <- tolower(must)
-    set3 <-
-    dplyr::filter(data, stringr::str_detect(data$description, must[1]))
-    if (length(must) > 1)
-    for (i in 2:length(must))
-    set3 <-
-    dplyr::intersect(set3, dplyr::filter(data,     stringr::str_detect(data$description, must[i])))
+    include<-tolower(include)
+    must<-tolower(must)
+    exclude<-tolower(exclude)
     }
-    if (length(include) == 0)
-    set1 <- data
-    else
+    labels<-unique(data$description)
+    detection<-function (x) labels[stringr::str_detect(labels,x)]
+    if (length(include)>0)
     {
-    if (sensitivity == FALSE)
-    include <- tolower(include)
-    set1 <-
-    dplyr::filter(data, stringr::str_detect(data$description, include[1]))
-    if (length(include) > 1)
-    for (i in 2:length(include))
-    set1 <-
-    dplyr::union(set1, dplyr::filter(data, stringr::str_detect(data$description, include[i])))
+    include_detected<-lapply(include, detection)
+    include_detected<-Reduce(union, include_detected)
     }
-    if (length(exclude) == 0)
-    set <- set1
-    else
+    else include_detected<-labels
+    if (length(must)>0)
     {
-    if (sensitivity == FALSE)
-    exclude <- tolower(exclude)
-    set2 <-
-    dplyr::filter(data, stringr::str_detect(data$description, exclude[1]))
-    if (length(exclude) > 1)
-    for (i in 2:length(exclude))
-    set2 <-
-    dplyr::union(set2, dplyr::filter(data, stringr::str_detect(data$description, exclude[i])))
-    set <- dplyr::setdiff(set1, set2)
+    must_detected<-lapply(must, detection)
+    must_detected<-Reduce(intersect, must_detected)
     }
-    new_set <- dplyr::intersect(set, set3)
+    else must_detected<-labels
+    if (length(exclude)>0)
+    {
+    exclude_detected<-lapply(exclude, detection)
+    exclude_detected<-Reduce(union, exclude_detected)
+    } 
+    else exclude_detected<-c()
+    final_descriptions<-setdiff(include_detected,exclude_detected)
+    final_descriptions<-intersect(must_detected,final_descriptions)
+    new_set<-dplyr::filter(data, description %in% final_descriptions)
     if (length(coicop) > 0)
     new_set$coicop <- coicop
     return (new_set)
-    }
+   }
     
-
 #' @title  Providing values from the indicated column that occur simultaneously in the compared periods or in a given time interval. 
 #'
 #' @description The function returns all values from the indicated column (defined by the \code{type} parameter) which occur simultaneously in the compared periods or in a given time interval.
@@ -2145,9 +2132,9 @@ data_unit <-
 #' @return The function returns the user's data frame with two transformed columns: \code{grammage} and \code{unit}, and two rescaled columns: \code{prices} and \code{quantities}. The above-mentioned transformation and rescaling take into consideration the user \code{rules}. Recalculated prices and quantities concern grammage units defined as the second parameter in the given rule.   
 #' @examples 
 #' # Preparing a data set
-#' data<-data_unit(dataU, units=c("g|ml|kg|l"), multiplication="x")
+#' \donttest{data<-data_unit(dataU, units=c("g|ml|kg|l"), multiplication="x")}
 #' # Normalization of grammage units
-#' data_norm(data, rules=list(c("ml","l",1000), c("g","kg",1000)))
+#' \donttest{data_norm(data, rules=list(c("ml","l",1000), c("g","kg",1000)))}
 #' @export
 
 data_norm <-
@@ -2772,23 +2759,23 @@ return(dplyr::bind_rows(subgroup_list))
 #' 
 #' @examples 
 #' #Data matching over time
-#' df<-data_matching(data=data_DOWN_UP_SIZED, start="2024-01", end="2024-02", 
+#' \donttest{df<-data_matching(data=data_DOWN_UP_SIZED, start="2024-01", end="2024-02", 
 #' codeIN=TRUE,codeOUT=TRUE,description=TRUE, 
-#' onlydescription=FALSE,precision=0.9,interval=FALSE)
+#' onlydescription=FALSE,precision=0.9,interval=FALSE)}
 #' # Extraction of information about grammage (if needed)
-#' df<-data_unit(df,units=c("g|ml|kg|l"),multiplication="x")
+#' \donttest{df<-data_unit(df,units=c("g|ml|kg|l"),multiplication="x")}
 #' # Price standardization
-#' df<-data_norm(df, rules=list(c("ml","l",1000),c("g","kg",1000)))
+#' \donttest{df<-data_norm(df, rules=list(c("ml","l",1000),c("g","kg",1000)))}
 #' # Downsized and upsized products detection
-#' result<-shrinkflation(data=df, start="2024-01","2024-02", 
-#' prec=3, interval=FALSE, type="shrinkflation")
-#' result$df_changes
-#' result$df_type
-#' result$df_overview
-#' result$products_detected
-#' result$df_detected
-#' result$df_reduced
-#' result$df_summary
+#' \donttest{result<-shrinkflation(data=df, start="2024-01","2024-02", 
+#' prec=3, interval=FALSE, type="shrinkflation")}
+#' \donttest{result$df_changes}
+#' \donttest{result$df_type}
+#' \donttest{result$df_overview}
+#' \donttest{result$products_detected}
+#' \donttest{result$df_detected}
+#' \donttest{result$df_reduced}
+#' \donttest{result$df_summary}
 #' 
 #' @export
 
