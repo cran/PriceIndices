@@ -48,7 +48,7 @@ knitr::opts_chunk$set(
 #  #The Fisher price index calculated for the original data set
 #  fisher(df, "2018-12","2019-03")
 #  #Zero price imputations:
-#  df2<-data_imputing(df, start="2018-12", end="2019-03",
+#  df2<-data_imputing(df, start="2018-12", end="2019-02",
 #                zero_prices=TRUE,
 #                outlets=TRUE)
 #  #The Fisher price index calculated for the data set with imputed prices:
@@ -176,6 +176,15 @@ knitr::opts_chunk$set(
 #  # result$df_detected
 #  # result$df_reduced
 #  result$df_summary
+
+## -----------------------------------------------------------------------------
+#  df<-MARS(data=dataMARS,
+#            start="2025-05",
+#            end="2025-09",
+#            attributes=c("brand","size","fabric"),
+#            strategy="two_months")
+#  #Results:
+#  df$scores
 
 ## -----------------------------------------------------------------------------
 #  available(milk, period1="2018-12", period2="2019-12", type="retID",interval=TRUE)

@@ -1,3 +1,17 @@
+# Package update 0.2.3 -> 0.2.4
+
+## New functions: 
+* New function for data stratification via the MARS method (*MARS*)
+
+## New data sets:
+* New artificial scanner data set for testing the MARS method (*dataMARS*)
+
+## Improvements:
+* New parameters (description, class) have been added to the *data_aggregating* function
+* New imputation methods (overall mean, class mean) have been added to the *data_imputing* function.
+* New index methods (GEKS-AQI, GEKS-GAQI) have been added to the *m_decomposition* function.
+* Update of references for multilateral methods.
+
 # Package update 0.2.2 -> 0.2.3
 
 ## New functions: 

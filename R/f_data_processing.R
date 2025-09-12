@@ -17,7 +17,7 @@
 #' @param zero_prices A logical parameter indicating whether zero prices are to be acceptable.
 #' @param zero_quantities A logical parameter indicating whether zero quantities are to be acceptable.
 #' @rdname data_preparing
-#' @return The resulting data frame is free from: missing values, negative prices (if \code{zero_prices} is set to TRUE), zero or negative prices (if \code{zero_prices} is set to FALSE), negative quantities (if \code{zero_quantities} is set to TRUE) and zero and negative quantities (if \code{zero_prices} is set to FALSE). As a result, column \code{time} is set to be Date type (in format: `Year-Month-01`), columns \code{prices} and \code{quantities} are set to be numeric. If the column \code{description} is selected, then it is set to be character type. If columns: \code{prodID}, \code{retID}, \code{codeIN} or  \code{codeOUT} are selected, then they are set to be factor type.
+#' @return The resulting data frame is free from: missing values, negative prices (if \code{zero_prices} is set to TRUE), zero or negative prices (if \code{zero_prices} is set to FALSE), negative quantities (if \code{zero_quantities} is set to TRUE) and zero and negative quantities (if \code{zero_prices} is set to FALSE). As a result, column \code{time} is set to be Date type (in format: `Year-Month-01`), columns \code{prices} and \code{quantities} are set to be numeric. If the column \code{description} is selected, then it is set to be character type. If columns: \code{prodID}, \code{retID}, \code{codeIN} or  \code{codeOUT} are selected, then they are set to be character type.
 #'
 #' @examples 
 #' \donttest{data_preparing(milk, time="time",prices="prices",quantities="quantities")}
@@ -79,16 +79,16 @@ data_preparing <-
   if (!(prodID %in% cn))
   stop ("Bad specification of the 'prodID' column!")
   colnames(data)[which(names(data) == prodID)] <- "prodID"
-  if (!(is.factor(data$prodID)))
-  data$prodID <- as.factor(data$prodID)
+  if (!(is.character(data$prodID)))
+  data$prodID <- as.character(data$prodID)
   variables <- c(variables, "prodID")
   }
   if (length(retID) > 0) {
   if (!(retID %in% cn))
   stop ("Bad specification of the 'retID' column!")
   colnames(data)[which(names(data) == retID)] <- "retID"
-  if (!(is.factor(data$retID)))
-  data$retID <- as.factor(data$retID)
+  if (!(is.character(data$retID)))
+  data$retID <- as.character(data$retID)
   variables <- c(variables, "retID")
   }
   if (length(description) > 0) {
@@ -104,16 +104,16 @@ data_preparing <-
   if (!(codeIN %in% cn))
   stop ("Bad specification of the 'codeIN' column!")
   colnames(data)[which(names(data) == codeIN)] <- "codeIN"
-  if (!(is.factor(data$codeIN)))
-  data$codeIN <- as.factor(data$codeIN)
+  if (!(is.character(data$codeIN)))
+  data$codeIN <- as.character(data$codeIN)
   variables <- c(variables, "codeIN")
   }
   if (length(codeOUT) > 0) {
   if (!(codeOUT %in% cn))
   stop ("Bad specification of the 'codeOUT' column!")
   colnames(data)[which(names(data) == codeOUT)] <- "codeOUT"
-  if (!(is.factor(data$codeOUT)))
-  data$codeOUT <- as.factor(data$codeOUT)
+  if (!(is.character(data$codeOUT)))
+  data$codeOUT <- as.character(data$codeOUT)
   variables <- c(variables, "codeOUT")
   }
   if (length(grammage) > 0) {
@@ -364,7 +364,7 @@ data_matching <-
 #' @param dplimits A two-dimensional vector of thresholds for maximum price drop and maximum drop in sales value (it works if one of the chosen filters is \code{dumpprices} filter). 
 #' @param lambda The lambda parameter for \code{lowsales} filter (see \code{References} below).
 #' @param interval A logical value indicating whether the filtering process concerns only two periods defined by \code{start} and \code{end} parameters (then the \code{interval} is set to FALSE) or whether that function is to filter products sold during the whole time interval <start, end>, i.e. any subsequent months are compared. 
-#' @param retailers A logical parameter indicating whether filtering should be done for each outlet (\code{retID}) separately. If it is set to FALSE, then there is no need to consider the \code{retID} column.
+#' @param outlets A logical parameter indicating whether filtering should be done for each outlet (\code{retID}) separately. If it is set to FALSE, then there is no need to consider the \code{retID} column.
 #' @rdname data_filtering
 #' @return This function returns a filtered data set (a reduced user's data frame). If the set of \code{filters} is empty, then the function returns the original data frame (defined by the \code{data} parameter) limited to considered months. On the other hand, if all filters are chosen, i.e. \code{filters=c(extremeprices,dumpprices,lowsales)}, then these filters work independently and a summary result is returned. Please note that both variants of \code{extremeprices} filter can be chosen at the same time, i.e. \code{plimits} and \code{pquantiles}, and they work also independently.
 #' @references
@@ -386,11 +386,11 @@ data_matching <-
     dplimits = c(),
     lambda = 1.25,
     interval = FALSE,
-    retailers = FALSE)
+    outlets = FALSE)
     {
     if (nrow(data) == 0)
     stop("A data frame is empty")
-    if (retailers == FALSE) {
+    if (outlets == FALSE) {
     if (interval == FALSE)
     return (filtering(
     data,
@@ -2245,6 +2245,8 @@ return (TRUE)
 #' @description The function aggregates the user's data frame over time and optionally over outlets.
 #' @param data The user's data frame.
 #' @param join_outlets A logical value indicating whether the data aggregation over outlets should be also done.
+#' @param description A logical value indicating whether the aggregated (returned) data frame should contain product descriptions. Please note that product codes and their descriptions are not necessarily in a 1:1 relationship. When description=TRUE, the function returns the first description encountered within a given product code (prodID).
+#' @param class A logical value indicating whether the aggregated (returned) data frame should contain product class. When class=TRUE, the function returns the first class value encountered within a given product code (prodID).
 #' @rdname data_aggregating
 #' @return The function aggregates the user's data frame over time and/or over outlets. Consequently, we obtain monthly data, where the unit value is calculated instead of a price for each \code{prodID} observed in each month (the \code{time} column gets the Date format: "Year-Month-01"). If the parameter \code{join_outlets} is TRUE, then the function also performs aggregation over outlets (retIDs) and the \code{retID} column is removed from the data frame. The main advantage of using this function is the ability to reduce the size of the data frame and the time needed to calculate the price index. Please note, that unnecessary columns are removed (e.g. \code{description}).
 #' @examples 
@@ -2256,20 +2258,35 @@ return (TRUE)
 #' nrow(data_aggregating(milk))
 #' @export
 
-data_aggregating<-function (data, join_outlets = TRUE)
+data_aggregating<-function (data, join_outlets = TRUE, description=FALSE, class=FALSE)
 {
 time<-prodID<-retID<-prices2<-quantities2<-NULL
 #checking columns
 cols<-colnames(data)
 if (!("time" %in% cols) | !("prodID" %in% cols)) stop("A data frame must contain columns: time, prodID")
 if ((join_outlets==FALSE) & !("retID" %in% cols)) stop("A date frame must contain the 'retID' column")
+if ((description==TRUE) & !("description" %in% cols)) stop("A date frame must contain the 'description' column")
+if ((class==TRUE) & !("class" %in% cols)) stop("A date frame must contain the 'class' column")
 #main body
 data$time<-as.character(data$time)
 data$time<-substr(data$time,0,7)
-if (join_outlets==TRUE) data_aggr<-dplyr::summarise(dplyr::group_by(data, time, prodID), prices2=sum(prices*quantities)/sum(quantities),quantities2=sum(quantities),.groups="drop")
-else data_aggr<-dplyr::summarise(dplyr::group_by(data, time, prodID, retID), prices2=sum(prices*quantities)/sum(quantities),quantities2=sum(quantities),.groups="drop")
+if (join_outlets==TRUE) 
+{ 
+if (description==FALSE & class==FALSE) data_aggr<-dplyr::summarise(dplyr::group_by(data, time, prodID),   prices2=sum(prices*quantities)/sum(quantities),quantities2=sum(quantities),.groups="drop")
+if (description==TRUE & class==FALSE) data_aggr<-dplyr::summarise(dplyr::group_by(data, time, prodID),   prices2=sum(prices*quantities)/sum(quantities),quantities2=sum(quantities),description=description[1],.groups="drop")
+if (description==FALSE & class==TRUE) data_aggr<-dplyr::summarise(dplyr::group_by(data, time, prodID),   prices2=sum(prices*quantities)/sum(quantities),quantities2=sum(quantities),class=class[1],.groups="drop")
+if (description==TRUE & class==TRUE) data_aggr<-dplyr::summarise(dplyr::group_by(data, time, prodID),   prices2=sum(prices*quantities)/sum(quantities),quantities2=sum(quantities),description=description[1],class=class[1],.groups="drop")
+}
+else 
+{  
+if (description==FALSE & class==FALSE) data_aggr<-dplyr::summarise(dplyr::group_by(data, time, prodID, retID), prices2=sum(prices*quantities)/sum(quantities),quantities2=sum(quantities),.groups="drop")
+if (description==TRUE & class==FALSE) data_aggr<-dplyr::summarise(dplyr::group_by(data, time, prodID, retID), prices2=sum(prices*quantities)/sum(quantities),quantities2=sum(quantities),description=description[1],.groups="drop")
+if (description==FALSE & class==TRUE) data_aggr<-dplyr::summarise(dplyr::group_by(data, time, prodID, retID), prices2=sum(prices*quantities)/sum(quantities),quantities2=sum(quantities),class=class[1],.groups="drop")
+if (description==TRUE & class==TRUE) data_aggr<-dplyr::summarise(dplyr::group_by(data, time, prodID, retID), prices2=sum(prices*quantities)/sum(quantities),quantities=sum(quantities),description=description[1],class=class[1],.groups="drop")
+}
 data_aggr$time<-paste(data_aggr$time,"-01",sep="")
 data_aggr$time<-as.Date(data_aggr$time)
+if (description==TRUE) data_aggr$description<-as.character(data_aggr$description)
 data_aggr<-dplyr::rename(data_aggr, prices=prices2, quantities=quantities2)
 return (data_aggr)
 }
@@ -2402,31 +2419,36 @@ return (fig)
 
 #' @title  Imputing missing and (optionally) zero prices.
 #'
-#' @description This function imputes missing prices and (optionally) zero prices by using carry forward/backward prices. 
+#' @description This function imputes missing prices and (optionally) zero prices by using one of the following methods: carry forward/backward, overall mean, class mean (targeted mean). 
 #'
 #' @param data The user's data frame with information about sold products. It must contain columns: \code{time} (as Date in format: year-month-day,e.g. '2020-12-01'), \code{prices} (as numeric), \code{quantities} (as numeric - for future calculations) and \code{prodID} (as numeric, factor or character). A column \code{retID} (as factor, character or numeric) is also needed if the User wants to impute prices over outlets.
 #' @param start The base period (as character) limited to the year and month, e.g. "2020-03".
 #' @param end The research period (as character) limited to the year and month, e.g. "2020-04".
+#' @param method A character string indicating the imputation method. Available options are: \code{carry forward}, \code{overall mean}, \code{class mean}. For the class mean method, the \code{class} parameter must be specified.
+#' @param class A character string indicating the column which describes product classes (homogeneous subgroups). 
+#' @param formula A character string indicating the index formula which will be used for the overall mean or class mean method. Available options are: \code{dutot}, \code{carli}, \code{jevons}, \code{fisher}, \code{tornqvist}, \code{walsh}.
 #' @param zero_prices A logical parameter indicating whether zero prices are to be imputed too (then it is set to TRUE).
 #' @param outlets A logical parameter indicating whether imputations are to be done for each outlet separately (then it is set to TRUE).
 #' @rdname data_imputing
-#' @return This function imputes missing prices (unit values) and (optionally) zero prices by using carry forward/backward prices. The imputation can be done for each outlet separately or for aggragated data (see the \code{outlets} parameter). If a missing product has a previous price then that previous price is carried forward until the next real observation. If there is no previous price then the next real observation is found and carried backward. The quantities for imputed prices are set to zeros. The function returns a data frame (monthly aggregated) which is ready for price index calculations.
+#' @return This function imputes missing prices (unit values) and (optionally) zero prices by using one of the following methods: carry forward/backward, overall mean, class mean (targeted mean). The imputation can be done for each outlet separately or for aggregated data (see the \code{outlets} parameter). For the carry forward/backward method: if a missing product has a previous price then that previous price is carried forward until the next real observation. If there is no previous price then the next real observation is found and carried backward. For the overall mean method: the procedure is similar, except that the imputed price is based on the previously recorded price multiplied (or divided - in the case of the next recorded price) by the price index determined for the quoted and imputed period. The user can select the index formula via the \code{formula} parameter. For the class mean method (also known as targeted mean method): the procedure is analogous to the overall mean method, but the price index is determined for the product class specified by the \code{class} parameter. The quantities for imputed prices are set to zero. The function returns a data frame (monthly aggregated) which is ready for price index calculations.
 #'
 #' @examples 
 #' # Creating a small data set with zero prices:
 #' time.<-c("2018-12-01","2019-01-01")
-#' time<-as.Date(c(time., time.))
-#' p1<-c(0,23)
-#' p2<-c(14,0)
-#' q1<-c(15,25)
-#' q2<-c(44,79)
+#' time<-as.Date(c(time., time., time.))
+#' p1<-c(0,23,10)
+#' p2<-c(40,0,20)
+#' q1<-c(15,25,30)
+#' q2<-c(44,79,30)
 #' quantities<-c(q1,q2)
 #' prices<-c(p1,p2)
-#' prodID<-c(1,1,2,2)
+#' prodID<-c(1,1,2,2,3,3)
 #' my_data<-data.frame(time, prices, quantities, prodID)
 #' # Price imputing:
 #' data_imputing(my_data, start="2018-12", end="2019-01",
 #' zero_prices=TRUE, outlets=FALSE)
+#' data_imputing(my_data, start="2018-12", end="2019-01",
+#' zero_prices=TRUE, outlets=FALSE, method="overall mean", formula="dutot")
 #' \donttest{
 #' # Preparing a data set with zero and missing prices:
 #' dataMATCH$prodID<-dataMATCH$codeIN 
@@ -2436,86 +2458,51 @@ return (fig)
 #' set2<-data[6:30,]
 #' df<-rbind(set1, set2)
 #' # Price imputing:
-#' data_imputing(df, start="2018-12", end="2019-03",
-#' zero_prices=TRUE, outlets=TRUE)}
+#' data_imputing(df, start="2018-12", end="2019-02",
+#' zero_prices=TRUE, outlets=TRUE)
+#' data_imputing(df, start="2018-12", end="2019-02",
+#' method="overall mean", zero_prices=TRUE, formula="fisher")}
 #' @export
 
-data_imputing<-function (data, start, end, 
-                         zero_prices=TRUE, 
-                         outlets=TRUE)
+data_imputing<-function (data, 
+                          start, 
+                          end, 
+                          method="carry forward",
+                          class=c(),
+                          formula="jevons",
+                          zero_prices=TRUE,
+                          outlets=FALSE)
 {
-#initial step:
-if (nrow(data) == 0)
-  stop("A data frame is empty")
-time<-prodID<-retID<-label<-NULL
-start <- paste(start, "-01", sep = "")
-end <- paste(end, "-01", sep = "")
-start <- as.Date(start)
-end <- as.Date(end)
-data<-dplyr::filter(data, time>=start & time<=end)
-dates <- seq.Date(from = start, to = end, by = "month")
-dates<-substr(dates,0,7)
-#available prodIDs
-#helping function for forward-backward procedure
-help<-function (x, set)
-{
-  s<-set[which(set<x)]
-  if (length(s)>0) s<-max(s)
-  else s<-min(set[which(set>x)])
-  return (s)
-}
-#main procedure
-impute_prices<-function (data.)
-{  
-# case with no aggregation over outlets and over groups 
-av_ID<-unique(data.$prodID)
-data.<-data_aggregating (data., join_outlets=TRUE)
-if (zero_prices==TRUE) data.<-dplyr::filter(data., prices>0)
-#procedure for each prodID
-prices<-c()
-impute<-function (id)
-{
-df<-dplyr::filter(data., prodID==id)
-if (nrow(df)==0) return (df)
-av_dates<-substr(unique(df$time),0,7) #available dates
-imp_dates<-setdiff(dates, av_dates)   #dates which require imputation
-if (length(imp_dates)==0) return (df)
-else {
-av_n<-match(av_dates, dates)
-imp_n<-match(imp_dates, dates)
-for (x in imp_n) prices<-c(prices, prices(df,
-                                period=dates[help(x,av_n)],
-                                set=id,
-                                ID=FALSE))
-imp_dates<-paste(imp_dates,"-01",sep="")
-imp_dates<-as.Date(imp_dates)
-df2<-data.frame(
-  time=imp_dates,
-  prices=prices,
-  quantities=rep(0,length(prices)),
-  prodID=rep(id, length(prices))
-)
-return (rbind(df,df2))
-}
-}
-result_list<-lapply(av_ID, impute)
-result_list<-dplyr::bind_rows(result_list)
-return (dplyr::select(result_list, time, prices, quantities, prodID))
-}
-#results
-if (outlets==FALSE) return (impute_prices(data))
+if (nrow(data) == 0) stop("A data frame is empty")
+if (!(method %in% c("carry forward","overall mean","class mean"))) 
+  stop("Available methods are: carry forward, overall mean, class mean.")
+if (!(formula %in% c("jevons","dutot","carli","fisher","walsh","tornqvist"))) 
+  stop("Available formulas are: dutot, carli, jevons, fisher, tornqvist, walsh.")
+if (method=="class mean" & (length(class)==0)) stop("The 'class' parameter must be specified when using the class mean method!")
+if (method=="class mean") if (!(class %in% colnames(data))) stop("Bad specificiation of the 'class' parameter!")  
+data_spli<-data_imputed_list<-data_classes<-NULL
+if (length(class)==0) data_imputing_help(data=data,
+                                         start=start,
+                                         end=end,
+                                         method=method,
+                                         formula=formula,
+                                         zero_prices=zero_prices,
+                                         outlets=outlets)
 else
-{
-impute_prices_list<-function (data.)
-{retID<-unique(data.$retID)
- df_list<-impute_prices(data.)
- df_list$retID<-retID
- return (df_list)
-}
-outlets<-split(data, data$retID)
-result_list<-lapply(outlets, impute_prices_list)
-result_list<-dplyr::bind_rows(result_list)
-return (dplyr::select(result_list, time, prices, quantities, prodID, retID))
+{#case with classes considered
+ data_split<-split(data,f=data[,class])
+ data_classes<-names(data_split)
+ data_imputed_list<-lapply(data_split, 
+                           data_imputing_help, 
+                           start=start,
+                           end=end,
+                           method=method,
+                           formula=formula,
+                           zero_prices=zero_prices,
+                           outlets=outlets)
+ for (i in 1:length(data_imputed_list)) data_imputed_list[[i]][,class]<-data_classes[i]
+ data_imputed_list<-dplyr::bind_rows(data_imputed_list)
+ return (data_imputed_list)
 }
 }
 
@@ -3008,4 +2995,189 @@ return (list(df_changes=changes,
              df_reduced=df_reduced,
              df_summary=data.frame(stats=characteristics, value=values)
              ))
-} 
+}
+
+#' @title  Data stratification via the MARS method
+#'
+#' @description This function groups prodIDs into strata (‘products’) by balancing two measures: an explained variance (R squared) measure for the ‘homogeneity’ of prodIDs within products, while the second expresses the degree to which products can be ‘matched’ over time with respect to a comparison period.
+#' @param data The user's data frame with information about products. It must contain attributes: \code{time} (as Date in format: year-month-day, e.g. '2020-12-01'), \code{prices} (as positive numeric), \code{quantities}  (as positive numeric), \code{prodID} (as numeric or character) and the attributes indicated by the 'attributes' parameter.
+#' @param start The base period \code{0} (as character) limited to the year and month, e.g. "2020-03".
+#' @param end The research period \code{t} (as character) limited to the year and month, e.g. "2020-04".
+#' @param attributes A character vector with column names specifying the product attributes. 
+#' @param n Parameter needed only if \code{last_months} strategy is selected. This parameter specifies how many last months are to be taken into account for calculating the average MARS value.
+#' @param strategy A variable that determines how to calculate the degree of product match, the degree of homogeneity (the weighted R squared measure) and the final MARS score. Available options are: \code{two_months} (only base and current periods are considered, i.e. the MARS score is computed for periods \code{0} and \code{t}), \code{interval_base} (MARS scores are calculated for each pair of periods: (0,1), (0,2), ...(0,t) and the geometric mean of these values is returned), \code{interval_chain} (MARS scores are calculated for each pair of periods: (0,1), (1,2), ...(t-1,t) and the geometric mean of these values is returned), \code{interval_pairs} (MARS scores are calculated for each pair of periods: (a,b) from periods (0,1,2,...,t) and the geometric mean of these values is returned), \code{last_months} (MARS scores are calculated for each pair of periods: (t-n,t), (t-n+1,2), ...(t-1,t) and the geometric mean of these values is returned). 
+#' @rdname MARS
+#' @return This function groups prodIDs into strata (‘products’) by balancing two measures: an explained variance (R squared) measure for the ‘homogeneity’ of prodIDs within products, while the second expresses the degree to which products can be ‘matched’ over time with respect to a comparison period. The resulting product ‘match adjusted R squared’ (MARS) combines explained variance in product prices with product match over time, so that different stratification schemes can be ranked according to the combined measure. Any combination of attributes is taken into account when creating stratas. For example, for a set of attributes (A, B, C), the stratas created by the following attribute combinations are considered: A, B, C, A-B, A-C, B-C, A-B-C.The function returns a list with the following elements: \code{scores} (with scores for degrees of product match and product homogeneity, as well as for MARS measure), \code{best_partition} (with the name of the partition for which the highest indication of the MARS measure was obtained), and \code{data_MARS} (with a data frame obtained by replacing the original prodIDs with identifiers created based on the selected best partition). 
+#' @references
+#' {Chessa, A.G. (2022). \emph{A Product Match Adjusted R Squared Method for Defining Products with Transaction Data}. Journal of Official Statistics, 37(2), 411–432.} 
+#' @examples 
+#' df<-MARS(data=dataMARS, 
+#'           start="2025-05", end="2025-09",
+#'           attributes=c("brand","size","fabric"),
+#'           strategy="two_months")
+#' #Results:
+#' df$scores
+#' df$best_partition
+#' df$data_MARS
+#' @export
+
+MARS<-function (data=data.frame(), 
+                start, 
+                end, 
+                attributes=c(), 
+                n=3, 
+                strategy="two_months")
+{#checking conditions
+ if (nrow(data)==0) stop("The data set is empty!")
+ av_strategy<-c("two_months", "interval_base", "interval_chain", "interval_pairs", "last_months")
+ if (!(strategy %in% av_strategy)) stop("Bad specification of the 'strategy' parameter!")
+ av_colnames<-colnames(data)
+ if (!length(base::intersect(attributes, av_colnames))==length(attributes)) stop("Bad specification of at least one attribute!")
+ #initial values
+ time<-test<-partition<-product_match<-product_homogeneity<-NULL
+ #creating additional column with product definitions
+ n_col<-length(attributes)
+ combinations<-list()
+ for (i in 1:n_col) {
+  combinations<-append(combinations, utils::combn(x=c(1:n_col),m=i, simplify=FALSE))
+ }
+ new_cols<-c()
+ attributes_joined<-c()
+ for (i in 1:length(combinations))
+ {
+ cols<-attributes[combinations[[i]]]
+ attributes_joined<-c(attributes_joined, paste0(cols, collapse = "-"))
+ new_cols<-c(new_cols, paste("new",as.character(i),sep="")) #newly created attributes new1, new2, ..etc.
+ data[,paste("new",as.character(i), sep="")] <- 
+   apply(as.matrix(data[ , cols]), 1, paste, collapse = "-" )  
+ }
+ start.<-paste(start,"-01", sep="")
+ start.<-as.Date(start.)
+ end.<-paste(end,"-01", sep="")
+ end.<-as.Date(end.)
+ lubridate::day(end.)<-lubridate::days_in_month(end.)
+ #reducing data frame to spare time
+ if (strategy=="two_months") {
+ df<-dplyr::filter(data, 
+                   (lubridate::year(time)==lubridate::year(start.)
+                   & lubridate::month(time)==lubridate::month(start.))
+                   | (lubridate::year(time)==lubridate::year(end.)
+                   & lubridate::month(time)==lubridate::month(end.))
+                    )  
+ }
+ else #the whole interval is considered
+   df<-dplyr::filter(data, time>=start. & time<=end.)  
+ #limiting dates to year-month versions
+ df$time<-substr(df$time,0,7)
+ periods<-unique(df$time) #periods like year-month (as character)
+ #internal function
+ scores <- function (start., end.)
+ {
+ niK<-c() #product match
+ RK<-c() #product homogeneity
+ MK<-c() #MARS values of all partitions
+ df_start<-dplyr::filter(df, time==start.)
+ df_end<-dplyr::filter(df, time==end.)
+ #product match
+ sum_qt<-sum(df_end$quantities)
+ #product homogeneity
+ sum_pqt<-sum(df_end$prices*df_end$quantities)
+ mean_pt<-sum_pqt/sum_qt
+ denom_RK<-sum(df_end$quantities*(df_end$prices-mean_pt)^2)
+ #loop for all partitions
+ for (partition in new_cols)
+ {matched_products<-dplyr::intersect(unique(df_start[,partition]),unique(df_end[,partition]))
+ matched_products<-matched_products[[1]] 
+ df_end$test<-df_end[,partition][[1]]
+ df_end_matched_products<-
+    dplyr::filter(df_end, test %in% matched_products)
+  niK<-c(niK, sum(df_end_matched_products$quantities)/sum_qt)
+ df_end_K<-dplyr::summarise(dplyr::group_by(df_end, by=test), 
+                  qt=sum(quantities),
+                  pt=sum(prices*quantities)/sum(quantities))
+ RK<-c(RK, sum(df_end_K$qt*(df_end_K$pt-mean_pt)^2)/denom_RK) 
+ MK<-niK*RK
+ }
+ #return(attributes_joined)
+ df_returned<-data.frame(
+   partition=attributes_joined, 
+   product_match=niK, 
+   product_homogeneity=RK, 
+   MARS=MK)
+ return (df_returned)
+ }
+ #creating a list which is returned
+ returned_list=list()
+ list_with_scores<-list()
+ if (strategy=="two_months") returned_list$scores<-scores(start, end)
+ if (strategy=="interval_base") {
+ periods.<-periods[2:length(periods)]
+ list_with_scores<-lapply(periods., scores, start.=periods[1])
+ list_with_scores<-dplyr::bind_rows(list_with_scores)
+ list_with_scores<-dplyr::summarise(dplyr::group_by(list_with_scores, by=partition),
+            product_match=prod(product_match)^(1/length(product_match)),
+            product_homogeneity=prod(product_homogeneity)^(1/length(product_homogeneity)),
+            MARS=prod(MARS)^(1/length(MARS))
+                  )
+ colnames(list_with_scores)<-c("partition","product_match","product_homogeneity","MARS")
+ #setting the order of partitions
+ list_with_scores<-
+   list_with_scores[match(attributes_joined, list_with_scores$partition),]
+ returned_list$scores<-list_with_scores
+ }
+ if (strategy=="interval_chain") {
+ for (i in 2:length(periods)) list_with_scores[[i]]<-
+     scores(start.=periods[i-1],end.=periods[i])
+ list_with_scores<-dplyr::bind_rows(list_with_scores)
+ list_with_scores<-dplyr::summarise(dplyr::group_by(list_with_scores, by=partition),
+            product_match=prod(product_match)^(1/length(product_match)),
+            product_homogeneity=prod(product_homogeneity)^(1/length(product_homogeneity)),
+            MARS=prod(MARS)^(1/length(MARS))
+                  )
+ colnames(list_with_scores)<-c("partition","product_match","product_homogeneity","MARS")
+ #setting the order of partitions
+ list_with_scores<-
+   list_with_scores[match(attributes_joined, list_with_scores$partition),]
+ returned_list$scores<-list_with_scores  
+ }
+ if (strategy=="interval_pairs") {
+ date_pairs<-utils::combn(periods,2,simplify=FALSE)
+ for (i in 1:length(date_pairs)) list_with_scores[[i]]<-
+     scores(start.=date_pairs[[i]][1], end.=date_pairs[[i]][2])
+ list_with_scores<-dplyr::bind_rows(list_with_scores)
+ list_with_scores<-dplyr::summarise(dplyr::group_by(list_with_scores, by=partition),
+            product_match=prod(product_match)^(1/length(product_match)),
+            product_homogeneity=prod(product_homogeneity)^(1/length(product_homogeneity)),
+            MARS=prod(MARS)^(1/length(MARS))
+                  )
+ colnames(list_with_scores)<-c("partition","product_match","product_homogeneity","MARS")
+ #setting the order of partitions
+ list_with_scores<-
+   list_with_scores[match(attributes_joined, list_with_scores$partition),]
+ returned_list$scores<-list_with_scores  
+ }
+ if (strategy=="last_months") {
+ periods.<-utils::tail(periods,n)
+ list_with_scores<-lapply(periods., scores, start.=periods[1])
+ list_with_scores<-dplyr::bind_rows(list_with_scores)
+ list_with_scores<-dplyr::summarise(dplyr::group_by(list_with_scores, by=partition),
+            product_match=prod(product_match)^(1/length(product_match)),
+            product_homogeneity=prod(product_homogeneity)^(1/length(product_homogeneity)),
+            MARS=prod(MARS)^(1/length(MARS))
+                  )
+ colnames(list_with_scores)<-c("partition","product_match","product_homogeneity","MARS")
+ #setting the order of partitions
+ list_with_scores<-
+   list_with_scores[match(attributes_joined, list_with_scores$partition),]
+ returned_list$scores<-list_with_scores  
+ }
+ #looking for best score
+ pos<-which(returned_list$scores$MARS==max(returned_list$scores$MARS))[1]
+ returned_list$best_partition<-returned_list$scores$partition[pos]
+ #returned df with re-defined prodID
+ data$prodID<-data[,new_cols[pos]][[1]]
+ data<-dplyr::select(data,-new_cols)
+ returned_list$data_MARS<-data
+ #returned_list is ready to be returned :)
+ return (returned_list)
+}
