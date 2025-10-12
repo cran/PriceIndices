@@ -1,6 +1,6 @@
 Package: PriceIndices
 Title: Calculating Bilateral and Multilateral Price Indexes
-Version: 0.2.4
+Version: 0.2.5
 Authors@R: 
     person(given = "Jacek",
            family = "Białek",
@@ -19,9 +19,9 @@ RoxygenNote: 7.1.1
 Suggests: testthat, knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2025-09-12 19:17:14 UTC; User
+Packaged: 2025-10-12 15:40:23 UTC; User
 Author: Jacek Białek [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-0952-5327>)
 Maintainer: Jacek Białek <jacek.bialek@uni.lodz.pl>
 Repository: CRAN
-Date/Publication: 2025-09-12 19:40:02 UTC
+Date/Publication: 2025-10-12 16:40:02 UTC

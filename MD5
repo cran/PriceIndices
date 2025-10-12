@@ -1,6 +1,6 @@
-97a2480de97489b800140d99285e8d0f *DESCRIPTION
+a6c52a8fea3e4c7ee7d76c6bbcc77c6e *DESCRIPTION
 f98184f4397f31dba47d25d79e3e9c92 *NAMESPACE
-3c06850393a4ba237413169dc17af8a4 *NEWS.md
+d4b1c47acc960fd3ca1129acb26e49d9 *NEWS.md
 7ca98aa3a5dd16ad160c923562a951c4 *R/PriceIndices.R
 ce162692b25e5e08211bc85cc80516eb *R/coffee.R
 c485513cf3ba6b2eb2662e0e7500aa87 *R/dataAGGR.R
@@ -14,7 +14,7 @@ d344db1a1b8ee0738fb1a4e5c0942577 *R/f_bilateral_indicators.R
 538e73236dd929483249e4689f2ab76a *R/f_bilateral_indices.R
 a8143c4326e9bf1e41349a1c6ecebae4 *R/f_chain_indices.R
 29b4aca6e8df1a89f3097380bc8d06a0 *R/f_comparing_indices.R
-40509e2eb82ff5aa5bdd8710c514a2f6 *R/f_data_processing.R
+d0a9b1aee951acf88e579e25ad8903cf *R/f_data_processing.R
 5f98a085f98d9fae3d9ebfa4c2d7e753 *R/f_extensions_multilateral_indices.R
 2073016ab1d40c00c70c3df8c0b48ac4 *R/f_full_multilateral_indices.R
 f5e5b5a3bae76e0ccf6f3668d80ea1cc *R/f_general.R
@@ -23,7 +23,7 @@ f5e5b5a3bae76e0ccf6f3668d80ea1cc *R/f_general.R
 aa4c712bedd4238538cb0711caae9569 *R/milk.R
 dc69e37c90ba56a8b2a46367b50e5ede *R/sugar.R
 6e062c79f9c008969ab088de9bb55a1e *README.md
-ebdeab4d66c5a94cf4a1112cd5af1b7f *build/vignette.rds
+460f017d65cc04c070e41b3e406dcabe *build/vignette.rds
 7f4b224b4f3c82976058647ff37b6b17 *data/coffee.rda
 4af9dffabaea995dab992ce2399ae00a *data/dataAGGR.rda
 f18c1e953f79d999adf6f960c623b074 *data/dataCOICOP.rda
@@ -33,9 +33,9 @@ f18c1e953f79d999adf6f960c623b074 *data/dataCOICOP.rda
 13c016e003974e5f126a80a16168b083 *data/data_DOWN_UP_SIZED.rda
 689b2f128338560f28997c1c9d134bfa *data/milk.rda
 6d988083aa9a227a7e991369fdabb253 *data/sugar.rda
-09161adaab0cf1be87cbdcc93851d00a *inst/doc/PriceIndices.R
+a683abb386be3c75a861903f09ab6336 *inst/doc/PriceIndices.R
 416c40cf2f81feca7f649893aa50c60c *inst/doc/PriceIndices.Rmd
-3b2f1a487c04fe598666310520df3067 *inst/doc/PriceIndices.html
+a260fbb7c7dd6692d9245b309cf018bb *inst/doc/PriceIndices.html
 9634987402d8b000de0ff0ffca59c077 *man/IQMp.Rd
 25a6f179836c4e59f373c5f492fb2bae *man/MARS.Rd
 7e2ce3f063ea0277ad2e778fdc27a47f *man/PriceIndices.Rd
