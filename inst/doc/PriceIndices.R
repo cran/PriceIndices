@@ -83,35 +83,6 @@ knitr::opts_chunk$set(
 ## -----------------------------------------------------------------------------
 # unique(subgroup2$description)
 
-## ----results=FALSE------------------------------------------------------------
-# my.grid=list(eta=c(0.01,0.02,0.05),subsample=c(0.5,0.8))
-# data_train<-dplyr::filter(dataCOICOP,dataCOICOP$time<=as.Date("2021-10-01"))
-# data_test<-dplyr::filter(dataCOICOP,dataCOICOP$time==as.Date("2021-11-01"))
-# ML<-model_classification(data_train,
-#                          data_test,
-#                          class="coicop6",
-#                          grid=my.grid,
-#                          indicators=c("description","codeIN","grammage"),
-#                          key_words=c("uht"),
-#                          rounds=60)
-
-## -----------------------------------------------------------------------------
-# ML$figure_training
-
-## -----------------------------------------------------------------------------
-# ML$figure_importance
-
-## -----------------------------------------------------------------------------
-# #Setting a temporary directory as a working directory
-# wd<-tempdir()
-# setwd(wd)
-# #Saving and loading the model
-# save_model(ML, dir="My_model")
-# ML_fromPC<-load_model("My_model")
-# #Prediction
-# data_predicted<-data_classifying(ML_fromPC, data_test)
-# head(data_predicted)
-
 ## -----------------------------------------------------------------------------
 # head(dataMATCH)
 
@@ -149,7 +120,7 @@ knitr::opts_chunk$set(
 ## -----------------------------------------------------------------------------
 # filter1B<-data_filtering(milk,start="2018-12",end="2019-03",
 #                          filters=c("extremeprices"),pquantiles=c(0.01,0.99),
-#                          interval=TRUE, retailers=TRUE)
+#                          interval=TRUE, outlets=TRUE)
 # nrow(filter1B)
 
 ## -----------------------------------------------------------------------------
@@ -265,6 +236,9 @@ knitr::opts_chunk$set(
 # fisher(milk, start="2018-12", end="2020-01")
 # lloyd_moulton(milk, start="2018-12", end="2020-01", sigma=0.9)
 # lowe(milk, start="2019-12", end="2020-02", base="2018-12", interval=TRUE)
+
+## -----------------------------------------------------------------------------
+# retro_index(milk, start="2018-12", end="2019-12", formula="dhkh")
 
 ## -----------------------------------------------------------------------------
 # chfisher(milk, start="2018-12", end="2020-01")

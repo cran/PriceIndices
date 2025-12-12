@@ -402,7 +402,7 @@ calculations</a></li>
 <div id="data-sets-included-in-the-package-and-generating-artificial-scanner-data-sets" class="section level3">
 <h3>Data sets included in the package and generating artificial scanner
 data sets</h3>
-<p><strong>This package includes nine data sets: artificial and
+<p><strong>This package includes 10 data sets: artificial and
 real.</strong></p>
 <p><strong><em>1) dataAGGR</em></strong></p>
 <p>The first one, <strong>dataAGGR</strong>, can be used to demonstrate
@@ -442,9 +442,8 @@ sales units, e.g. ‘kg’, ‘ml’, etc.; <strong>category</strong> - product
 categories (in English) corresponding to COICOP 6 levels;
 <strong>coicop6</strong> - identifiers of local COICOP 6 groups (6
 levels). Please note that this data set can serve as a training or
-testing set in product classification using machine learning methods
-(see the functions: <strong>model_classification</strong> and
-<strong>data_classifying</strong>).</p>
+testing set in product classification using machine learning
+methods.</p>
 <p><strong><em>4) data_DOWN_UP_SIZED</em></strong></p>
 <p>This data set, <strong>data_DOWN_UP_SIZED</strong>, is a collection
 of scanner data on the sale of coffee in the period from January 2024 to
@@ -526,6 +525,25 @@ different brands: X and Y), <strong>gender</strong> - gender of the
 person for whom the shirt is dedicated (M or F), <strong>size</strong> -
 size of shirts (M, L, and XL), <strong>fabric</strong> - fabric of
 shirts (cotton, polyester, blend).</p>
+<p><strong><em>10) dataRSM</em></strong> This data set,
+<strong>dataRSM</strong>, is a collection of scanner data on the sale of
+rice, sugar and milk products in one of Polish supermarkets in the
+period from December 2023 to January 2025. It contains 9 columns and
+8090 rows. The used variables are as follows: <strong>time</strong> -
+dates of transactions (Year-Month-Day), <strong>prices</strong> - prices
+of sold products [PLN], <strong>quantities</strong> - quantities of sold
+products, <strong>retID</strong> - unique codes identifying
+outlets/retailer sale points (data set contains 4 different retIDs),
+<strong>description</strong> - descriptions (labels) of sold products
+(data set contains 152 different descriptions),
+<strong>retailer_code</strong> - retailer codes for product definition
+(134 retailer codes), <strong>EAN_code</strong> - EAN codes (bar codes)
+for product definition (138 EAN codes), <strong>category</strong> -
+product categories at the 6-digit COICOP level (4 categories), and
+<strong>subcategory</strong> - product subcategories from 7-digit COICOP
+level (11 subcategories). Please note that the data frame does not
+contain the <strong>prodID</strong> column, so it must be defined (or
+specified) before calculating price indices.</p>
 <p>The set <strong>milk</strong> represents a typical data frame used in
 the package for most calculations and is organized as follows:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(PriceIndices)</span>
@@ -691,45 +709,6 @@ category:</p>
 <p>to obtain the subset of <strong>milk</strong> with products which are
 not <em>pasteurized</em> and which are not <strong>goat</strong>:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">unique</span>(subgroup2<span class="sc">$</span>description)</span></code></pre></div>
-<p><strong>data_classifying</strong></p>
-<p>This function predicts product COICOP levels (or any other defined
-product levels) using the selected machine learning model (see the
-<strong>model</strong> parameter). It provides the indicated data set
-with an additional column, i.e. <em>class_predicted</em>. The selected
-model must be built previously (see the
-<strong>model_classification</strong> function) and after the training
-process it can be saved on your disk (see the
-<strong>save_model</strong> function) and then loaded at any time (see
-the <strong>load_model</strong> function). Please note that the machine
-learning process is based on the XGBoost algorithm (from the XGBoost
-package) which is an implementation of gradient boosted decision trees
-designed for speed and performance. For example, let us build a machine
-learning model</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>my.grid<span class="ot">=</span><span class="fu">list</span>(<span class="at">eta=</span><span class="fu">c</span>(<span class="fl">0.01</span>,<span class="fl">0.02</span>,<span class="fl">0.05</span>),<span class="at">subsample=</span><span class="fu">c</span>(<span class="fl">0.5</span>,<span class="fl">0.8</span>))</span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>data_train<span class="ot">&lt;-</span>dplyr<span class="sc">::</span><span class="fu">filter</span>(dataCOICOP,dataCOICOP<span class="sc">$</span>time<span class="sc">&lt;=</span><span class="fu">as.Date</span>(<span class="st">&quot;2021-10-01&quot;</span>))</span>
-<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>data_test<span class="ot">&lt;-</span>dplyr<span class="sc">::</span><span class="fu">filter</span>(dataCOICOP,dataCOICOP<span class="sc">$</span>time<span class="sc">==</span><span class="fu">as.Date</span>(<span class="st">&quot;2021-11-01&quot;</span>))</span>
-<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>ML<span class="ot">&lt;-</span><span class="fu">model_classification</span>(data_train,</span>
-<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>                         data_test,</span>
-<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>                         <span class="at">class=</span><span class="st">&quot;coicop6&quot;</span>,</span>
-<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>                         <span class="at">grid=</span>my.grid,</span>
-<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a>                         <span class="at">indicators=</span><span class="fu">c</span>(<span class="st">&quot;description&quot;</span>,<span class="st">&quot;codeIN&quot;</span>,<span class="st">&quot;grammage&quot;</span>),</span>
-<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a>                         <span class="at">key_words=</span><span class="fu">c</span>(<span class="st">&quot;uht&quot;</span>), </span>
-<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a>                         <span class="at">rounds=</span><span class="dv">60</span>)</span></code></pre></div>
-<p>We can watch the results of the whole training process:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>ML<span class="sc">$</span>figure_training</span></code></pre></div>
-<p>or we can observe the importance of the used indicators:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>ML<span class="sc">$</span>figure_importance</span></code></pre></div>
-<p>Now, let us save the model on the disk. After saving the model we can
-load it and use at any time:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="co">#Setting a temporary directory as a working directory</span></span>
-<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>wd<span class="ot">&lt;-</span><span class="fu">tempdir</span>()</span>
-<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a><span class="fu">setwd</span>(wd)</span>
-<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a><span class="co">#Saving and loading the model</span></span>
-<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a><span class="fu">save_model</span>(ML, <span class="at">dir=</span><span class="st">&quot;My_model&quot;</span>)</span>
-<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a>ML_fromPC<span class="ot">&lt;-</span><span class="fu">load_model</span>(<span class="st">&quot;My_model&quot;</span>)</span>
-<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a><span class="co">#Prediction</span></span>
-<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a>data_predicted<span class="ot">&lt;-</span><span class="fu">data_classifying</span>(ML_fromPC, data_test)</span>
-<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a><span class="fu">head</span>(data_predicted)</span></code></pre></div>
 <p><strong>data_matching</strong></p>
 <p>If you have a dataset with information about products sold but they
 are not matched you can use the <strong>data_matching</strong> function.
@@ -746,7 +725,7 @@ above-mentioned additional column depends on the set of chosen columns
 for matching (see documentation for details). For instance, let us
 suppose you want to obtain matched products from the following,
 artificial data set:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">head</span>(dataMATCH)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">head</span>(dataMATCH)</span></code></pre></div>
 <p>Let us assume that products with two identical codes
 (<strong>codeIN</strong> and <strong>codeOUT</strong>) or one of the
 codes identical and an identical description are automatically matched.
@@ -757,18 +736,18 @@ than the fixed <strong>precision</strong> value (see documentation -
 products sold in the interval: December 2018 - February 2019. If you use
 the <strong>data_matching</strong> function (as below), an additional
 column (<strong>prodID</strong>) will be added to your data frame:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>data1<span class="ot">&lt;-</span><span class="fu">data_matching</span>(dataMATCH, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-02&quot;</span>, <span class="at">codeIN=</span><span class="cn">TRUE</span>, <span class="at">codeOUT=</span><span class="cn">TRUE</span>, <span class="at">precision=</span>.<span class="dv">98</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span>
-<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="fu">head</span>(data1)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>data1<span class="ot">&lt;-</span><span class="fu">data_matching</span>(dataMATCH, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-02&quot;</span>, <span class="at">codeIN=</span><span class="cn">TRUE</span>, <span class="at">codeOUT=</span><span class="cn">TRUE</span>, <span class="at">precision=</span>.<span class="dv">98</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="fu">head</span>(data1)</span></code></pre></div>
 <p>Let us now suppose you do not want to consider
 <strong>codeIN</strong> while matching and that products with an
 identical <strong>description</strong> are to be matched too:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>data2<span class="ot">&lt;-</span><span class="fu">data_matching</span>(dataMATCH, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-02&quot;</span>, </span>
-<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>                     <span class="at">codeIN=</span><span class="cn">FALSE</span>, <span class="at">onlydescription=</span><span class="cn">TRUE</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span>
-<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a><span class="fu">head</span>(data2)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>data2<span class="ot">&lt;-</span><span class="fu">data_matching</span>(dataMATCH, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-02&quot;</span>, </span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>                     <span class="at">codeIN=</span><span class="cn">FALSE</span>, <span class="at">onlydescription=</span><span class="cn">TRUE</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a><span class="fu">head</span>(data2)</span></code></pre></div>
 <p>Now, having a <strong>prodID</strong> column, your datasets are ready
 for further price index calculations, e.g.:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="fu">fisher</span>(data1, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-02&quot;</span>)</span>
-<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a><span class="fu">jevons</span>(data2, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-02&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">fisher</span>(data1, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-02&quot;</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="fu">jevons</span>(data2, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-02&quot;</span>)</span></code></pre></div>
 <p><strong>data_filtering</strong></p>
 <p>This function returns a filtered data set, i.e. a reduced user’s data
 frame with the same columns and rows limited by a criterion defined by
@@ -790,40 +769,40 @@ being less than 0.5 or bigger than 2 in the same time,
 <em>low sale</em> in compared months, <strong>filter4</strong> rejects
 products with the price ratio being less than 0.9 and with the
 expenditure ratio being less than 0.8 in the same time.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>filter1<span class="ot">&lt;-</span><span class="fu">data_filtering</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-03&quot;</span>,</span>
-<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>                        <span class="at">filters=</span><span class="fu">c</span>(<span class="st">&quot;extremeprices&quot;</span>),<span class="at">pquantiles=</span><span class="fu">c</span>(<span class="fl">0.01</span>,<span class="fl">0.99</span>))</span>
-<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>filter2<span class="ot">&lt;-</span><span class="fu">data_filtering</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-03&quot;</span>,</span>
-<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>                        <span class="at">filters=</span><span class="fu">c</span>(<span class="st">&quot;extremeprices&quot;</span>),<span class="at">plimits=</span><span class="fu">c</span>(<span class="fl">0.5</span>,<span class="dv">2</span>))</span>
-<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a>filter3<span class="ot">&lt;-</span><span class="fu">data_filtering</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-03&quot;</span>,</span>
-<span id="cb27-6"><a href="#cb27-6" tabindex="-1"></a>                        <span class="at">filters=</span><span class="fu">c</span>(<span class="st">&quot;extremeprices&quot;</span>,<span class="st">&quot;lowsales&quot;</span>),<span class="at">plimits=</span><span class="fu">c</span>(<span class="fl">0.5</span>,<span class="dv">2</span>))</span>
-<span id="cb27-7"><a href="#cb27-7" tabindex="-1"></a>filter4<span class="ot">&lt;-</span><span class="fu">data_filtering</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-03&quot;</span>,</span>
-<span id="cb27-8"><a href="#cb27-8" tabindex="-1"></a>                        <span class="at">filters=</span><span class="fu">c</span>(<span class="st">&quot;dumpprices&quot;</span>),<span class="at">dplimits=</span><span class="fu">c</span>(<span class="fl">0.9</span>,<span class="fl">0.8</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>filter1<span class="ot">&lt;-</span><span class="fu">data_filtering</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-03&quot;</span>,</span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>                        <span class="at">filters=</span><span class="fu">c</span>(<span class="st">&quot;extremeprices&quot;</span>),<span class="at">pquantiles=</span><span class="fu">c</span>(<span class="fl">0.01</span>,<span class="fl">0.99</span>))</span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>filter2<span class="ot">&lt;-</span><span class="fu">data_filtering</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-03&quot;</span>,</span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>                        <span class="at">filters=</span><span class="fu">c</span>(<span class="st">&quot;extremeprices&quot;</span>),<span class="at">plimits=</span><span class="fu">c</span>(<span class="fl">0.5</span>,<span class="dv">2</span>))</span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>filter3<span class="ot">&lt;-</span><span class="fu">data_filtering</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-03&quot;</span>,</span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a>                        <span class="at">filters=</span><span class="fu">c</span>(<span class="st">&quot;extremeprices&quot;</span>,<span class="st">&quot;lowsales&quot;</span>),<span class="at">plimits=</span><span class="fu">c</span>(<span class="fl">0.5</span>,<span class="dv">2</span>))</span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a>filter4<span class="ot">&lt;-</span><span class="fu">data_filtering</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-03&quot;</span>,</span>
+<span id="cb23-8"><a href="#cb23-8" tabindex="-1"></a>                        <span class="at">filters=</span><span class="fu">c</span>(<span class="st">&quot;dumpprices&quot;</span>),<span class="at">dplimits=</span><span class="fu">c</span>(<span class="fl">0.9</span>,<span class="fl">0.8</span>))</span></code></pre></div>
 <p>These three filters differ from each other with regard to the data
 reduction level:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>data_without_filters<span class="ot">&lt;-</span><span class="fu">data_filtering</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-03&quot;</span>,<span class="at">filters=</span><span class="fu">c</span>())</span>
-<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a><span class="fu">nrow</span>(data_without_filters)</span>
-<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a><span class="fu">nrow</span>(filter1)</span>
-<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a><span class="fu">nrow</span>(filter2)</span>
-<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a><span class="fu">nrow</span>(filter3)</span>
-<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a><span class="fu">nrow</span>(filter4)</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>data_without_filters<span class="ot">&lt;-</span><span class="fu">data_filtering</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-03&quot;</span>,<span class="at">filters=</span><span class="fu">c</span>())</span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a><span class="fu">nrow</span>(data_without_filters)</span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a><span class="fu">nrow</span>(filter1)</span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a><span class="fu">nrow</span>(filter2)</span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a><span class="fu">nrow</span>(filter3)</span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a><span class="fu">nrow</span>(filter4)</span></code></pre></div>
 <p>You can also use <strong>data_filtering</strong> for each pair of
 subsequent months from the considered time interval under the condition
 that this filtering is done for each outlet (<strong>retID</strong>)
 separately, e.g. </p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a>filter1B<span class="ot">&lt;-</span><span class="fu">data_filtering</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-03&quot;</span>,</span>
-<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>                         <span class="at">filters=</span><span class="fu">c</span>(<span class="st">&quot;extremeprices&quot;</span>),<span class="at">pquantiles=</span><span class="fu">c</span>(<span class="fl">0.01</span>,<span class="fl">0.99</span>),</span>
-<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a>                         <span class="at">interval=</span><span class="cn">TRUE</span>, <span class="at">retailers=</span><span class="cn">TRUE</span>)</span>
-<span id="cb29-4"><a href="#cb29-4" tabindex="-1"></a><span class="fu">nrow</span>(filter1B)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>filter1B<span class="ot">&lt;-</span><span class="fu">data_filtering</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-03&quot;</span>,</span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>                         <span class="at">filters=</span><span class="fu">c</span>(<span class="st">&quot;extremeprices&quot;</span>),<span class="at">pquantiles=</span><span class="fu">c</span>(<span class="fl">0.01</span>,<span class="fl">0.99</span>),</span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>                         <span class="at">interval=</span><span class="cn">TRUE</span>, <span class="at">outlets=</span><span class="cn">TRUE</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a><span class="fu">nrow</span>(filter1B)</span></code></pre></div>
 <p>Two more useful functions are included for the procedure of scanner
 data. The first, <strong>data_reducing</strong>, returns a data set
 containing sufficiently numerous matched products in the indicated
 groups (see documentation). It reduces the dataset to only a
 representative set of products that have appeared in sufficient numbers
 in the sales offer:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>sugar.<span class="ot">&lt;-</span>dplyr<span class="sc">::</span><span class="fu">filter</span>(sugar, time<span class="sc">==</span><span class="fu">as.Date</span>(<span class="st">&quot;2018-12-01&quot;</span>) <span class="sc">|</span> time<span class="sc">==</span><span class="fu">as.Date</span>(<span class="st">&quot;2019-12-01&quot;</span>))</span>
-<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a><span class="fu">nrow</span>(sugar.)</span>
-<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a>sugar_<span class="ot">&lt;-</span><span class="fu">data_reducing</span>(sugar., <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="at">by=</span><span class="st">&quot;description&quot;</span>, <span class="at">minN=</span><span class="dv">5</span>)</span>
-<span id="cb30-4"><a href="#cb30-4" tabindex="-1"></a><span class="fu">nrow</span>(sugar_)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>sugar.<span class="ot">&lt;-</span>dplyr<span class="sc">::</span><span class="fu">filter</span>(sugar, time<span class="sc">==</span><span class="fu">as.Date</span>(<span class="st">&quot;2018-12-01&quot;</span>) <span class="sc">|</span> time<span class="sc">==</span><span class="fu">as.Date</span>(<span class="st">&quot;2019-12-01&quot;</span>))</span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a><span class="fu">nrow</span>(sugar.)</span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>sugar_<span class="ot">&lt;-</span><span class="fu">data_reducing</span>(sugar., <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="at">by=</span><span class="st">&quot;description&quot;</span>, <span class="at">minN=</span><span class="dv">5</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a><span class="fu">nrow</span>(sugar_)</span></code></pre></div>
 <p>The second function, <strong>shrinkflation</strong>, detects and
 summarises downsized and upsized products. The function detects
 phenomena such as: <strong>shrinkflation</strong>,
@@ -845,23 +824,23 @@ products, and <strong>df_summary</strong> which provides basic
 statistics for all detected downsized and upsized products (including
 their share in the total number of products and mean price and size
 changes). For instance:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="co">#Data matching over time</span></span>
-<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">data_matching</span>(<span class="at">data=</span>data_DOWN_UP_SIZED, <span class="at">start=</span><span class="st">&quot;2024-01&quot;</span>, <span class="at">end=</span><span class="st">&quot;2024-02&quot;</span>, </span>
-<span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a>                  <span class="at">codeIN=</span><span class="cn">TRUE</span>,<span class="at">codeOUT=</span><span class="cn">TRUE</span>,<span class="at">description=</span><span class="cn">TRUE</span>,</span>
-<span id="cb31-4"><a href="#cb31-4" tabindex="-1"></a>                  <span class="at">onlydescription=</span><span class="cn">FALSE</span>,<span class="at">precision=</span><span class="fl">0.9</span>,<span class="at">interval=</span><span class="cn">FALSE</span>)</span>
-<span id="cb31-5"><a href="#cb31-5" tabindex="-1"></a><span class="co"># Extraction of information about grammage</span></span>
-<span id="cb31-6"><a href="#cb31-6" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">data_unit</span>(df,<span class="at">units=</span><span class="fu">c</span>(<span class="st">&quot;g|ml|kg|l&quot;</span>),<span class="at">multiplication=</span><span class="st">&quot;x&quot;</span>)</span>
-<span id="cb31-7"><a href="#cb31-7" tabindex="-1"></a><span class="co"># Price standardization</span></span>
-<span id="cb31-8"><a href="#cb31-8" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">data_norm</span>(df, <span class="at">rules=</span><span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;ml&quot;</span>,<span class="st">&quot;l&quot;</span>,<span class="dv">1000</span>),<span class="fu">c</span>(<span class="st">&quot;g&quot;</span>,<span class="st">&quot;kg&quot;</span>,<span class="dv">1000</span>)))</span>
-<span id="cb31-9"><a href="#cb31-9" tabindex="-1"></a><span class="co"># Downsized and upsized products detection</span></span>
-<span id="cb31-10"><a href="#cb31-10" tabindex="-1"></a>result<span class="ot">&lt;-</span><span class="fu">shrinkflation</span>(<span class="at">data=</span>df, <span class="at">start=</span><span class="st">&quot;2024-01&quot;</span>,<span class="st">&quot;2024-02&quot;</span>, <span class="at">prec=</span><span class="dv">3</span>, <span class="at">interval=</span><span class="cn">FALSE</span>, <span class="at">type=</span><span class="st">&quot;shrinkflation&quot;</span>)</span>
-<span id="cb31-11"><a href="#cb31-11" tabindex="-1"></a><span class="co"># result$df_changes</span></span>
-<span id="cb31-12"><a href="#cb31-12" tabindex="-1"></a>result<span class="sc">$</span>df_type</span>
-<span id="cb31-13"><a href="#cb31-13" tabindex="-1"></a>result<span class="sc">$</span>df_overview</span>
-<span id="cb31-14"><a href="#cb31-14" tabindex="-1"></a><span class="co"># result$products_detected</span></span>
-<span id="cb31-15"><a href="#cb31-15" tabindex="-1"></a><span class="co"># result$df_detected</span></span>
-<span id="cb31-16"><a href="#cb31-16" tabindex="-1"></a><span class="co"># result$df_reduced</span></span>
-<span id="cb31-17"><a href="#cb31-17" tabindex="-1"></a>result<span class="sc">$</span>df_summary</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="co">#Data matching over time</span></span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">data_matching</span>(<span class="at">data=</span>data_DOWN_UP_SIZED, <span class="at">start=</span><span class="st">&quot;2024-01&quot;</span>, <span class="at">end=</span><span class="st">&quot;2024-02&quot;</span>, </span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>                  <span class="at">codeIN=</span><span class="cn">TRUE</span>,<span class="at">codeOUT=</span><span class="cn">TRUE</span>,<span class="at">description=</span><span class="cn">TRUE</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>                  <span class="at">onlydescription=</span><span class="cn">FALSE</span>,<span class="at">precision=</span><span class="fl">0.9</span>,<span class="at">interval=</span><span class="cn">FALSE</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a><span class="co"># Extraction of information about grammage</span></span>
+<span id="cb27-6"><a href="#cb27-6" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">data_unit</span>(df,<span class="at">units=</span><span class="fu">c</span>(<span class="st">&quot;g|ml|kg|l&quot;</span>),<span class="at">multiplication=</span><span class="st">&quot;x&quot;</span>)</span>
+<span id="cb27-7"><a href="#cb27-7" tabindex="-1"></a><span class="co"># Price standardization</span></span>
+<span id="cb27-8"><a href="#cb27-8" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">data_norm</span>(df, <span class="at">rules=</span><span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;ml&quot;</span>,<span class="st">&quot;l&quot;</span>,<span class="dv">1000</span>),<span class="fu">c</span>(<span class="st">&quot;g&quot;</span>,<span class="st">&quot;kg&quot;</span>,<span class="dv">1000</span>)))</span>
+<span id="cb27-9"><a href="#cb27-9" tabindex="-1"></a><span class="co"># Downsized and upsized products detection</span></span>
+<span id="cb27-10"><a href="#cb27-10" tabindex="-1"></a>result<span class="ot">&lt;-</span><span class="fu">shrinkflation</span>(<span class="at">data=</span>df, <span class="at">start=</span><span class="st">&quot;2024-01&quot;</span>,<span class="st">&quot;2024-02&quot;</span>, <span class="at">prec=</span><span class="dv">3</span>, <span class="at">interval=</span><span class="cn">FALSE</span>, <span class="at">type=</span><span class="st">&quot;shrinkflation&quot;</span>)</span>
+<span id="cb27-11"><a href="#cb27-11" tabindex="-1"></a><span class="co"># result$df_changes</span></span>
+<span id="cb27-12"><a href="#cb27-12" tabindex="-1"></a>result<span class="sc">$</span>df_type</span>
+<span id="cb27-13"><a href="#cb27-13" tabindex="-1"></a>result<span class="sc">$</span>df_overview</span>
+<span id="cb27-14"><a href="#cb27-14" tabindex="-1"></a><span class="co"># result$products_detected</span></span>
+<span id="cb27-15"><a href="#cb27-15" tabindex="-1"></a><span class="co"># result$df_detected</span></span>
+<span id="cb27-16"><a href="#cb27-16" tabindex="-1"></a><span class="co"># result$df_reduced</span></span>
+<span id="cb27-17"><a href="#cb27-17" tabindex="-1"></a>result<span class="sc">$</span>df_summary</span></code></pre></div>
 <p><strong>MARS</strong></p>
 <p>This function groups prodIDs into strata (‘products’) by balancing
 two measures: an explained variance (R squared) measure for the
@@ -881,13 +860,13 @@ highest indication of the MARS measure was obtained), and data_MARS
 (with a data frame obtained by replacing the original prodIDs with
 identifiers created based on the selected best partition). An
 example:</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">MARS</span>(<span class="at">data=</span>dataMARS, </span>
-<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a>          <span class="at">start=</span><span class="st">&quot;2025-05&quot;</span>, </span>
-<span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a>          <span class="at">end=</span><span class="st">&quot;2025-09&quot;</span>,</span>
-<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a>          <span class="at">attributes=</span><span class="fu">c</span>(<span class="st">&quot;brand&quot;</span>,<span class="st">&quot;size&quot;</span>,<span class="st">&quot;fabric&quot;</span>),</span>
-<span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a>          <span class="at">strategy=</span><span class="st">&quot;two_months&quot;</span>)</span>
-<span id="cb32-6"><a href="#cb32-6" tabindex="-1"></a><span class="co">#Results:</span></span>
-<span id="cb32-7"><a href="#cb32-7" tabindex="-1"></a>df<span class="sc">$</span>scores</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">MARS</span>(<span class="at">data=</span>dataMARS, </span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>          <span class="at">start=</span><span class="st">&quot;2025-05&quot;</span>, </span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>          <span class="at">end=</span><span class="st">&quot;2025-09&quot;</span>,</span>
+<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a>          <span class="at">attributes=</span><span class="fu">c</span>(<span class="st">&quot;brand&quot;</span>,<span class="st">&quot;size&quot;</span>,<span class="st">&quot;fabric&quot;</span>),</span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a>          <span class="at">strategy=</span><span class="st">&quot;two_months&quot;</span>)</span>
+<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a><span class="co">#Results:</span></span>
+<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a>df<span class="sc">$</span>scores</span></code></pre></div>
 <p><a id="ad3"> </a></p>
 </div>
 <div id="functions-providing-dataset-characteristics" class="section level3">
@@ -904,7 +883,7 @@ FALSE, then the function compares only periods defined by
 <strong>period1</strong> and <strong>period2</strong>. Otherwise the
 whole time period between period1 and period2 is considered. For
 example:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="fu">available</span>(milk, <span class="at">period1=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">period2=</span><span class="st">&quot;2019-12&quot;</span>, <span class="at">type=</span><span class="st">&quot;retID&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="fu">available</span>(milk, <span class="at">period1=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">period2=</span><span class="st">&quot;2019-12&quot;</span>, <span class="at">type=</span><span class="st">&quot;retID&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p><strong>matched</strong></p>
 <p>The function returns all values from the indicated column (defined by
 the <strong>type</strong> parameter) which occur simultaneously in the
@@ -917,7 +896,7 @@ FALSE, then the function compares only periods defined by
 <strong>period1</strong> and <strong>period2</strong>. Otherwise the
 whole time period between period1 and period2 is considered. For
 example:</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a><span class="fu">matched</span>(milk, <span class="at">period1=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">period2=</span><span class="st">&quot;2019-12&quot;</span>, <span class="at">type=</span><span class="st">&quot;prodID&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="fu">matched</span>(milk, <span class="at">period1=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">period2=</span><span class="st">&quot;2019-12&quot;</span>, <span class="at">type=</span><span class="st">&quot;prodID&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p><strong>matched_index</strong></p>
 <p>The function returns a ratio of values from the indicated column that
 occur simultaneously in the compared periods or in a given time interval
@@ -930,7 +909,7 @@ documentation). If the <strong>interval</strong> parameter is set to
 FALSE, then the function compares only periods defined by period1 and
 period2. Otherwise the whole time period between period1 and period2 is
 considered. The returned value is from 0 to 1. For example:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a><span class="fu">matched_index</span>(milk, <span class="at">period1=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">period2=</span><span class="st">&quot;2019-12&quot;</span>, <span class="at">type=</span><span class="st">&quot;prodID&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="fu">matched_index</span>(milk, <span class="at">period1=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">period2=</span><span class="st">&quot;2019-12&quot;</span>, <span class="at">type=</span><span class="st">&quot;prodID&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p><strong>matched_fig</strong></p>
 <p>The function returns a <strong>data frame</strong> or a
 <strong>figure</strong> presenting the <strong>matched_index</strong>
@@ -939,8 +918,8 @@ parameter and for each month from the considered time interval. The
 interval is set by the <strong>start</strong> and <strong>end</strong>
 parameters. The returned object (data frame or figure) depends on the
 value of the <strong>figure</strong> parameter. Examples:</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a><span class="fu">matched_fig</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>, <span class="at">type=</span><span class="st">&quot;prodID&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="fu">matched_fig</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-04&quot;</span>, <span class="at">type=</span><span class="st">&quot;prodID&quot;</span>, <span class="at">figure=</span><span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="fu">matched_fig</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>, <span class="at">type=</span><span class="st">&quot;prodID&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="fu">matched_fig</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-04&quot;</span>, <span class="at">type=</span><span class="st">&quot;prodID&quot;</span>, <span class="at">figure=</span><span class="cn">FALSE</span>)</span></code></pre></div>
 <p><strong>products</strong></p>
 <p>This function detects and summarises available, matched, new and
 disappearing products on the basis of their prodIDs. It compares
@@ -951,9 +930,9 @@ matched, new and disappearing products, statistics with basic statistics
 for them and figure with a pie chart describing a contribution of
 matched, new and disappearing products in a set of available products.
 Please see the following example:</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a>list<span class="ot">&lt;-</span><span class="fu">products</span>(milk, <span class="st">&quot;2018-12&quot;</span>,<span class="st">&quot;2019-12&quot;</span>)</span>
-<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a>list<span class="sc">$</span>statistics</span></code></pre></div>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a>list<span class="sc">$</span>figure</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a>list<span class="ot">&lt;-</span><span class="fu">products</span>(milk, <span class="st">&quot;2018-12&quot;</span>,<span class="st">&quot;2019-12&quot;</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a>list<span class="sc">$</span>statistics</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>list<span class="sc">$</span>figure</span></code></pre></div>
 <p><strong>products_fig</strong></p>
 <p>This function returns a figure with plots of volume (or
 contributions) of available, matched, new as well as disappearing
@@ -961,9 +940,9 @@ products. The User may control which groups of products are to be taken
 into consideration. Available options are <strong>available</strong>,
 <strong>matched</strong>, <strong>new</strong> and
 <strong>disappearing</strong>. Please follow the example:</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a><span class="fu">products_fig</span>(milk, <span class="st">&quot;2018-12&quot;</span>,<span class="st">&quot;2019-12&quot;</span>, </span>
-<span id="cb40-2"><a href="#cb40-2" tabindex="-1"></a><span class="at">fixed_base=</span><span class="cn">TRUE</span>, <span class="at">contributions=</span><span class="cn">FALSE</span>,</span>
-<span id="cb40-3"><a href="#cb40-3" tabindex="-1"></a><span class="at">show=</span><span class="fu">c</span>(<span class="st">&quot;new&quot;</span>,<span class="st">&quot;disappearing&quot;</span>,<span class="st">&quot;matched&quot;</span>,<span class="st">&quot;available&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a><span class="fu">products_fig</span>(milk, <span class="st">&quot;2018-12&quot;</span>,<span class="st">&quot;2019-12&quot;</span>, </span>
+<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a><span class="at">fixed_base=</span><span class="cn">TRUE</span>, <span class="at">contributions=</span><span class="cn">FALSE</span>,</span>
+<span id="cb36-3"><a href="#cb36-3" tabindex="-1"></a><span class="at">show=</span><span class="fu">c</span>(<span class="st">&quot;new&quot;</span>,<span class="st">&quot;disappearing&quot;</span>,<span class="st">&quot;matched&quot;</span>,<span class="st">&quot;available&quot;</span>))</span></code></pre></div>
 <p><strong>prices</strong></p>
 <p>The function returns prices (unit value) of products with a given ID
 (<strong>prodID</strong> column) and being sold in the time period
@@ -976,7 +955,7 @@ values for sorted prodIDs and in the absence of a given prodID in the
 data set, the function returns nothing (it does not return zero).To get
 prices (unit values) of all available milk products sold in July, 2019,
 please use:</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a><span class="fu">prices</span>(milk, <span class="at">period=</span><span class="st">&quot;2019-06&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="fu">prices</span>(milk, <span class="at">period=</span><span class="st">&quot;2019-06&quot;</span>)</span></code></pre></div>
 <p><strong>quantities</strong></p>
 <p>The function returns quantities of products with a given ID
 (<strong>prodID</strong> column) and being sold in the time period
@@ -989,7 +968,7 @@ quantity values for sorted prodIDs and in the absence of a given prodID
 in the data set, the function returns nothing (it does not return zero).
 To get a data frame containing quantities of milk products with prodIDs:
 400032, 71772 and 82919, and sold in July, 2019, please use:</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a><span class="fu">quantities</span>(milk, <span class="at">period=</span><span class="st">&quot;2019-06&quot;</span>, <span class="at">set=</span><span class="fu">c</span>(<span class="dv">400032</span>, <span class="dv">71772</span>, <span class="dv">82919</span>), <span class="at">ID=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a><span class="fu">quantities</span>(milk, <span class="at">period=</span><span class="st">&quot;2019-06&quot;</span>, <span class="at">set=</span><span class="fu">c</span>(<span class="dv">400032</span>, <span class="dv">71772</span>, <span class="dv">82919</span>), <span class="at">ID=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p><strong>sales</strong></p>
 <p>The function returns values of sales of products with a given ID
 (<strong>prodID</strong> column) and being sold in the time period
@@ -1001,7 +980,7 @@ of sales of all products being available in the <strong>period</strong>
 expenditure values for sorted prodIDs). To get values of sales of milk
 products with prodIDs: 400032, 71772 and 82919, and sold in July, 2019,
 please use:</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a><span class="fu">sales</span>(milk, <span class="at">period=</span><span class="st">&quot;2019-06&quot;</span>, <span class="at">set=</span><span class="fu">c</span>(<span class="dv">400032</span>, <span class="dv">71772</span>, <span class="dv">82919</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a><span class="fu">sales</span>(milk, <span class="at">period=</span><span class="st">&quot;2019-06&quot;</span>, <span class="at">set=</span><span class="fu">c</span>(<span class="dv">400032</span>, <span class="dv">71772</span>, <span class="dv">82919</span>))</span></code></pre></div>
 <p><strong>sales_groups</strong></p>
 <p>The function returns <strong>values of sales</strong> of products
 from one or more <strong>datasets</strong> or the corresponding
@@ -1013,16 +992,16 @@ an example, let us create 3 subgroups of <strong>milk</strong> products
 and let us find out their sale shares for the time interval: April, 2019
 - July, 2019. We can obtain precise values for the given
 <strong>period</strong>:</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a>ctg<span class="ot">&lt;-</span><span class="fu">unique</span>(milk<span class="sc">$</span>description)</span>
-<span id="cb44-2"><a href="#cb44-2" tabindex="-1"></a>categories<span class="ot">&lt;-</span><span class="fu">c</span>(ctg[<span class="dv">1</span>],ctg[<span class="dv">2</span>],ctg[<span class="dv">3</span>])</span>
-<span id="cb44-3"><a href="#cb44-3" tabindex="-1"></a>milk1<span class="ot">&lt;-</span>dplyr<span class="sc">::</span><span class="fu">filter</span>(milk, milk<span class="sc">$</span>description<span class="sc">==</span>categories[<span class="dv">1</span>])</span>
-<span id="cb44-4"><a href="#cb44-4" tabindex="-1"></a>milk2<span class="ot">&lt;-</span>dplyr<span class="sc">::</span><span class="fu">filter</span>(milk, milk<span class="sc">$</span>description<span class="sc">==</span>categories[<span class="dv">2</span>])</span>
-<span id="cb44-5"><a href="#cb44-5" tabindex="-1"></a>milk3<span class="ot">&lt;-</span>dplyr<span class="sc">::</span><span class="fu">filter</span>(milk, milk<span class="sc">$</span>description<span class="sc">==</span>categories[<span class="dv">3</span>])</span>
-<span id="cb44-6"><a href="#cb44-6" tabindex="-1"></a><span class="fu">sales_groups</span>(<span class="at">datasets=</span><span class="fu">list</span>(milk1,milk2,milk3),<span class="at">start=</span><span class="st">&quot;2019-04&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-07&quot;</span>)</span>
-<span id="cb44-7"><a href="#cb44-7" tabindex="-1"></a><span class="fu">sales_groups</span>(<span class="at">datasets=</span><span class="fu">list</span>(milk1,milk2,milk3),<span class="at">start=</span><span class="st">&quot;2019-04&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-07&quot;</span>, <span class="at">shares=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a>ctg<span class="ot">&lt;-</span><span class="fu">unique</span>(milk<span class="sc">$</span>description)</span>
+<span id="cb40-2"><a href="#cb40-2" tabindex="-1"></a>categories<span class="ot">&lt;-</span><span class="fu">c</span>(ctg[<span class="dv">1</span>],ctg[<span class="dv">2</span>],ctg[<span class="dv">3</span>])</span>
+<span id="cb40-3"><a href="#cb40-3" tabindex="-1"></a>milk1<span class="ot">&lt;-</span>dplyr<span class="sc">::</span><span class="fu">filter</span>(milk, milk<span class="sc">$</span>description<span class="sc">==</span>categories[<span class="dv">1</span>])</span>
+<span id="cb40-4"><a href="#cb40-4" tabindex="-1"></a>milk2<span class="ot">&lt;-</span>dplyr<span class="sc">::</span><span class="fu">filter</span>(milk, milk<span class="sc">$</span>description<span class="sc">==</span>categories[<span class="dv">2</span>])</span>
+<span id="cb40-5"><a href="#cb40-5" tabindex="-1"></a>milk3<span class="ot">&lt;-</span>dplyr<span class="sc">::</span><span class="fu">filter</span>(milk, milk<span class="sc">$</span>description<span class="sc">==</span>categories[<span class="dv">3</span>])</span>
+<span id="cb40-6"><a href="#cb40-6" tabindex="-1"></a><span class="fu">sales_groups</span>(<span class="at">datasets=</span><span class="fu">list</span>(milk1,milk2,milk3),<span class="at">start=</span><span class="st">&quot;2019-04&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-07&quot;</span>)</span>
+<span id="cb40-7"><a href="#cb40-7" tabindex="-1"></a><span class="fu">sales_groups</span>(<span class="at">datasets=</span><span class="fu">list</span>(milk1,milk2,milk3),<span class="at">start=</span><span class="st">&quot;2019-04&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-07&quot;</span>, <span class="at">shares=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p>or a barplot presenting these results:</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a><span class="fu">sales_groups</span>(<span class="at">datasets=</span><span class="fu">list</span>(milk1,milk2,milk3),<span class="at">start=</span><span class="st">&quot;2019-04&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-07&quot;</span>, </span>
-<span id="cb45-2"><a href="#cb45-2" tabindex="-1"></a>             <span class="at">barplot=</span><span class="cn">TRUE</span>, <span class="at">shares=</span><span class="cn">TRUE</span>, <span class="at">names=</span>categories)</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a><span class="fu">sales_groups</span>(<span class="at">datasets=</span><span class="fu">list</span>(milk1,milk2,milk3),<span class="at">start=</span><span class="st">&quot;2019-04&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-07&quot;</span>, </span>
+<span id="cb41-2"><a href="#cb41-2" tabindex="-1"></a>             <span class="at">barplot=</span><span class="cn">TRUE</span>, <span class="at">shares=</span><span class="cn">TRUE</span>, <span class="at">names=</span>categories)</span></code></pre></div>
 <p><strong>pqcor</strong></p>
 <p>The function returns <strong>Pearson’s correlation
 coefficient</strong> for price and quantity of products with given IDs
@@ -1032,8 +1011,8 @@ function works for all products being available in the
 <strong>period</strong>. The <strong>figure</strong> parameter indicates
 whether the function returns a figure with a correlation coefficient
 (TRUE) or just a correlation coefficient (FALSE). For instance:</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a><span class="fu">pqcor</span>(milk, <span class="at">period=</span><span class="st">&quot;2019-05&quot;</span>)</span>
-<span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a><span class="fu">pqcor</span>(milk, <span class="at">period=</span><span class="st">&quot;2019-05&quot;</span>,<span class="at">figure=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a><span class="fu">pqcor</span>(milk, <span class="at">period=</span><span class="st">&quot;2019-05&quot;</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a><span class="fu">pqcor</span>(milk, <span class="at">period=</span><span class="st">&quot;2019-05&quot;</span>,<span class="at">figure=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p><strong>pqcor_fig</strong></p>
 <p>The function returns <strong>Pearson’s correlation
 coefficients</strong> between price and quantity of products with given
@@ -1044,8 +1023,8 @@ all available products. Correlation coefficients are calculated for each
 month separately. Results are presented in tabular or graphical form
 depending on the <strong>figure</strong> parameter. Both cases are
 presented below:</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" tabindex="-1"></a><span class="fu">pqcor_fig</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-06&quot;</span>, <span class="at">figure=</span><span class="cn">FALSE</span>)</span>
-<span id="cb47-2"><a href="#cb47-2" tabindex="-1"></a><span class="fu">pqcor_fig</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-06&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a><span class="fu">pqcor_fig</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-06&quot;</span>, <span class="at">figure=</span><span class="cn">FALSE</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" tabindex="-1"></a><span class="fu">pqcor_fig</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-06&quot;</span>)</span></code></pre></div>
 <p><strong>dissimilarity</strong></p>
 <p>This function returns a value of the relative price (dSP) and/or
 quantity (dSQ) dissimilarity measure. In a special case, when the
@@ -1053,7 +1032,7 @@ quantity (dSQ) dissimilarity measure. In a special case, when the
 function provides the value of dSPQ measure (relative price and quantity
 dissimilarity measure calculated as <strong>min(dSP,dSQ)</strong>. For
 instance:</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="fu">dissimilarity</span>(milk, <span class="at">period1=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">period2=</span><span class="st">&quot;2019-12&quot;</span>,<span class="at">type=</span><span class="st">&quot;pq&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a><span class="fu">dissimilarity</span>(milk, <span class="at">period1=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">period2=</span><span class="st">&quot;2019-12&quot;</span>,<span class="at">type=</span><span class="st">&quot;pq&quot;</span>)</span></code></pre></div>
 <p><strong>dissimilarity_fig</strong></p>
 <p>This function presents values of the relative price and/or quantity
 dissimilarity measure over time. The user can choose a benchmark period
@@ -1063,7 +1042,7 @@ obtained results of dissimilarities over time can be presented in a
 dataframe form or via a figure (the default value of
 <strong>figure</strong> is TRUE which results a figure). For
 instance:</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" tabindex="-1"></a><span class="fu">dissimilarity_fig</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="at">type=</span><span class="st">&quot;pq&quot;</span>,<span class="at">benchmark=</span><span class="st">&quot;start&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a><span class="fu">dissimilarity_fig</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="at">type=</span><span class="st">&quot;pq&quot;</span>,<span class="at">benchmark=</span><span class="st">&quot;start&quot;</span>)</span></code></pre></div>
 <p><strong>elasticity</strong></p>
 <p>This function returns a value of the elasticity of substitution. If
 the <strong>method</strong> parameter is set to <strong>lm</strong> (it
@@ -1082,7 +1061,7 @@ is set to <strong>sv</strong>, the Sato-Vartia price index formula is
 used instead of the CW price index.The procedure continues until the
 absolute value of this difference is greater than the value of the
 ‘precision’ parameter. For example:</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="fu">elasticity</span>(coffee, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-01&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a><span class="fu">elasticity</span>(coffee, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-01&quot;</span>)</span></code></pre></div>
 <p><strong>elasticity_fig</strong></p>
 <p>The function provides a data frame or a figure presenting
 elasticities of substitution calculated for time interval (see the
@@ -1093,8 +1072,8 @@ interval (it depends on the <strong>fixedbase</strong> parameter). The
 presented function is based on the <strong>elasticity</strong> function.
 For instance, to get elasticities of substitution calculated for milk
 products for subsequent months we run:</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" tabindex="-1"></a><span class="fu">elasticity_fig</span> (milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-04&quot;</span>,<span class="at">figure=</span><span class="cn">TRUE</span>, </span>
-<span id="cb51-2"><a href="#cb51-2" tabindex="-1"></a><span class="at">method=</span><span class="fu">c</span>(<span class="st">&quot;lm&quot;</span>,<span class="st">&quot;f&quot;</span>,<span class="st">&quot;sv&quot;</span>),<span class="at">names=</span><span class="fu">c</span>(<span class="st">&quot;LM&quot;</span>,<span class="st">&quot;Fisher&quot;</span>, <span class="st">&quot;SV&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" tabindex="-1"></a><span class="fu">elasticity_fig</span> (milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-04&quot;</span>,<span class="at">figure=</span><span class="cn">TRUE</span>, </span>
+<span id="cb47-2"><a href="#cb47-2" tabindex="-1"></a><span class="at">method=</span><span class="fu">c</span>(<span class="st">&quot;lm&quot;</span>,<span class="st">&quot;f&quot;</span>,<span class="st">&quot;sv&quot;</span>),<span class="at">names=</span><span class="fu">c</span>(<span class="st">&quot;LM&quot;</span>,<span class="st">&quot;Fisher&quot;</span>, <span class="st">&quot;SV&quot;</span>))</span></code></pre></div>
 <p><a id="ad4"> </a></p>
 </div>
 <div id="functions-for-bilateral-unweighted-price-index-calculation" class="section level3">
@@ -1150,8 +1129,8 @@ aggregating over outlets or product subgroups (to consider these types
 of aggregating please use the <strong>final_index</strong> function.)
 Below are examples of calculations for the Jevons index (in the second
 case a <em>fixed base month</em> is set to December 2018):</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a><span class="fu">jevons</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-01&quot;</span>)</span>
-<span id="cb52-2"><a href="#cb52-2" tabindex="-1"></a><span class="fu">jevons</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-01&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="fu">jevons</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-01&quot;</span>)</span>
+<span id="cb48-2"><a href="#cb48-2" tabindex="-1"></a><span class="fu">jevons</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-01&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p><a id="ad5"> </a></p>
 </div>
 <div id="functions-for-bilateral-weighted-price-index-calculation" class="section level3">
@@ -1301,9 +1280,16 @@ of aggregating please use the <strong>final_index</strong> function.)
 Below are examples of calculations for the Fisher, the Lloyd-Moulton and
 the Lowe indices (in the last case, the <em>fixed base month</em> is set
 to December 2019 and the <em>prior</em> period is December 2018):</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" tabindex="-1"></a><span class="fu">fisher</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-01&quot;</span>)</span>
-<span id="cb53-2"><a href="#cb53-2" tabindex="-1"></a><span class="fu">lloyd_moulton</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-01&quot;</span>, <span class="at">sigma=</span><span class="fl">0.9</span>)</span>
-<span id="cb53-3"><a href="#cb53-3" tabindex="-1"></a><span class="fu">lowe</span>(milk, <span class="at">start=</span><span class="st">&quot;2019-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-02&quot;</span>, <span class="at">base=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" tabindex="-1"></a><span class="fu">fisher</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-01&quot;</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" tabindex="-1"></a><span class="fu">lloyd_moulton</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-01&quot;</span>, <span class="at">sigma=</span><span class="fl">0.9</span>)</span>
+<span id="cb49-3"><a href="#cb49-3" tabindex="-1"></a><span class="fu">lowe</span>(milk, <span class="at">start=</span><span class="st">&quot;2019-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-02&quot;</span>, <span class="at">base=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<p>The package also allows the User to calculate <em>retrospective price
+indices</em>. The <strong>retro_index</strong> function implements the
+correction or imputation approaches (see von Auer (2024) cited in the
+documentation) and also estimates the Diewert-Huwiler-Kohli-Hansen index
+(DHKH). For example, let us determine the retrospective DHKH index for
+the milk set:</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="fu">retro_index</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>, <span class="at">formula=</span><span class="st">&quot;dhkh&quot;</span>)</span></code></pre></div>
 <p><a id="ad6"> </a></p>
 </div>
 <div id="functions-for-chain-price-index-calculation" class="section level3">
@@ -1474,8 +1460,8 @@ calculated. In this second case, all months from the time interval
 <strong>start</strong> defines the base period
 (<strong>interval</strong> is set to TRUE). Here are examples for the
 Fisher chain index:</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" tabindex="-1"></a><span class="fu">chfisher</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-01&quot;</span>)</span>
-<span id="cb54-2"><a href="#cb54-2" tabindex="-1"></a><span class="fu">chfisher</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-01&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" tabindex="-1"></a><span class="fu">chfisher</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-01&quot;</span>)</span>
+<span id="cb51-2"><a href="#cb51-2" tabindex="-1"></a><span class="fu">chfisher</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-01&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p><a id="ad7"> </a></p>
 </div>
 <div id="functions-for-multilateral-price-index-calculation" class="section level3">
@@ -1599,15 +1585,15 @@ please see functions: <strong>price_indices</strong> or
 aggregating over outlets or product subgroups (to consider these types
 of aggregating please use function: <strong>final_index</strong> ). Here
 are examples for the GEKS formula (see documentation):</p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" tabindex="-1"></a><span class="fu">geks</span>(milk, <span class="at">start=</span><span class="st">&quot;2019-01&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-04&quot;</span>,<span class="at">window=</span><span class="dv">10</span>)</span>
-<span id="cb55-2"><a href="#cb55-2" tabindex="-1"></a><span class="fu">geksl</span>(milk, <span class="at">wstart=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">start=</span><span class="st">&quot;2019-03&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-05&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a><span class="fu">geks</span>(milk, <span class="at">start=</span><span class="st">&quot;2019-01&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-04&quot;</span>,<span class="at">window=</span><span class="dv">10</span>)</span>
+<span id="cb52-2"><a href="#cb52-2" tabindex="-1"></a><span class="fu">geksl</span>(milk, <span class="at">wstart=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">start=</span><span class="st">&quot;2019-03&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-05&quot;</span>)</span></code></pre></div>
 <p>The user may decompose the GEKS-type indices. The
 <strong>m_decomposition</strong> function returns multiplicative
 decompositions of the selected GEKS-type indices. For instance:</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" tabindex="-1"></a>milk.<span class="ot">&lt;-</span>milk</span>
-<span id="cb56-2"><a href="#cb56-2" tabindex="-1"></a>milk.<span class="sc">$</span>prodID<span class="ot">&lt;-</span>milk.<span class="sc">$</span>description</span>
-<span id="cb56-3"><a href="#cb56-3" tabindex="-1"></a><span class="fu">m_decomposition</span>(milk., <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,</span>
-<span id="cb56-4"><a href="#cb56-4" tabindex="-1"></a>                <span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;geks&quot;</span>,<span class="st">&quot;ccdi&quot;</span>))<span class="sc">$</span>multiplicative</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" tabindex="-1"></a>milk.<span class="ot">&lt;-</span>milk</span>
+<span id="cb53-2"><a href="#cb53-2" tabindex="-1"></a>milk.<span class="sc">$</span>prodID<span class="ot">&lt;-</span>milk.<span class="sc">$</span>description</span>
+<span id="cb53-3"><a href="#cb53-3" tabindex="-1"></a><span class="fu">m_decomposition</span>(milk., <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,</span>
+<span id="cb53-4"><a href="#cb53-4" tabindex="-1"></a>                <span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;geks&quot;</span>,<span class="st">&quot;ccdi&quot;</span>))<span class="sc">$</span>multiplicative</span></code></pre></div>
 <p>The <strong>QU</strong> function returns a value of the <em>quality
 adjusted unit value index</em> (QU index) for the given set of
 adjustment factors. An additional <strong>v</strong> parameter is a data
@@ -1617,13 +1603,13 @@ frame with adjustment factors for at least all matched
 <strong>value</strong> with corresponding adjustment factors (see
 documentation). The following example starts from creating a data frame
 which includes sample adjusted factors:</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" tabindex="-1"></a>prodID<span class="ot">&lt;-</span>base<span class="sc">::</span><span class="fu">unique</span>(milk<span class="sc">$</span>prodID)</span>
-<span id="cb57-2"><a href="#cb57-2" tabindex="-1"></a>values<span class="ot">&lt;-</span>stats<span class="sc">::</span><span class="fu">runif</span>(<span class="fu">length</span>(prodID),<span class="dv">1</span>,<span class="dv">2</span>)</span>
-<span id="cb57-3"><a href="#cb57-3" tabindex="-1"></a>v<span class="ot">&lt;-</span><span class="fu">data.frame</span>(prodID,values)</span>
-<span id="cb57-4"><a href="#cb57-4" tabindex="-1"></a><span class="fu">head</span>(v)</span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" tabindex="-1"></a>prodID<span class="ot">&lt;-</span>base<span class="sc">::</span><span class="fu">unique</span>(milk<span class="sc">$</span>prodID)</span>
+<span id="cb54-2"><a href="#cb54-2" tabindex="-1"></a>values<span class="ot">&lt;-</span>stats<span class="sc">::</span><span class="fu">runif</span>(<span class="fu">length</span>(prodID),<span class="dv">1</span>,<span class="dv">2</span>)</span>
+<span id="cb54-3"><a href="#cb54-3" tabindex="-1"></a>v<span class="ot">&lt;-</span><span class="fu">data.frame</span>(prodID,values)</span>
+<span id="cb54-4"><a href="#cb54-4" tabindex="-1"></a><span class="fu">head</span>(v)</span></code></pre></div>
 <p>and the next step is calculating the QU index which compares December
 2019 to December 2018:</p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" tabindex="-1"></a><span class="fu">QU</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>, v)</span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" tabindex="-1"></a><span class="fu">QU</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>, v)</span></code></pre></div>
 <p><a id="ad8"> </a></p>
 </div>
 <div id="functions-for-extending-multilateral-price-indices-by-using-splicing-methods" class="section level3">
@@ -1751,7 +1737,7 @@ subgroups (to consider these types of aggregating, please use the
 <strong>final_index</strong> function). For instance, let us calculate
 the <strong>extended Time Product Dummy</strong> index by using the
 <strong>half splice method</strong> with a 10-month time window:</p>
-<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" tabindex="-1"></a><span class="fu">tpd_splice</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-02&quot;</span>,<span class="at">window=</span><span class="dv">10</span>,<span class="at">splice=</span><span class="st">&quot;half&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" tabindex="-1"></a><span class="fu">tpd_splice</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-02&quot;</span>,<span class="at">window=</span><span class="dv">10</span>,<span class="at">splice=</span><span class="st">&quot;half&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p><a id="ad9"> </a></p>
 </div>
 <div id="functions-for-extending-multilateral-price-indices-by-using-the-fbew-method" class="section level3">
@@ -1873,9 +1859,9 @@ of aggregating, please use the <strong>final_index</strong> function).
 For instance, let us calculate the <strong>extended GEKS</strong> index
 by using the FBEW method. Please note that December 2019 is the
 chain-linking month, i.e.:</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" tabindex="-1"></a><span class="fu">geks_fbew</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-03&quot;</span>)</span>
-<span id="cb60-2"><a href="#cb60-2" tabindex="-1"></a>  <span class="fu">geks_fbew</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>)<span class="sc">*</span></span>
-<span id="cb60-3"><a href="#cb60-3" tabindex="-1"></a>  <span class="fu">geks_fbew</span>(milk, <span class="at">start=</span><span class="st">&quot;2019-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-03&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" tabindex="-1"></a><span class="fu">geks_fbew</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-03&quot;</span>)</span>
+<span id="cb57-2"><a href="#cb57-2" tabindex="-1"></a>  <span class="fu">geks_fbew</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>)<span class="sc">*</span></span>
+<span id="cb57-3"><a href="#cb57-3" tabindex="-1"></a>  <span class="fu">geks_fbew</span>(milk, <span class="at">start=</span><span class="st">&quot;2019-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-03&quot;</span>)</span></code></pre></div>
 <p><a id="ad10"> </a></p>
 </div>
 <div id="functions-for-extending-multilateral-price-indices-by-using-the-fbmw-method" class="section level3">
@@ -1994,9 +1980,9 @@ subgroups (to consider these types of aggregating, please use the
 <strong>final_index</strong> function). For instance, let us calculate
 the <strong>extended CCDI</strong> index by using the FBMW method.
 Please note that December 2019 is the chain-linking month, i.e.:</p>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a><span class="fu">ccdi_fbmw</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-03&quot;</span>)</span>
-<span id="cb61-2"><a href="#cb61-2" tabindex="-1"></a>    <span class="fu">ccdi_fbmw</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>)<span class="sc">*</span></span>
-<span id="cb61-3"><a href="#cb61-3" tabindex="-1"></a>    <span class="fu">ccdi_fbmw</span>(milk, <span class="at">start=</span><span class="st">&quot;2019-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-03&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" tabindex="-1"></a><span class="fu">ccdi_fbmw</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-03&quot;</span>)</span>
+<span id="cb58-2"><a href="#cb58-2" tabindex="-1"></a>    <span class="fu">ccdi_fbmw</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>)<span class="sc">*</span></span>
+<span id="cb58-3"><a href="#cb58-3" tabindex="-1"></a>    <span class="fu">ccdi_fbmw</span>(milk, <span class="at">start=</span><span class="st">&quot;2019-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2020-03&quot;</span>)</span></code></pre></div>
 <p><a id="ad11"> </a></p>
 </div>
 <div id="general-functions-for-price-index-calculations" class="section level3">
@@ -2027,18 +2013,18 @@ indices are calculated for the same data set defined by the
 outlets are not taken into consideration here (to consider it, please
 use function: <strong>final_index</strong>).</p>
 <p>For instance:</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a><span class="fu">price_indices</span>(milk, </span>
-<span id="cb62-2"><a href="#cb62-2" tabindex="-1"></a>         <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>,</span>
-<span id="cb62-3"><a href="#cb62-3" tabindex="-1"></a>         <span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;geks&quot;</span>,<span class="st">&quot;ccdi&quot;</span>,<span class="st">&quot;hybrid&quot;</span>,<span class="st">&quot;fisher&quot;</span>,</span>
-<span id="cb62-4"><a href="#cb62-4" tabindex="-1"></a>         <span class="st">&quot;QMp&quot;</span>,<span class="st">&quot;young&quot;</span>,<span class="st">&quot;geksl_fbew&quot;</span>),</span>
-<span id="cb62-5"><a href="#cb62-5" tabindex="-1"></a>         <span class="at">window =</span> <span class="fu">c</span>(<span class="dv">13</span>, <span class="dv">13</span>),</span>
-<span id="cb62-6"><a href="#cb62-6" tabindex="-1"></a>         <span class="at">base =</span> <span class="fu">c</span>(<span class="st">&quot;2019-03&quot;</span>, <span class="st">&quot;2019-03&quot;</span>),</span>
-<span id="cb62-7"><a href="#cb62-7" tabindex="-1"></a>         <span class="at">r=</span><span class="fu">c</span>(<span class="dv">3</span>), <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" tabindex="-1"></a><span class="fu">price_indices</span>(milk, </span>
+<span id="cb59-2"><a href="#cb59-2" tabindex="-1"></a>         <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>,</span>
+<span id="cb59-3"><a href="#cb59-3" tabindex="-1"></a>         <span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;geks&quot;</span>,<span class="st">&quot;ccdi&quot;</span>,<span class="st">&quot;hybrid&quot;</span>,<span class="st">&quot;fisher&quot;</span>,</span>
+<span id="cb59-4"><a href="#cb59-4" tabindex="-1"></a>         <span class="st">&quot;QMp&quot;</span>,<span class="st">&quot;young&quot;</span>,<span class="st">&quot;geksl_fbew&quot;</span>),</span>
+<span id="cb59-5"><a href="#cb59-5" tabindex="-1"></a>         <span class="at">window =</span> <span class="fu">c</span>(<span class="dv">13</span>, <span class="dv">13</span>),</span>
+<span id="cb59-6"><a href="#cb59-6" tabindex="-1"></a>         <span class="at">base =</span> <span class="fu">c</span>(<span class="st">&quot;2019-03&quot;</span>, <span class="st">&quot;2019-03&quot;</span>),</span>
+<span id="cb59-7"><a href="#cb59-7" tabindex="-1"></a>         <span class="at">r=</span><span class="fu">c</span>(<span class="dv">3</span>), <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p>or</p>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" tabindex="-1"></a><span class="fu">price_indices</span>(coffee, </span>
-<span id="cb63-2"><a href="#cb63-2" tabindex="-1"></a>         <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>,</span>
-<span id="cb63-3"><a href="#cb63-3" tabindex="-1"></a>         <span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;laspeyres&quot;</span>,<span class="st">&quot;paasche&quot;</span>,<span class="st">&quot;fisher&quot;</span>),</span>
-<span id="cb63-4"><a href="#cb63-4" tabindex="-1"></a>         <span class="at">interval=</span><span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" tabindex="-1"></a><span class="fu">price_indices</span>(coffee, </span>
+<span id="cb60-2"><a href="#cb60-2" tabindex="-1"></a>         <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>,</span>
+<span id="cb60-3"><a href="#cb60-3" tabindex="-1"></a>         <span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;laspeyres&quot;</span>,<span class="st">&quot;paasche&quot;</span>,<span class="st">&quot;fisher&quot;</span>),</span>
+<span id="cb60-4"><a href="#cb60-4" tabindex="-1"></a>         <span class="at">interval=</span><span class="cn">FALSE</span>)</span></code></pre></div>
 <p><strong>final_index</strong></p>
 <p>This general function returns a value or values of the selected final
 price index for the selected type of aggregation of partial results. If
@@ -2053,10 +2039,10 @@ and the User decides on directions of aggregation (see
 <p><strong>Example</strong>. Let us calculate the final Fisher price
 index (with Laspeyres-type aggregation over outlets and product
 subgroups) for the data set on <strong>milk</strong></p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" tabindex="-1"></a><span class="fu">final_index</span>(milk, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, </span>
-<span id="cb64-2"><a href="#cb64-2" tabindex="-1"></a>         <span class="at">formula =</span> <span class="st">&quot;fisher&quot;</span>, <span class="at">groups =</span> <span class="cn">TRUE</span>, <span class="at">outlets =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb64-3"><a href="#cb64-3" tabindex="-1"></a>         <span class="at">aggr =</span> <span class="st">&quot;laspeyres&quot;</span>, <span class="at">by =</span> <span class="st">&quot;description&quot;</span>, </span>
-<span id="cb64-4"><a href="#cb64-4" tabindex="-1"></a>         <span class="at">interval =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a><span class="fu">final_index</span>(milk, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, </span>
+<span id="cb61-2"><a href="#cb61-2" tabindex="-1"></a>         <span class="at">formula =</span> <span class="st">&quot;fisher&quot;</span>, <span class="at">groups =</span> <span class="cn">TRUE</span>, <span class="at">outlets =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb61-3"><a href="#cb61-3" tabindex="-1"></a>         <span class="at">aggr =</span> <span class="st">&quot;laspeyres&quot;</span>, <span class="at">by =</span> <span class="st">&quot;description&quot;</span>, </span>
+<span id="cb61-4"><a href="#cb61-4" tabindex="-1"></a>         <span class="at">interval =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p><a id="ad12"> </a></p>
 </div>
 <div id="functions-for-comparisons-of-price-indices" class="section level3">
@@ -2085,9 +2071,9 @@ which are provided as a data frame (<strong>compare_indices_df</strong>)
 or a list of data frames (<strong>compare_indices_list</strong>). For
 instance, let us compare the Laspeyres and Paasche indices calculated
 for the data set on milk:</p>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, </span>
-<span id="cb65-2"><a href="#cb65-2" tabindex="-1"></a><span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;laspeyres&quot;</span>, <span class="st">&quot;fisher&quot;</span>), <span class="at">interval =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb65-3"><a href="#cb65-3" tabindex="-1"></a><span class="fu">compare_indices_df</span>(df)</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, </span>
+<span id="cb62-2"><a href="#cb62-2" tabindex="-1"></a><span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;laspeyres&quot;</span>, <span class="st">&quot;fisher&quot;</span>), <span class="at">interval =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb62-3"><a href="#cb62-3" tabindex="-1"></a><span class="fu">compare_indices_df</span>(df)</span></code></pre></div>
 <p>Now, let us compare the impact of the aggregating over outlets on the
 price index results (e.g. the Laspeyres formula is the assumed
 aggregating method). For this purpose, let us calculate the Fisher price
@@ -2095,17 +2081,17 @@ index in two cases: <strong>case1</strong> without the above-mentioned
 aggregation and <strong>case2</strong> which considers that aggregation.
 We use the <strong>milk</strong> dataset and the yearly time
 interval:</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" tabindex="-1"></a>case1<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,</span>
-<span id="cb66-2"><a href="#cb66-2" tabindex="-1"></a>                   <span class="at">formula=</span><span class="st">&quot;fisher&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span>
-<span id="cb66-3"><a href="#cb66-3" tabindex="-1"></a>case2<span class="ot">&lt;-</span><span class="fu">final_index</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>, </span>
-<span id="cb66-4"><a href="#cb66-4" tabindex="-1"></a>                   <span class="at">formula=</span><span class="st">&quot;fisher&quot;</span>,</span>
-<span id="cb66-5"><a href="#cb66-5" tabindex="-1"></a>                   <span class="at">outlets=</span><span class="cn">TRUE</span>, </span>
-<span id="cb66-6"><a href="#cb66-6" tabindex="-1"></a>                   <span class="at">aggr =</span> <span class="st">&quot;laspeyres&quot;</span>, </span>
-<span id="cb66-7"><a href="#cb66-7" tabindex="-1"></a>                   <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" tabindex="-1"></a>case1<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,</span>
+<span id="cb63-2"><a href="#cb63-2" tabindex="-1"></a>                   <span class="at">formula=</span><span class="st">&quot;fisher&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span>
+<span id="cb63-3"><a href="#cb63-3" tabindex="-1"></a>case2<span class="ot">&lt;-</span><span class="fu">final_index</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>, </span>
+<span id="cb63-4"><a href="#cb63-4" tabindex="-1"></a>                   <span class="at">formula=</span><span class="st">&quot;fisher&quot;</span>,</span>
+<span id="cb63-5"><a href="#cb63-5" tabindex="-1"></a>                   <span class="at">outlets=</span><span class="cn">TRUE</span>, </span>
+<span id="cb63-6"><a href="#cb63-6" tabindex="-1"></a>                   <span class="at">aggr =</span> <span class="st">&quot;laspeyres&quot;</span>, </span>
+<span id="cb63-7"><a href="#cb63-7" tabindex="-1"></a>                   <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p>The comparison of obtained results can be made as follows:</p>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a><span class="fu">compare_indices_list</span>(<span class="at">data=</span><span class="fu">list</span>(case1, case2), </span>
-<span id="cb67-2"><a href="#cb67-2" tabindex="-1"></a>                <span class="at">names=</span><span class="fu">c</span>(<span class="st">&quot;Fisher without aggregation&quot;</span>,</span>
-<span id="cb67-3"><a href="#cb67-3" tabindex="-1"></a>                <span class="st">&quot;Fisher with aggregation&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" tabindex="-1"></a><span class="fu">compare_indices_list</span>(<span class="at">data=</span><span class="fu">list</span>(case1, case2), </span>
+<span id="cb64-2"><a href="#cb64-2" tabindex="-1"></a>                <span class="at">names=</span><span class="fu">c</span>(<span class="st">&quot;Fisher without aggregation&quot;</span>,</span>
+<span id="cb64-3"><a href="#cb64-3" tabindex="-1"></a>                <span class="st">&quot;Fisher with aggregation&quot;</span>))</span></code></pre></div>
 <p><strong>compare_distances</strong></p>
 <p>The function calculates average distances between price indices and
 it returns a data frame with these values for each pair of price
@@ -2122,14 +2108,14 @@ parameter).</p>
 calculated for the <strong>milk</strong> data set and for the time
 interval: December 2018 - December 2019. Let us use the MAD measure for
 these comparisons:</p>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" tabindex="-1"></a><span class="co">#Creating a data frame with unweighted bilateral index values</span></span>
-<span id="cb68-2"><a href="#cb68-2" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, </span>
-<span id="cb68-3"><a href="#cb68-3" tabindex="-1"></a>                  <span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;dutot&quot;</span>,<span class="st">&quot;carli&quot;</span>), </span>
-<span id="cb68-4"><a href="#cb68-4" tabindex="-1"></a>                  <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,</span>
-<span id="cb68-5"><a href="#cb68-5" tabindex="-1"></a>                  <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,</span>
-<span id="cb68-6"><a href="#cb68-6" tabindex="-1"></a>                  <span class="at">interval=</span><span class="cn">TRUE</span>)</span>
-<span id="cb68-7"><a href="#cb68-7" tabindex="-1"></a><span class="co">#Calculating average distances between indices (in p.p)</span></span>
-<span id="cb68-8"><a href="#cb68-8" tabindex="-1"></a><span class="fu">compare_distances</span>(df)</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" tabindex="-1"></a><span class="co">#Creating a data frame with unweighted bilateral index values</span></span>
+<span id="cb65-2"><a href="#cb65-2" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, </span>
+<span id="cb65-3"><a href="#cb65-3" tabindex="-1"></a>                  <span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;dutot&quot;</span>,<span class="st">&quot;carli&quot;</span>), </span>
+<span id="cb65-4"><a href="#cb65-4" tabindex="-1"></a>                  <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,</span>
+<span id="cb65-5"><a href="#cb65-5" tabindex="-1"></a>                  <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,</span>
+<span id="cb65-6"><a href="#cb65-6" tabindex="-1"></a>                  <span class="at">interval=</span><span class="cn">TRUE</span>)</span>
+<span id="cb65-7"><a href="#cb65-7" tabindex="-1"></a><span class="co">#Calculating average distances between indices (in p.p)</span></span>
+<span id="cb65-8"><a href="#cb65-8" tabindex="-1"></a><span class="fu">compare_distances</span>(df)</span></code></pre></div>
 <p><strong>compare_to_target</strong></p>
 <p>The function calculates average distances between considered price
 indices and the target price index and it returns a data frame with:
@@ -2143,14 +2129,14 @@ index values (<strong>distance_lower</strong> column).</p>
 price indices (calculated for the <strong>milk</strong> data set and for
 the time interval: December 2018 - December 2019) with the target Fisher
 price index:</p>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" tabindex="-1"></a><span class="co">#Creating a data frame with example bilateral indices</span></span>
-<span id="cb69-2"><a href="#cb69-2" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, </span>
-<span id="cb69-3"><a href="#cb69-3" tabindex="-1"></a>                  <span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;laspeyres&quot;</span>,<span class="st">&quot;paasche&quot;</span>,<span class="st">&quot;walsh&quot;</span>),</span>
-<span id="cb69-4"><a href="#cb69-4" tabindex="-1"></a>                  <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span>
-<span id="cb69-5"><a href="#cb69-5" tabindex="-1"></a><span class="co">#Calculating the target Fisher price index</span></span>
-<span id="cb69-6"><a href="#cb69-6" tabindex="-1"></a>target_index<span class="ot">&lt;-</span><span class="fu">fisher</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span>
-<span id="cb69-7"><a href="#cb69-7" tabindex="-1"></a><span class="co">#Calculating average distances between considered indices and the Fisher index (in p.p)</span></span>
-<span id="cb69-8"><a href="#cb69-8" tabindex="-1"></a><span class="fu">compare_to_target</span>(df,<span class="at">target=</span>target_index)</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" tabindex="-1"></a><span class="co">#Creating a data frame with example bilateral indices</span></span>
+<span id="cb66-2"><a href="#cb66-2" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, </span>
+<span id="cb66-3"><a href="#cb66-3" tabindex="-1"></a>                  <span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;laspeyres&quot;</span>,<span class="st">&quot;paasche&quot;</span>,<span class="st">&quot;walsh&quot;</span>),</span>
+<span id="cb66-4"><a href="#cb66-4" tabindex="-1"></a>                  <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span>
+<span id="cb66-5"><a href="#cb66-5" tabindex="-1"></a><span class="co">#Calculating the target Fisher price index</span></span>
+<span id="cb66-6"><a href="#cb66-6" tabindex="-1"></a>target_index<span class="ot">&lt;-</span><span class="fu">fisher</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span>
+<span id="cb66-7"><a href="#cb66-7" tabindex="-1"></a><span class="co">#Calculating average distances between considered indices and the Fisher index (in p.p)</span></span>
+<span id="cb66-8"><a href="#cb66-8" tabindex="-1"></a><span class="fu">compare_to_target</span>(df,<span class="at">target=</span>target_index)</span></code></pre></div>
 <p><strong>compare_indices_jk</strong></p>
 <p>This function presents a comparison of selected indices obtained by
 using the jackknife method. In particular, it returns a list with four
@@ -2167,24 +2153,24 @@ calculated iteration index values, and
 calculated index pseudovalues obtained in the jackknife procedure.
 Please follow the example, in which the Jevons, Fisher and GEKS indices
 are compared by using the jackknife method:</p>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" tabindex="-1"></a><span class="co">#creating a list with jackknife results</span></span>
-<span id="cb70-2"><a href="#cb70-2" tabindex="-1"></a>comparison<span class="ot">&lt;-</span><span class="fu">compare_indices_jk</span>(milk,</span>
-<span id="cb70-3"><a href="#cb70-3" tabindex="-1"></a><span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;fisher&quot;</span>,<span class="st">&quot;geks&quot;</span>),</span>
-<span id="cb70-4"><a href="#cb70-4" tabindex="-1"></a><span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,</span>
-<span id="cb70-5"><a href="#cb70-5" tabindex="-1"></a><span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>, </span>
-<span id="cb70-6"><a href="#cb70-6" tabindex="-1"></a><span class="at">window=</span><span class="fu">c</span>(<span class="dv">13</span>),</span>
-<span id="cb70-7"><a href="#cb70-7" tabindex="-1"></a><span class="at">names=</span><span class="fu">c</span>(<span class="st">&quot;Jevons&quot;</span>,<span class="st">&quot;Fisher&quot;</span>,<span class="st">&quot;GEKS&quot;</span>), </span>
-<span id="cb70-8"><a href="#cb70-8" tabindex="-1"></a><span class="at">by=</span><span class="st">&quot;retID&quot;</span>,</span>
-<span id="cb70-9"><a href="#cb70-9" tabindex="-1"></a><span class="at">title_iterations=</span><span class="st">&quot;Box-plots for iteration values&quot;</span>,</span>
-<span id="cb70-10"><a href="#cb70-10" tabindex="-1"></a><span class="at">title_pseudovalues=</span><span class="st">&quot;Box-plots for pseudovalues&quot;</span>)</span>
-<span id="cb70-11"><a href="#cb70-11" tabindex="-1"></a><span class="co">#displaying a data frame with basic characteristics of the calculated iteration index values</span></span>
-<span id="cb70-12"><a href="#cb70-12" tabindex="-1"></a>comparison<span class="sc">$</span>iterations</span></code></pre></div>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" tabindex="-1"></a><span class="co">#displaying a data frame with basic characteristics of the calculated index pseudovalues obtained in the jackknife procedure</span></span>
-<span id="cb71-2"><a href="#cb71-2" tabindex="-1"></a>comparison<span class="sc">$</span>pseudovalues</span></code></pre></div>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" tabindex="-1"></a><span class="co">#displaying box-plotes created for the calculated iteration index values</span></span>
-<span id="cb72-2"><a href="#cb72-2" tabindex="-1"></a>comparison<span class="sc">$</span>figure_iterations</span></code></pre></div>
-<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" tabindex="-1"></a><span class="co">#displaying box-plotes created for the calculated index pseudovalues obtained in the jackknife procedure</span></span>
-<span id="cb73-2"><a href="#cb73-2" tabindex="-1"></a>comparison<span class="sc">$</span>figure_pseudovalues</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a><span class="co">#creating a list with jackknife results</span></span>
+<span id="cb67-2"><a href="#cb67-2" tabindex="-1"></a>comparison<span class="ot">&lt;-</span><span class="fu">compare_indices_jk</span>(milk,</span>
+<span id="cb67-3"><a href="#cb67-3" tabindex="-1"></a><span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;fisher&quot;</span>,<span class="st">&quot;geks&quot;</span>),</span>
+<span id="cb67-4"><a href="#cb67-4" tabindex="-1"></a><span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,</span>
+<span id="cb67-5"><a href="#cb67-5" tabindex="-1"></a><span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>, </span>
+<span id="cb67-6"><a href="#cb67-6" tabindex="-1"></a><span class="at">window=</span><span class="fu">c</span>(<span class="dv">13</span>),</span>
+<span id="cb67-7"><a href="#cb67-7" tabindex="-1"></a><span class="at">names=</span><span class="fu">c</span>(<span class="st">&quot;Jevons&quot;</span>,<span class="st">&quot;Fisher&quot;</span>,<span class="st">&quot;GEKS&quot;</span>), </span>
+<span id="cb67-8"><a href="#cb67-8" tabindex="-1"></a><span class="at">by=</span><span class="st">&quot;retID&quot;</span>,</span>
+<span id="cb67-9"><a href="#cb67-9" tabindex="-1"></a><span class="at">title_iterations=</span><span class="st">&quot;Box-plots for iteration values&quot;</span>,</span>
+<span id="cb67-10"><a href="#cb67-10" tabindex="-1"></a><span class="at">title_pseudovalues=</span><span class="st">&quot;Box-plots for pseudovalues&quot;</span>)</span>
+<span id="cb67-11"><a href="#cb67-11" tabindex="-1"></a><span class="co">#displaying a data frame with basic characteristics of the calculated iteration index values</span></span>
+<span id="cb67-12"><a href="#cb67-12" tabindex="-1"></a>comparison<span class="sc">$</span>iterations</span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" tabindex="-1"></a><span class="co">#displaying a data frame with basic characteristics of the calculated index pseudovalues obtained in the jackknife procedure</span></span>
+<span id="cb68-2"><a href="#cb68-2" tabindex="-1"></a>comparison<span class="sc">$</span>pseudovalues</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" tabindex="-1"></a><span class="co">#displaying box-plotes created for the calculated iteration index values</span></span>
+<span id="cb69-2"><a href="#cb69-2" tabindex="-1"></a>comparison<span class="sc">$</span>figure_iterations</span></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" tabindex="-1"></a><span class="co">#displaying box-plotes created for the calculated index pseudovalues obtained in the jackknife procedure</span></span>
+<span id="cb70-2"><a href="#cb70-2" tabindex="-1"></a>comparison<span class="sc">$</span>figure_pseudovalues</span></code></pre></div>
 <p><a id="ad13"> </a></p>
 </div>
 <div id="functions-for-price-and-quantity-indicator-calculations" class="section level3">
@@ -2204,18 +2190,18 @@ quantity indicators and optionally also the price and quantity
 contributions of individual products.For instance, the following command
 calculates the Bennet price and quantity indicators for milk
 products:</p>
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" tabindex="-1"></a><span class="fu">bennet</span>(milk, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" tabindex="-1"></a><span class="fu">bennet</span>(milk, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p>where price and quantity contributions of each subgroups of milk
 products can be obtained as follows:</p>
-<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" tabindex="-1"></a>milk<span class="sc">$</span>prodID<span class="ot">&lt;-</span>milk<span class="sc">$</span>description</span>
-<span id="cb75-2"><a href="#cb75-2" tabindex="-1"></a><span class="fu">bennet</span>(milk, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">contributions =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" tabindex="-1"></a>milk<span class="sc">$</span>prodID<span class="ot">&lt;-</span>milk<span class="sc">$</span>description</span>
+<span id="cb72-2"><a href="#cb72-2" tabindex="-1"></a><span class="fu">bennet</span>(milk, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">contributions =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p>The following command calculates the Montgomery price and quantity
 indicators for coffee products:</p>
-<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" tabindex="-1"></a><span class="fu">montgomery</span>(coffee, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" tabindex="-1"></a><span class="fu">montgomery</span>(coffee, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p>where price and quantity contributions of each subgroups of coffee
 products can be obtained as follows:</p>
-<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" tabindex="-1"></a>coffee<span class="sc">$</span>prodID<span class="ot">&lt;-</span>coffee<span class="sc">$</span>description</span>
-<span id="cb77-2"><a href="#cb77-2" tabindex="-1"></a><span class="fu">montgomery</span>(coffee, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">contributions =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" tabindex="-1"></a>coffee<span class="sc">$</span>prodID<span class="ot">&lt;-</span>coffee<span class="sc">$</span>description</span>
+<span id="cb74-2"><a href="#cb74-2" tabindex="-1"></a><span class="fu">montgomery</span>(coffee, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">contributions =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 </div>
 </div>
 </div>

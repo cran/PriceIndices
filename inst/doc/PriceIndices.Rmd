@@ -68,7 +68,7 @@ remotes::install_github("JacekBialek/PriceIndices")
 
 ### Data sets included in the package and generating artificial scanner data sets         
 
-**This package includes nine data sets: artificial and real.** 
+**This package includes 10 data sets: artificial and real.** 
 
 ***1) dataAGGR***
 
@@ -80,7 +80,7 @@ The second one, **dataMATCH**, can be used to demonstrate the **data_matching** 
 
 ***3) dataCOICOP***
 
-The third one, **dataCOICOP**, is a ollection of real scanner data on the sale of milk products sold in a period: Dec, 2020 - Feb, 2022. It is a data frame with 10 columns and 139600 rows. The used variables are as follows: **time** - dates of transactions (Year-Month-Day); **prices** - prices of sold products (PLN); **quantities** - quantities of sold products; **description** - descriptions of sold products (original: in Polish); **codeID** - retailer product codes; **retID** - IDs of retailer outlets; **grammage** - product grammages; **unit** - sales units, e.g. 'kg', 'ml', etc.; **category** - product categories (in English) corresponding to COICOP 6 levels; **coicop6** - identifiers of local COICOP 6 groups (6 levels). Please note that this data set can serve as a training or testing set in product classification using machine learning methods (see the functions: **model_classification** and **data_classifying**).
+The third one, **dataCOICOP**, is a ollection of real scanner data on the sale of milk products sold in a period: Dec, 2020 - Feb, 2022. It is a data frame with 10 columns and 139600 rows. The used variables are as follows: **time** - dates of transactions (Year-Month-Day); **prices** - prices of sold products (PLN); **quantities** - quantities of sold products; **description** - descriptions of sold products (original: in Polish); **codeID** - retailer product codes; **retID** - IDs of retailer outlets; **grammage** - product grammages; **unit** - sales units, e.g. 'kg', 'ml', etc.; **category** - product categories (in English) corresponding to COICOP 6 levels; **coicop6** - identifiers of local COICOP 6 groups (6 levels). Please note that this data set can serve as a training or testing set in product classification using machine learning methods.
 
 ***4) data_DOWN_UP_SIZED***
 
@@ -105,6 +105,9 @@ This data set, **dataU**, is a collection of artificial scanner data on 6 produc
 ***9) dataMARS***
 
 This data set, **dataMARS**,  is a collection of artificial scanner data on shirts for testing the MARS method. It contains 9 columns and 44 rows. The used variables are as follows: **time** - dates of transactions (Year-Month-Day), **prices** - prices of sold products [PLN], **quantities** - quantities of sold products, **prodID** - unique product identifiers (data set contains 28 different prodIDs), **description** - descriptions (labels) of sold shirts (data set contains 12 different descriptions), **brand** - brand of sold shirts (data set contains 2 different brands: X and Y), **gender** - gender of the person for whom the shirt is dedicated (M or F), **size** - size of shirts (M, L, and XL), **fabric** - fabric of shirts (cotton, polyester, blend).
+
+***10) dataRSM***
+This data set, **dataRSM**, is a collection of scanner data on the sale of rice, sugar and milk products in one of Polish supermarkets in the period from December 2023 to January 2025. It contains 9 columns and 8090 rows. The used variables are as follows: **time** - dates of transactions (Year-Month-Day), **prices** - prices of sold products [PLN], **quantities** - quantities of sold products, **retID** - unique codes identifying outlets/retailer sale points (data set contains 4 different retIDs), **description** - descriptions (labels) of sold products (data set contains 152 different descriptions), **retailer_code** - retailer codes for product definition (134 retailer codes), **EAN_code** - EAN codes (bar codes) for product definition (138 EAN codes), **category** - product categories at the 6-digit COICOP level (4 categories), and **subcategory** - product subcategories from 7-digit COICOP level (11 subcategories). Please note that the data frame does not contain the **prodID** column, so it must be defined (or specified) before calculating price indices.
 
 The set **milk** represents a typical data frame used in the package for most calculations and is organized as follows:
 
@@ -232,48 +235,6 @@ to obtain the subset of **milk** with products which are not *pasteurized* and w
 ```{r}
 unique(subgroup2$description)
 ```
-**data_classifying**
-
-This function predicts product COICOP levels (or any other defined product levels) using the selected machine learning model (see the **model** parameter). It provides the indicated data set with an additional column, i.e. *class_predicted*. The selected model must be built previously (see the **model_classification** function) and after the training process it can be saved on your disk (see the **save_model** function) and then loaded at any time (see the **load_model** function). Please note that the machine learning process is based on the XGBoost algorithm (from the XGBoost package) which is an implementation of gradient boosted decision trees designed for speed and performance. For example, let us build a machine learning model
-
-```{r, results=FALSE}
-my.grid=list(eta=c(0.01,0.02,0.05),subsample=c(0.5,0.8))
-data_train<-dplyr::filter(dataCOICOP,dataCOICOP$time<=as.Date("2021-10-01"))
-data_test<-dplyr::filter(dataCOICOP,dataCOICOP$time==as.Date("2021-11-01"))
-ML<-model_classification(data_train,
-                         data_test,
-                         class="coicop6",
-                         grid=my.grid,
-                         indicators=c("description","codeIN","grammage"),
-                         key_words=c("uht"), 
-                         rounds=60)
-```
-
-We can watch the results of the whole training process:
-
-```{r}
-ML$figure_training
-```
-
-or we can observe the importance of the used indicators:
-
-```{r}
-ML$figure_importance
-```
-
-Now, let us save the model on the disk. After saving the model we can load it and use at any time:
-
-```{r}
-#Setting a temporary directory as a working directory
-wd<-tempdir()
-setwd(wd)
-#Saving and loading the model
-save_model(ML, dir="My_model")
-ML_fromPC<-load_model("My_model")
-#Prediction
-data_predicted<-data_classifying(ML_fromPC, data_test)
-head(data_predicted)
-```
 
 **data_matching**
 
@@ -324,7 +285,7 @@ You can also use **data_filtering** for each pair of subsequent months from the 
 ```{r}
 filter1B<-data_filtering(milk,start="2018-12",end="2019-03",
                          filters=c("extremeprices"),pquantiles=c(0.01,0.99),
-                         interval=TRUE, retailers=TRUE)
+                         interval=TRUE, outlets=TRUE)
 nrow(filter1B)
 ```
 Two more useful functions are included for the procedure of scanner data. The first, **data_reducing**, returns a data set containing sufficiently numerous matched products in the indicated groups (see documentation). It reduces the dataset to only a representative set of products that have appeared in sufficient numbers in the sales offer:
@@ -571,6 +532,12 @@ fisher(milk, start="2018-12", end="2020-01")
 lloyd_moulton(milk, start="2018-12", end="2020-01", sigma=0.9)
 lowe(milk, start="2019-12", end="2020-02", base="2018-12", interval=TRUE)
 ```
+
+The package also allows the User to calculate *retrospective price indices*. The **retro_index** function implements the correction or imputation approaches (see von Auer (2024) cited in the documentation) and also estimates the Diewert-Huwiler-Kohli-Hansen index (DHKH). For example, let us determine the retrospective DHKH index for the milk set:
+```{r}
+retro_index(milk, start="2018-12", end="2019-12", formula="dhkh")
+```
+
 <a id="ad6">   </a>
 
 ### Functions for chain price index calculation

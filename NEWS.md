@@ -1,3 +1,15 @@
+# Package update 0.2.5 -> 0.2.6
+
+## New function:
+* New function *retro_index* (for computing retrospective price indices) has been added;
+
+## Deleted functions:
+* The following functions have been removed: *data_classifying*, *model_classification*, 
+*save_model*, and *load_model*.
+
+## New dataset
+* New detailed scanner dataset (*dataRSM*) on *milk*, *sugar* and *rice* products
+
 # Package update 0.2.4 -> 0.2.5
 
 ## Improvements:

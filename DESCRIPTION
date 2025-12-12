@@ -1,6 +1,6 @@
 Package: PriceIndices
 Title: Calculating Bilateral and Multilateral Price Indexes
-Version: 0.2.5
+Version: 0.2.6
 Authors@R: 
     person(given = "Jacek",
            family = "Białek",
@@ -11,17 +11,17 @@ Description: Preparing a scanner data set for price dynamics calculations (data 
     <doi:10.1080/07350015.2020.1816176>, Białek (2019) <doi:10.2478/jos-2019-0014> or Białek (2020) <doi:10.2478/jos-2020-0037>.
 Depends: R (>= 3.5.0)
 Imports: lubridate (>= 1.7.4), dplyr (>= 0.8.3), ggplot2 (>= 3.2.0),
-        reshape, reclin2, stringr, xgboost, caret, strex
+        reshape, reclin2, stringr, strex
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.3
 Suggests: testthat, knitr, rmarkdown
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2025-10-12 15:40:23 UTC; User
+Packaged: 2025-12-12 12:20:27 UTC; User
 Author: Jacek Białek [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-0952-5327>)
 Maintainer: Jacek Białek <jacek.bialek@uni.lodz.pl>
 Repository: CRAN
-Date/Publication: 2025-10-12 16:40:02 UTC
+Date/Publication: 2025-12-12 12:50:02 UTC
