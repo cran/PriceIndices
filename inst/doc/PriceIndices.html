@@ -1078,7 +1078,7 @@ products for subsequent months we run:</p>
 </div>
 <div id="functions-for-bilateral-unweighted-price-index-calculation" class="section level3">
 <h3>Functions for bilateral unweighted price index calculation</h3>
-<p>This package includes 7 functions for calculating the following
+<p>This package includes 8 functions for calculating the following
 bilateral unweighted price indices:</p>
 <table>
 <thead>
@@ -1101,20 +1101,24 @@ bilateral unweighted price indices:</p>
 <td>cswd</td>
 </tr>
 <tr class="even">
+<td>Dikhanov (2021, 2024)</td>
+<td>dikhanov</td>
+</tr>
+<tr class="odd">
 <td>Dutot (1738)</td>
 <td>dutot</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Jevons (1865)</td>
 <td>jevons</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Harmonic</td>
 <td>harmonic</td>
 </tr>
-<tr class="odd">
-<td>Dikhanov (2021, 2024)</td>
-<td>dikhanov</td>
+<tr class="even">
+<td>YBMD (2026)</td>
+<td>ybmd</td>
 </tr>
 </tbody>
 </table>
@@ -1135,7 +1139,7 @@ case a <em>fixed base month</em> is set to December 2018):</p>
 </div>
 <div id="functions-for-bilateral-weighted-price-index-calculation" class="section level3">
 <h3>Functions for bilateral weighted price index calculation</h3>
-<p>This package includes 30 functions for calculating the following
+<p>This package includes 35 functions for calculating the following
 bilateral weighted price indices:</p>
 <table>
 <thead>
@@ -1186,12 +1190,20 @@ bilateral weighted price indices:</p>
 <td>geopaasche</td>
 </tr>
 <tr class="odd">
+<td>Geo-Walsh</td>
+<td>geowalsh</td>
+</tr>
+<tr class="even">
 <td>Geo-Young</td>
 <td>geoyoung</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Geo-hybrid (2020)</td>
 <td>geohybrid</td>
+</tr>
+<tr class="even">
+<td>Harmonic log-change</td>
+<td>hlc</td>
 </tr>
 <tr class="odd">
 <td>Hybrid (2020)</td>
@@ -1234,6 +1246,14 @@ bilateral weighted price indices:</p>
 <td>stuvel</td>
 </tr>
 <tr class="odd">
+<td>Theil I</td>
+<td>theil1</td>
+</tr>
+<tr class="even">
+<td>Theil II</td>
+<td>theil2</td>
+</tr>
+<tr class="odd">
 <td>Tornqvist (1936)</td>
 <td>tornqvist</td>
 </tr>
@@ -1246,22 +1266,26 @@ bilateral weighted price indices:</p>
 <td>walsh</td>
 </tr>
 <tr class="even">
+<td>Walsh-Vartia</td>
+<td>walsh_vartia</td>
+</tr>
+<tr class="odd">
 <td>Young</td>
 <td>young</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Quadratic mean of order r price index</td>
 <td>QMp</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Implicit quadratic mean of order r price index</td>
 <td>IQMp</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Value Index</td>
 <td>value_index</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Unit Value Index</td>
 <td>unit_value_index</td>
 </tr>
@@ -1294,7 +1318,7 @@ the milk set:</p>
 </div>
 <div id="functions-for-chain-price-index-calculation" class="section level3">
 <h3>Functions for chain price index calculation</h3>
-<p>This package includes 36 functions for calculating the following
+<p>This package includes 42 functions for calculating the following
 chain indices (weighted and unweighted):</p>
 <table>
 <thead>
@@ -1333,44 +1357,52 @@ chain indices (weighted and unweighted):</p>
 <td>chdikhanov</td>
 </tr>
 <tr class="even">
+<td>Chain YBMD</td>
+<td>chybmd</td>
+</tr>
+<tr class="odd">
 <td>Chain AG Mean</td>
 <td>chagmean</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Banajree</td>
 <td>chbanajree</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Bialek</td>
 <td>chbialek</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Davies</td>
 <td>chdavies</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Drobisch</td>
 <td>chdrobisch</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Fisher</td>
 <td>chfisher</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Geary-Khamis</td>
 <td>chgeary_khamis</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Geo-Laspeyres</td>
 <td>chgeolaspeyres</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Geo-Lowe</td>
 <td>chgeolowe</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Geo-Paasche</td>
 <td>chgeopaasche</td>
+</tr>
+<tr class="odd">
+<td>Chain Geo-Walsh</td>
+<td>chgeowalsh</td>
 </tr>
 <tr class="even">
 <td>Chain Geo-Young</td>
@@ -1381,56 +1413,72 @@ chain indices (weighted and unweighted):</p>
 <td>chgeohybrid</td>
 </tr>
 <tr class="even">
+<td>Chain harmonic log-change</td>
+<td>chhlc</td>
+</tr>
+<tr class="odd">
 <td>Chain Hybrid</td>
 <td>chhybrid</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Laspeyres</td>
 <td>chlaspeyres</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Lehr</td>
 <td>chlehr</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Lloyd-Moulton</td>
 <td>chlloyd_moulton</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Lowe</td>
 <td>chlowe</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Marshall-Edgeworth</td>
 <td>chmarshall_edgeworth</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Paasche</td>
 <td>chpaasche</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Palgrave</td>
 <td>chpalgrave</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Sato-Vartia</td>
 <td>chsato_vartia</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Stuvel</td>
 <td>chstuvel</td>
 </tr>
+<tr class="odd">
+<td>Chain Theil I</td>
+<td>chtheil1</td>
+</tr>
 <tr class="even">
+<td>Chain Theil II</td>
+<td>chtheil2</td>
+</tr>
+<tr class="odd">
 <td>Chain Tornqvist</td>
 <td>chtornqvist</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Chain Vartia</td>
 <td>chvartia</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Chain Walsh</td>
 <td>chwalsh</td>
+</tr>
+<tr class="even">
+<td>Chain Walsh-Vartia</td>
+<td>chwalsh_vartia</td>
 </tr>
 <tr class="odd">
 <td>Chain Young</td>
