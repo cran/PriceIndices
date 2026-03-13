@@ -1,7 +1,7 @@
-28eda8672e25e56d25d29e933b1516a8 *DESCRIPTION
-f8906866ff55f182dfb4654c993d1d2a *NAMESPACE
-7cf4817e0929aff526a4e5d4f8443d34 *NEWS.md
-5620090c5c86b3c7f7547f2c613ee53e *R/PriceIndices.R
+5de3ffb694bf5d6d24ce9fe37e342141 *DESCRIPTION
+4ecadfa867ec21db467c922208c40cce *NAMESPACE
+247a5673a47bfc25c9debe12c32186f5 *NEWS.md
+5a204657a475877f7b12c5d94cc94982 *R/PriceIndices.R
 ce162692b25e5e08211bc85cc80516eb *R/coffee.R
 c485513cf3ba6b2eb2662e0e7500aa87 *R/dataAGGR.R
 7606eaf411be9fd2a7c6f36e4f0d042e *R/dataCOICOP.R
@@ -14,7 +14,7 @@ d344db1a1b8ee0738fb1a4e5c0942577 *R/f_bilateral_indicators.R
 07fab2abe4025fd75875bebc46e84748 *R/f_bilateral_indices.R
 28d429c5c2f4260fb5c432e442c38887 *R/f_chain_indices.R
 29b4aca6e8df1a89f3097380bc8d06a0 *R/f_comparing_indices.R
-d0a9b1aee951acf88e579e25ad8903cf *R/f_data_processing.R
+d7c2b53611601270c7549cdc2ed215d2 *R/f_data_processing.R
 5f98a085f98d9fae3d9ebfa4c2d7e753 *R/f_extensions_multilateral_indices.R
 2073016ab1d40c00c70c3df8c0b48ac4 *R/f_full_multilateral_indices.R
 dd861cd2afe8d73d3041017e3e81a67d *R/f_general.R
@@ -22,7 +22,7 @@ f8ddcc05626d762eec728c9a3d19fbe1 *R/f_internal.R
 114d4caddab4534684b86662253b5480 *R/f_multilateral_indicators.R
 aa4c712bedd4238538cb0711caae9569 *R/milk.R
 dc69e37c90ba56a8b2a46367b50e5ede *R/sugar.R
-eef47cd20ff25bc557ffdf0a49e8c541 *README.md
+09dfeb61578ea9b2aebf390f792b59f2 *README.md
 460f017d65cc04c070e41b3e406dcabe *build/vignette.rds
 7f4b224b4f3c82976058647ff37b6b17 *data/coffee.rda
 4af9dffabaea995dab992ce2399ae00a *data/dataAGGR.rda
@@ -35,11 +35,11 @@ f41194b0da043e768e0a9912028d8b16 *data/dataRSM.rda
 689b2f128338560f28997c1c9d134bfa *data/milk.rda
 6d988083aa9a227a7e991369fdabb253 *data/sugar.rda
 372deb402fd0e920366e53401f484236 *inst/doc/PriceIndices.R
-7927b639e45fa41f13a2886bf8932e5f *inst/doc/PriceIndices.Rmd
-90aadd7eb79362e6d9c9e4957d743ae2 *inst/doc/PriceIndices.html
+5ccc60a054b0f81b1dac0ddedcb44a51 *inst/doc/PriceIndices.Rmd
+e28c6e13488bfe6d7871387b77e346c2 *inst/doc/PriceIndices.html
 9634987402d8b000de0ff0ffca59c077 *man/IQMp.Rd
 25a6f179836c4e59f373c5f492fb2bae *man/MARS.Rd
-80845f60098198ba8cf90b11ab36ad6f *man/PriceIndices.Rd
+73a80088b1068a6a0da440ebfd902ba0 *man/PriceIndices.Rd
 a17cca45135c89ec0e19639da4e5036b *man/QMp.Rd
 d52310a4b99f6fd56267649a7dece295 *man/QMq.Rd
 fd3d43475aa176edffa91d06bd0e9678 *man/QU.Rd
@@ -218,6 +218,7 @@ e76d7bb3ed7c17dd3fbb23173356a99b *man/matched_index.Rd
 3a4606af471152c02de7abda715b66a3 *man/milk.Rd
 b3a1a4fd0cd25c928d717941088128c1 *man/mmontgomery.Rd
 f90a982025bcb528b7322a84b1a9c9d5 *man/montgomery.Rd
+7b5b1892df4638747d92e7f55b320bba *man/outlet_check.Rd
 734f149f31640bf67dbfaaf71de39a24 *man/paasche.Rd
 4d98aae8408e271744c67f262b990e0b *man/palgrave.Rd
 92623b988a871682562ce88757ca3114 *man/pqcor.Rd
@@ -280,4 +281,4 @@ a1ddfed146ee71b6b7355d3bf7a1ae42 *man/wgeksgl_fbmw.Rd
 90af8e5999e952060ac6fc5bf0cf0366 *man/young.Rd
 014624c2efc59e02938c91870da8fd1f *tests/testthat.R
 1c0a9ca8de09214c7c2ecc3a3630448b *tests/testthat/testing_indices.R
-7927b639e45fa41f13a2886bf8932e5f *vignettes/PriceIndices.Rmd
+5ccc60a054b0f81b1dac0ddedcb44a51 *vignettes/PriceIndices.Rmd

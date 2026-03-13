@@ -2083,7 +2083,10 @@ formula can be any index formula which is available in the PriceIdices
 packages (bilateral or multilateral). The formula used for aggregating
 partial index results is selected by the <strong>aggr</strong> parameter
 and the User decides on directions of aggregation (see
-<strong>outlets</strong> and <strong>groups</strong> parameters).</p>
+<strong>outlets</strong> and <strong>groups</strong> parameters). To
+optimize and automate the procedure for determining
+<strong>final_index</strong>, the <strong>data_reducing</strong> and
+<strong>outlet_check</strong> functions can be used.</p>
 <p><strong>Example</strong>. Let us calculate the final Fisher price
 index (with Laspeyres-type aggregation over outlets and product
 subgroups) for the data set on <strong>milk</strong></p>
