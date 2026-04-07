@@ -2094,6 +2094,15 @@ subgroups) for the data set on <strong>milk</strong></p>
 <span id="cb61-2"><a href="#cb61-2" tabindex="-1"></a>         <span class="at">formula =</span> <span class="st">&quot;fisher&quot;</span>, <span class="at">groups =</span> <span class="cn">TRUE</span>, <span class="at">outlets =</span> <span class="cn">TRUE</span>, </span>
 <span id="cb61-3"><a href="#cb61-3" tabindex="-1"></a>         <span class="at">aggr =</span> <span class="st">&quot;laspeyres&quot;</span>, <span class="at">by =</span> <span class="st">&quot;description&quot;</span>, </span>
 <span id="cb61-4"><a href="#cb61-4" tabindex="-1"></a>         <span class="at">interval =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><strong>resultant_index</strong></p>
+<p>The User may also calculate the resultant price index based on
+partial price indices, the system of weights from the base and current
+periods, and taking into account the aggregation formula by using the
+<strong>resultant_index</strong> function. For instance:</p>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a><span class="fu">resultant_index</span>(<span class="at">w0 =</span> <span class="fu">c</span>(<span class="fl">0.4</span>, <span class="fl">0.4</span>, <span class="fl">0.2</span>), </span>
+<span id="cb62-2"><a href="#cb62-2" tabindex="-1"></a>                <span class="at">wt =</span> <span class="fu">c</span>(<span class="fl">0.35</span>, <span class="fl">0.5</span>, <span class="fl">0.15</span>), </span>
+<span id="cb62-3"><a href="#cb62-3" tabindex="-1"></a>                <span class="at">subindices =</span> <span class="fu">c</span>(<span class="fl">1.1</span>, <span class="fl">0.95</span>, <span class="fl">1.12</span>), </span>
+<span id="cb62-4"><a href="#cb62-4" tabindex="-1"></a>                <span class="at">aggr =</span> <span class="st">&quot;fisher&quot;</span>)</span></code></pre></div>
 <p><a id="ad12"> </a></p>
 </div>
 <div id="functions-for-comparisons-of-price-indices" class="section level3">
@@ -2122,9 +2131,9 @@ which are provided as a data frame (<strong>compare_indices_df</strong>)
 or a list of data frames (<strong>compare_indices_list</strong>). For
 instance, let us compare the Laspeyres and Paasche indices calculated
 for the data set on milk:</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, </span>
-<span id="cb62-2"><a href="#cb62-2" tabindex="-1"></a><span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;laspeyres&quot;</span>, <span class="st">&quot;fisher&quot;</span>), <span class="at">interval =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb62-3"><a href="#cb62-3" tabindex="-1"></a><span class="fu">compare_indices_df</span>(df)</span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, </span>
+<span id="cb63-2"><a href="#cb63-2" tabindex="-1"></a><span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;laspeyres&quot;</span>, <span class="st">&quot;fisher&quot;</span>), <span class="at">interval =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb63-3"><a href="#cb63-3" tabindex="-1"></a><span class="fu">compare_indices_df</span>(df)</span></code></pre></div>
 <p>Now, let us compare the impact of the aggregating over outlets on the
 price index results (e.g. the Laspeyres formula is the assumed
 aggregating method). For this purpose, let us calculate the Fisher price
@@ -2132,17 +2141,17 @@ index in two cases: <strong>case1</strong> without the above-mentioned
 aggregation and <strong>case2</strong> which considers that aggregation.
 We use the <strong>milk</strong> dataset and the yearly time
 interval:</p>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" tabindex="-1"></a>case1<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,</span>
-<span id="cb63-2"><a href="#cb63-2" tabindex="-1"></a>                   <span class="at">formula=</span><span class="st">&quot;fisher&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span>
-<span id="cb63-3"><a href="#cb63-3" tabindex="-1"></a>case2<span class="ot">&lt;-</span><span class="fu">final_index</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>, </span>
-<span id="cb63-4"><a href="#cb63-4" tabindex="-1"></a>                   <span class="at">formula=</span><span class="st">&quot;fisher&quot;</span>,</span>
-<span id="cb63-5"><a href="#cb63-5" tabindex="-1"></a>                   <span class="at">outlets=</span><span class="cn">TRUE</span>, </span>
-<span id="cb63-6"><a href="#cb63-6" tabindex="-1"></a>                   <span class="at">aggr =</span> <span class="st">&quot;laspeyres&quot;</span>, </span>
-<span id="cb63-7"><a href="#cb63-7" tabindex="-1"></a>                   <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" tabindex="-1"></a>case1<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,</span>
+<span id="cb64-2"><a href="#cb64-2" tabindex="-1"></a>                   <span class="at">formula=</span><span class="st">&quot;fisher&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span>
+<span id="cb64-3"><a href="#cb64-3" tabindex="-1"></a>case2<span class="ot">&lt;-</span><span class="fu">final_index</span>(milk, <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>, <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>, </span>
+<span id="cb64-4"><a href="#cb64-4" tabindex="-1"></a>                   <span class="at">formula=</span><span class="st">&quot;fisher&quot;</span>,</span>
+<span id="cb64-5"><a href="#cb64-5" tabindex="-1"></a>                   <span class="at">outlets=</span><span class="cn">TRUE</span>, </span>
+<span id="cb64-6"><a href="#cb64-6" tabindex="-1"></a>                   <span class="at">aggr =</span> <span class="st">&quot;laspeyres&quot;</span>, </span>
+<span id="cb64-7"><a href="#cb64-7" tabindex="-1"></a>                   <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p>The comparison of obtained results can be made as follows:</p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" tabindex="-1"></a><span class="fu">compare_indices_list</span>(<span class="at">data=</span><span class="fu">list</span>(case1, case2), </span>
-<span id="cb64-2"><a href="#cb64-2" tabindex="-1"></a>                <span class="at">names=</span><span class="fu">c</span>(<span class="st">&quot;Fisher without aggregation&quot;</span>,</span>
-<span id="cb64-3"><a href="#cb64-3" tabindex="-1"></a>                <span class="st">&quot;Fisher with aggregation&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" tabindex="-1"></a><span class="fu">compare_indices_list</span>(<span class="at">data=</span><span class="fu">list</span>(case1, case2), </span>
+<span id="cb65-2"><a href="#cb65-2" tabindex="-1"></a>                <span class="at">names=</span><span class="fu">c</span>(<span class="st">&quot;Fisher without aggregation&quot;</span>,</span>
+<span id="cb65-3"><a href="#cb65-3" tabindex="-1"></a>                <span class="st">&quot;Fisher with aggregation&quot;</span>))</span></code></pre></div>
 <p><strong>compare_distances</strong></p>
 <p>The function calculates average distances between price indices and
 it returns a data frame with these values for each pair of price
@@ -2159,14 +2168,14 @@ parameter).</p>
 calculated for the <strong>milk</strong> data set and for the time
 interval: December 2018 - December 2019. Let us use the MAD measure for
 these comparisons:</p>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" tabindex="-1"></a><span class="co">#Creating a data frame with unweighted bilateral index values</span></span>
-<span id="cb65-2"><a href="#cb65-2" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, </span>
-<span id="cb65-3"><a href="#cb65-3" tabindex="-1"></a>                  <span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;dutot&quot;</span>,<span class="st">&quot;carli&quot;</span>), </span>
-<span id="cb65-4"><a href="#cb65-4" tabindex="-1"></a>                  <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,</span>
-<span id="cb65-5"><a href="#cb65-5" tabindex="-1"></a>                  <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,</span>
-<span id="cb65-6"><a href="#cb65-6" tabindex="-1"></a>                  <span class="at">interval=</span><span class="cn">TRUE</span>)</span>
-<span id="cb65-7"><a href="#cb65-7" tabindex="-1"></a><span class="co">#Calculating average distances between indices (in p.p)</span></span>
-<span id="cb65-8"><a href="#cb65-8" tabindex="-1"></a><span class="fu">compare_distances</span>(df)</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" tabindex="-1"></a><span class="co">#Creating a data frame with unweighted bilateral index values</span></span>
+<span id="cb66-2"><a href="#cb66-2" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, </span>
+<span id="cb66-3"><a href="#cb66-3" tabindex="-1"></a>                  <span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;dutot&quot;</span>,<span class="st">&quot;carli&quot;</span>), </span>
+<span id="cb66-4"><a href="#cb66-4" tabindex="-1"></a>                  <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,</span>
+<span id="cb66-5"><a href="#cb66-5" tabindex="-1"></a>                  <span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,</span>
+<span id="cb66-6"><a href="#cb66-6" tabindex="-1"></a>                  <span class="at">interval=</span><span class="cn">TRUE</span>)</span>
+<span id="cb66-7"><a href="#cb66-7" tabindex="-1"></a><span class="co">#Calculating average distances between indices (in p.p)</span></span>
+<span id="cb66-8"><a href="#cb66-8" tabindex="-1"></a><span class="fu">compare_distances</span>(df)</span></code></pre></div>
 <p><strong>compare_to_target</strong></p>
 <p>The function calculates average distances between considered price
 indices and the target price index and it returns a data frame with:
@@ -2180,14 +2189,14 @@ index values (<strong>distance_lower</strong> column).</p>
 price indices (calculated for the <strong>milk</strong> data set and for
 the time interval: December 2018 - December 2019) with the target Fisher
 price index:</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" tabindex="-1"></a><span class="co">#Creating a data frame with example bilateral indices</span></span>
-<span id="cb66-2"><a href="#cb66-2" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, </span>
-<span id="cb66-3"><a href="#cb66-3" tabindex="-1"></a>                  <span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;laspeyres&quot;</span>,<span class="st">&quot;paasche&quot;</span>,<span class="st">&quot;walsh&quot;</span>),</span>
-<span id="cb66-4"><a href="#cb66-4" tabindex="-1"></a>                  <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span>
-<span id="cb66-5"><a href="#cb66-5" tabindex="-1"></a><span class="co">#Calculating the target Fisher price index</span></span>
-<span id="cb66-6"><a href="#cb66-6" tabindex="-1"></a>target_index<span class="ot">&lt;-</span><span class="fu">fisher</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span>
-<span id="cb66-7"><a href="#cb66-7" tabindex="-1"></a><span class="co">#Calculating average distances between considered indices and the Fisher index (in p.p)</span></span>
-<span id="cb66-8"><a href="#cb66-8" tabindex="-1"></a><span class="fu">compare_to_target</span>(df,<span class="at">target=</span>target_index)</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a><span class="co">#Creating a data frame with example bilateral indices</span></span>
+<span id="cb67-2"><a href="#cb67-2" tabindex="-1"></a>df<span class="ot">&lt;-</span><span class="fu">price_indices</span>(milk, </span>
+<span id="cb67-3"><a href="#cb67-3" tabindex="-1"></a>                  <span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;laspeyres&quot;</span>,<span class="st">&quot;paasche&quot;</span>,<span class="st">&quot;walsh&quot;</span>),</span>
+<span id="cb67-4"><a href="#cb67-4" tabindex="-1"></a>                  <span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span>
+<span id="cb67-5"><a href="#cb67-5" tabindex="-1"></a><span class="co">#Calculating the target Fisher price index</span></span>
+<span id="cb67-6"><a href="#cb67-6" tabindex="-1"></a>target_index<span class="ot">&lt;-</span><span class="fu">fisher</span>(milk,<span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,<span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>,<span class="at">interval=</span><span class="cn">TRUE</span>)</span>
+<span id="cb67-7"><a href="#cb67-7" tabindex="-1"></a><span class="co">#Calculating average distances between considered indices and the Fisher index (in p.p)</span></span>
+<span id="cb67-8"><a href="#cb67-8" tabindex="-1"></a><span class="fu">compare_to_target</span>(df,<span class="at">target=</span>target_index)</span></code></pre></div>
 <p><strong>compare_indices_jk</strong></p>
 <p>This function presents a comparison of selected indices obtained by
 using the jackknife method. In particular, it returns a list with four
@@ -2204,24 +2213,24 @@ calculated iteration index values, and
 calculated index pseudovalues obtained in the jackknife procedure.
 Please follow the example, in which the Jevons, Fisher and GEKS indices
 are compared by using the jackknife method:</p>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a><span class="co">#creating a list with jackknife results</span></span>
-<span id="cb67-2"><a href="#cb67-2" tabindex="-1"></a>comparison<span class="ot">&lt;-</span><span class="fu">compare_indices_jk</span>(milk,</span>
-<span id="cb67-3"><a href="#cb67-3" tabindex="-1"></a><span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;fisher&quot;</span>,<span class="st">&quot;geks&quot;</span>),</span>
-<span id="cb67-4"><a href="#cb67-4" tabindex="-1"></a><span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,</span>
-<span id="cb67-5"><a href="#cb67-5" tabindex="-1"></a><span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>, </span>
-<span id="cb67-6"><a href="#cb67-6" tabindex="-1"></a><span class="at">window=</span><span class="fu">c</span>(<span class="dv">13</span>),</span>
-<span id="cb67-7"><a href="#cb67-7" tabindex="-1"></a><span class="at">names=</span><span class="fu">c</span>(<span class="st">&quot;Jevons&quot;</span>,<span class="st">&quot;Fisher&quot;</span>,<span class="st">&quot;GEKS&quot;</span>), </span>
-<span id="cb67-8"><a href="#cb67-8" tabindex="-1"></a><span class="at">by=</span><span class="st">&quot;retID&quot;</span>,</span>
-<span id="cb67-9"><a href="#cb67-9" tabindex="-1"></a><span class="at">title_iterations=</span><span class="st">&quot;Box-plots for iteration values&quot;</span>,</span>
-<span id="cb67-10"><a href="#cb67-10" tabindex="-1"></a><span class="at">title_pseudovalues=</span><span class="st">&quot;Box-plots for pseudovalues&quot;</span>)</span>
-<span id="cb67-11"><a href="#cb67-11" tabindex="-1"></a><span class="co">#displaying a data frame with basic characteristics of the calculated iteration index values</span></span>
-<span id="cb67-12"><a href="#cb67-12" tabindex="-1"></a>comparison<span class="sc">$</span>iterations</span></code></pre></div>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" tabindex="-1"></a><span class="co">#displaying a data frame with basic characteristics of the calculated index pseudovalues obtained in the jackknife procedure</span></span>
-<span id="cb68-2"><a href="#cb68-2" tabindex="-1"></a>comparison<span class="sc">$</span>pseudovalues</span></code></pre></div>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" tabindex="-1"></a><span class="co">#displaying box-plotes created for the calculated iteration index values</span></span>
-<span id="cb69-2"><a href="#cb69-2" tabindex="-1"></a>comparison<span class="sc">$</span>figure_iterations</span></code></pre></div>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" tabindex="-1"></a><span class="co">#displaying box-plotes created for the calculated index pseudovalues obtained in the jackknife procedure</span></span>
-<span id="cb70-2"><a href="#cb70-2" tabindex="-1"></a>comparison<span class="sc">$</span>figure_pseudovalues</span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" tabindex="-1"></a><span class="co">#creating a list with jackknife results</span></span>
+<span id="cb68-2"><a href="#cb68-2" tabindex="-1"></a>comparison<span class="ot">&lt;-</span><span class="fu">compare_indices_jk</span>(milk,</span>
+<span id="cb68-3"><a href="#cb68-3" tabindex="-1"></a><span class="at">formula=</span><span class="fu">c</span>(<span class="st">&quot;jevons&quot;</span>,<span class="st">&quot;fisher&quot;</span>,<span class="st">&quot;geks&quot;</span>),</span>
+<span id="cb68-4"><a href="#cb68-4" tabindex="-1"></a><span class="at">start=</span><span class="st">&quot;2018-12&quot;</span>,</span>
+<span id="cb68-5"><a href="#cb68-5" tabindex="-1"></a><span class="at">end=</span><span class="st">&quot;2019-12&quot;</span>, </span>
+<span id="cb68-6"><a href="#cb68-6" tabindex="-1"></a><span class="at">window=</span><span class="fu">c</span>(<span class="dv">13</span>),</span>
+<span id="cb68-7"><a href="#cb68-7" tabindex="-1"></a><span class="at">names=</span><span class="fu">c</span>(<span class="st">&quot;Jevons&quot;</span>,<span class="st">&quot;Fisher&quot;</span>,<span class="st">&quot;GEKS&quot;</span>), </span>
+<span id="cb68-8"><a href="#cb68-8" tabindex="-1"></a><span class="at">by=</span><span class="st">&quot;retID&quot;</span>,</span>
+<span id="cb68-9"><a href="#cb68-9" tabindex="-1"></a><span class="at">title_iterations=</span><span class="st">&quot;Box-plots for iteration values&quot;</span>,</span>
+<span id="cb68-10"><a href="#cb68-10" tabindex="-1"></a><span class="at">title_pseudovalues=</span><span class="st">&quot;Box-plots for pseudovalues&quot;</span>)</span>
+<span id="cb68-11"><a href="#cb68-11" tabindex="-1"></a><span class="co">#displaying a data frame with basic characteristics of the calculated iteration index values</span></span>
+<span id="cb68-12"><a href="#cb68-12" tabindex="-1"></a>comparison<span class="sc">$</span>iterations</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" tabindex="-1"></a><span class="co">#displaying a data frame with basic characteristics of the calculated index pseudovalues obtained in the jackknife procedure</span></span>
+<span id="cb69-2"><a href="#cb69-2" tabindex="-1"></a>comparison<span class="sc">$</span>pseudovalues</span></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" tabindex="-1"></a><span class="co">#displaying box-plotes created for the calculated iteration index values</span></span>
+<span id="cb70-2"><a href="#cb70-2" tabindex="-1"></a>comparison<span class="sc">$</span>figure_iterations</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" tabindex="-1"></a><span class="co">#displaying box-plotes created for the calculated index pseudovalues obtained in the jackknife procedure</span></span>
+<span id="cb71-2"><a href="#cb71-2" tabindex="-1"></a>comparison<span class="sc">$</span>figure_pseudovalues</span></code></pre></div>
 <p><a id="ad13"> </a></p>
 </div>
 <div id="functions-for-price-and-quantity-indicator-calculations" class="section level3">
@@ -2241,18 +2250,18 @@ quantity indicators and optionally also the price and quantity
 contributions of individual products.For instance, the following command
 calculates the Bennet price and quantity indicators for milk
 products:</p>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" tabindex="-1"></a><span class="fu">bennet</span>(milk, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" tabindex="-1"></a><span class="fu">bennet</span>(milk, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p>where price and quantity contributions of each subgroups of milk
 products can be obtained as follows:</p>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" tabindex="-1"></a>milk<span class="sc">$</span>prodID<span class="ot">&lt;-</span>milk<span class="sc">$</span>description</span>
-<span id="cb72-2"><a href="#cb72-2" tabindex="-1"></a><span class="fu">bennet</span>(milk, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">contributions =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" tabindex="-1"></a>milk<span class="sc">$</span>prodID<span class="ot">&lt;-</span>milk<span class="sc">$</span>description</span>
+<span id="cb73-2"><a href="#cb73-2" tabindex="-1"></a><span class="fu">bennet</span>(milk, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">contributions =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p>The following command calculates the Montgomery price and quantity
 indicators for coffee products:</p>
-<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" tabindex="-1"></a><span class="fu">montgomery</span>(coffee, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" tabindex="-1"></a><span class="fu">montgomery</span>(coffee, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">interval=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 <p>where price and quantity contributions of each subgroups of coffee
 products can be obtained as follows:</p>
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" tabindex="-1"></a>coffee<span class="sc">$</span>prodID<span class="ot">&lt;-</span>coffee<span class="sc">$</span>description</span>
-<span id="cb74-2"><a href="#cb74-2" tabindex="-1"></a><span class="fu">montgomery</span>(coffee, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">contributions =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" tabindex="-1"></a>coffee<span class="sc">$</span>prodID<span class="ot">&lt;-</span>coffee<span class="sc">$</span>description</span>
+<span id="cb75-2"><a href="#cb75-2" tabindex="-1"></a><span class="fu">montgomery</span>(coffee, <span class="at">start =</span> <span class="st">&quot;2018-12&quot;</span>, <span class="at">end =</span> <span class="st">&quot;2019-12&quot;</span>, <span class="at">contributions =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 </div>
 </div>
 </div>

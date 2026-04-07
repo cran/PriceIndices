@@ -300,6 +300,13 @@ knitr::opts_chunk$set(
 # 
 
 ## -----------------------------------------------------------------------------
+# resultant_index(w0 = c(0.4, 0.4, 0.2),
+#                 wt = c(0.35, 0.5, 0.15),
+#                 subindices = c(1.1, 0.95, 1.12),
+#                 aggr = "fisher")
+# 
+
+## -----------------------------------------------------------------------------
 # df<-price_indices(milk, start = "2018-12", end = "2019-12",
 # formula=c("laspeyres", "fisher"), interval = TRUE)
 # compare_indices_df(df)
