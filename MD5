@@ -1,6 +1,6 @@
-8a8f046b7751ffc0899da34eeb82d058 *DESCRIPTION
+a6d19dd2df33b84ebdf0b6833401659b *DESCRIPTION
 9a865875e43f76137975d0694d8b8fca *NAMESPACE
-5f4d4496858a598cbfee39baac0d1e37 *NEWS.md
+cb11ea75e2c952b254e21c0fa6ff800d *NEWS.md
 7b4c4e5c802b48600a92f171b1d22301 *R/PriceIndices.R
 ce162692b25e5e08211bc85cc80516eb *R/coffee.R
 c485513cf3ba6b2eb2662e0e7500aa87 *R/dataAGGR.R
@@ -12,11 +12,11 @@ bfda5bc910895b9c910ff30a1b62ac55 *R/dataRSM.R
 9e95ea98944325e0ae824ab85d3f668d *R/data_DOWN_UP_SIZED.R
 d344db1a1b8ee0738fb1a4e5c0942577 *R/f_bilateral_indicators.R
 07fab2abe4025fd75875bebc46e84748 *R/f_bilateral_indices.R
-28d429c5c2f4260fb5c432e442c38887 *R/f_chain_indices.R
+fab83ac48c6a9aaf668a372cdb2a7d49 *R/f_chain_indices.R
 29b4aca6e8df1a89f3097380bc8d06a0 *R/f_comparing_indices.R
 55d575ef3e255ca79109500ea24af753 *R/f_data_processing.R
 5f98a085f98d9fae3d9ebfa4c2d7e753 *R/f_extensions_multilateral_indices.R
-2073016ab1d40c00c70c3df8c0b48ac4 *R/f_full_multilateral_indices.R
+e2b20c52016f21d08e537a8701509537 *R/f_full_multilateral_indices.R
 29ab6bc166d1530f5c39bdd7de6b873b *R/f_general.R
 f8ddcc05626d762eec728c9a3d19fbe1 *R/f_internal.R
 114d4caddab4534684b86662253b5480 *R/f_multilateral_indicators.R
@@ -209,7 +209,7 @@ b30f1bcb7a5d5a4e53cab7c56c30ea87 *man/laspeyres.Rd
 24c5c4b4a49f51bfe88c0e19f70ac712 *man/lehr.Rd
 e1858351b9b17b09d4437d3db0079091 *man/lloyd_moulton.Rd
 561dd8cffab5cacaa61b695f86ababfa *man/lowe.Rd
-3bdb13fac69c75637d118f56206b2b41 *man/m_decomposition.Rd
+ba22e8d618adff2a80896fc55007ec51 *man/m_decomposition.Rd
 05ff283a4bce05ed7f6e0ff57d4cfcc9 *man/marshall_edgeworth.Rd
 064153fb815271eb9f03bde2d0cc15d4 *man/matched.Rd
 fdbbedc0379cc05baef36130b514004d *man/matched_fig.Rd
